@@ -21,4 +21,6 @@ __pypackages__/
 celerybeat-schedule
 celerybeat.pid
 .venv
+venv/
 .DS_Store
+TODO.md
