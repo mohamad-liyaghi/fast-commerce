@@ -17,6 +17,7 @@ services:
     depends_on:
         - postgres
         - postgres-test
+        - redis
 
   postgres:
     container_name: 'fast-commerce-postgres'
@@ -40,8 +41,19 @@ services:
     networks:
       - main
 
+  redis:
+    container_name: 'fast-commerce-redis'
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+        - redis-data:/data
+    networks:
+      - main
+
 networks:
     main:
 
 volumes:
     postgres-data:
+    redis-data:
