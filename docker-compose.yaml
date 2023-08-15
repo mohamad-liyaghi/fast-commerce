@@ -51,6 +51,14 @@ services:
     networks:
       - main
 
+  redis-test:
+    container_name: 'fast-commerce-redis-test'
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    networks:
+      - main
+
 networks:
     main:
 

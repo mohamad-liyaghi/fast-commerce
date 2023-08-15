@@ -5,12 +5,7 @@ from src.core.database import Base, get_db
 from src.main import app
 
 
-TEST_DATABASE_URL = (
-    "postgresql://"
-    f"{settings.env.get('TEST_DB_USER')}:{settings.env.get('TEST_DB_PASSWORD')}@"
-    f"{settings.env.get('TEST_DB_HOST')}/"
-    f"{settings.env.get('TEST_DB_NAME')}"
-)
+TEST_DATABASE_URL = settings.TEST_POSTGRES_URL
 
 engine = create_engine(TEST_DATABASE_URL)
 TestingSessionLocal = sessionmaker(
