@@ -18,6 +18,8 @@ services:
         - postgres
         - postgres-test
         - redis
+        - redis-test
+        - smtp4dev
 
   postgres:
     container_name: 'fast-commerce-postgres'
@@ -58,6 +60,14 @@ services:
       - "6380:6379"
     networks:
       - main
+
+  smtp4dev:
+    image: rnwood/smtp4dev:v3
+    container_name: 'fast-commerce-smtp4dev'
+    ports:
+      - "5000:80"
+      - "25:25"
+    restart: always
 
 networks:
     main:
