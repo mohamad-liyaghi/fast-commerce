@@ -1,6 +1,6 @@
 from fastapi_mail import FastMail, ConnectionConfig
 from fastapi.templating import Jinja2Templates
-from core.config import settings
+from src.core.config import settings
 
 template_path = Jinja2Templates(directory='src/templates/email')
 configs = ConnectionConfig(

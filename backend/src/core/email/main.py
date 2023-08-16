@@ -1,5 +1,5 @@
 from fastapi_mail import MessageSchema, MessageType
-from core.config import settings
+from src.core.config import settings
 from .config import mail, template_path
 
 
