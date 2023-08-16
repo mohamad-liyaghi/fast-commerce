@@ -39,3 +39,21 @@ class TestUserController:
     async def test_list(self, user_controller):
         result = await user_controller.list()
         assert result is not None
+
+    @pytest.mark.asyncio
+    async def test_list_password_is_hashed(self, user_controller):
+        credential = create_fake_credential()
+        password = credential.get('password')
+
+        user = await user_controller.create(**credential)
+        assert user.password != password
+
+    @pytest.mark.asyncio
+    async def test_update_password(self, user_controller, user):
+        """
+        When user updates its password, the new pass gets hashed
+        """
+        password = '1234'
+        result = await user_controller.update(user, password=password)
+
+        assert not result.password == password
