@@ -1,10 +1,8 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
-from redis import Redis
 from src.core.factory import Factory
 from src.app.schemas import UserRegisterIn
 from src.app.controllers import AuthController
-from src.core.redis import get_redis
 
 
 auth_router = APIRouter(
@@ -18,9 +16,7 @@ async def register(
         auth_controller: AuthController = Depends(
             Factory().get_auth_controller
         ),
-        redis: Redis = Depends(get_redis),
-        self=None,  # TODO: Find a solution for this
 ) -> dict:
     """Register a new user."""
-    await auth_controller.register(data=request.dict(), redis=redis)
+    await auth_controller.register(data=request.dict())
     return {'success': 'user and is pending verification.'}

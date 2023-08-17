@@ -9,12 +9,16 @@ faker = Faker()
 
 
 @pytest_asyncio.fixture
-async def user_controller(get_test_db):
+async def user_controller(get_test_db, get_test_redis):
     """
     Returns a UserController instance
     """
     return UserController(
-        repository=UserRepository(model=User, database=get_test_db)
+        repository=UserRepository(
+            model=User,
+            database=get_test_db,
+            redis=get_test_redis
+        )
     )
 
 

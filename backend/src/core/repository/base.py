@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
+from redis import Redis
 from src.core.database import Base
+from .cache import BaseCacheRepository
 
 
-class BaseRepository:
+class BaseRepository(BaseCacheRepository):
     """
     Base repository class
     Methods:
@@ -12,7 +14,8 @@ class BaseRepository:
         retrieve: Retrieve an instance of model
         list: List all instances of model
     """
-    def __init__(self, model: Base, database: Session):
+    def __init__(self, model: Base, database: Session, redis: Redis):
+        super().__init__(redis_client=redis)
         self.model = model
         self.database = database
 

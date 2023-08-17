@@ -8,10 +8,9 @@ class AuthController(UserController):
     This Controller handles user registration and verification.
     """
 
-    async def register(self, redis, data) -> None:
+    async def register(self, data: dict) -> None:
         """
         Create a new user in cache.
-        :param redis: the redis client
         :param data: the user data
         """
         email = data.pop('email')
@@ -25,10 +24,7 @@ class AuthController(UserController):
             )
 
         # Check cache if user exists
-        redis_user = await self.repository.get_cache(
-            redis=redis,
-            key=email
-        )
+        redis_user = await self.repository.get_cache(key=email, field='verification_code')
 
         if redis_user:
             raise HTTPException(
@@ -41,7 +37,6 @@ class AuthController(UserController):
 
         # Set user in cache
         await self.repository.create_cache(
-            redis=redis,
             key=email,
             data=data,
             ttl=60 * 2
