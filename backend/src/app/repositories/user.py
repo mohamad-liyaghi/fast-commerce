@@ -26,3 +26,25 @@ class UserRepository(BaseRepository):
 
         return await super().update(instance, **data)
 
+    # TODO: Move to a separate repository
+    async def create_cache(self, redis, key, data, ttl):
+        """
+        Create a new user in cache. (with its verification code)
+        """
+        # Set in cache
+        await redis.hset(key, mapping=data)
+        # Set TTL
+        await redis.expire(key, ttl)
+
+    async def get_cache(self, redis, key):
+        """
+        Get user from cache.
+        """
+        result = await redis.hget(key, 'verification_code')
+        return result
+
+    async def delete_cache(self, redis, email):
+        """
+        Delete user from cache.
+        """
+        await redis.hdel(email)

@@ -9,10 +9,7 @@ from src.core.database import get_db
 class Factory:
 
     @staticmethod
-    def get_user_controller(
-            self,
-            db: Depends = Depends(get_db)
-    ) -> UserController:
+    def get_user_controller(db: Depends = Depends(get_db)) -> UserController:
         """
         Returns a UserController instance
         """
@@ -21,10 +18,7 @@ class Factory:
         )
 
     @staticmethod
-    def get_auth_controller(
-            self,
-            db: Depends = Depends(get_db)
-    ) -> UserController:
+    def get_auth_controller(db: Depends = Depends(get_db)) -> UserController:
         """
         Returns a UserController instance
         """

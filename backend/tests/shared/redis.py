@@ -11,13 +11,12 @@ redis_pool = ConnectionPool.from_url(
 )
 
 
-def override_get_redis() -> Redis:
+async def override_get_redis() -> Redis:
     """
     Return a Redis instance [TEST]
     """
     redis = Redis(connection_pool=redis_pool)
     return redis
 
-
 # Override the get_redis function
-app.dependency_overrides[get_redis] = override_get_redis()
+app.dependency_overrides[get_redis] = override_get_redis

@@ -16,7 +16,6 @@ TestingSessionLocal = sessionmaker(
 )
 
 
-@pytest.fixture
 def get_test_db() -> TestingSessionLocal:
     """
     Return a TestingSessionLocal instance

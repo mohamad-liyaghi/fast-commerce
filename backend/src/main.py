@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 import uvicorn
+from src.api import router
 
 app = FastAPI(
     title='Fast Commerce',
@@ -9,6 +10,7 @@ app = FastAPI(
     redoc_url='/redoc/'
 )
 
+app.include_router(router)
 
 if __name__ == "__main__":
     uvicorn.run(

@@ -19,6 +19,10 @@ class TestPasswordHandler:
         assert await PasswordHandler.verify_password(
             hashed_password, self.password
         )
+
+    @pytest.mark.asyncio
+    async def test_not_verify_invalid_password(self):
+        hashed_password = await PasswordHandler.hash_password(self.password)
         assert not await PasswordHandler.verify_password(
-            hashed_password, 'wrong_password'
+            hashed_password, 'fake pass'
         )
