@@ -14,8 +14,5 @@ class OtpHandler:
     @staticmethod
     async def validate(otp: str, user: dict) -> bool:
         """Validate otp code"""
-        print(user)
         user_otp = user.get('otp')
-        print(user_otp)
-        print(otp)
         return int(otp) == int(user_otp)

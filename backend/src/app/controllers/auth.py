@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from src.core.handlers import OtpHandler
+from src.core.email import send_email
 from .user import UserController
 
 
@@ -38,6 +39,13 @@ class AuthController(UserController):
             key=email,
             data=data,
             ttl=60 * 2
+        )
+
+        await send_email(
+            subject='Verify your account',
+            to_email=email,
+            body={'otp': otp, 'first_name': data.get('first_name')},
+            template_name='verification.html',
         )
 
     async def verify(self, email: str, otp: int) -> None:

@@ -88,7 +88,7 @@ class BaseController:
         """
         await self.repository.create_cache(key=key, data=data, ttl=ttl)
 
-    async def get_cache(self, key: str, field: str|None = None):
+    async def get_cache(self, key: str, field: str | None = None):
         """
         Get user from cache.
         """
