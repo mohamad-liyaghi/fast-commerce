@@ -1,7 +1,7 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
 from src.core.factory import Factory
-from src.app.schemas import UserRegisterIn
+from src.app.schemas import UserRegisterIn, UserVerifyIn
 from src.app.controllers import AuthController
 
 
@@ -20,3 +20,15 @@ async def register(
     """Register a new user."""
     await auth_controller.register(data=request.dict())
     return {'success': 'user and is pending verification.'}
+
+
+@auth_router.post('/verify', status_code=status.HTTP_200_OK)
+async def verify(
+        request: UserVerifyIn,
+        auth_controller: AuthController = Depends(
+            Factory().get_auth_controller
+        ),
+) -> dict:
+    """Verify a user by its otp code."""
+    await auth_controller.verify(email=request.email, otp=request.otp)
+    return {'success': 'user verified.'}

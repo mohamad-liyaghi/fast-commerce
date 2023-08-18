@@ -11,5 +11,11 @@ class OtpHandler:
         """Hash password using bcrypt"""
         return randint(11111, 99999)
 
-    # @staticmethod
-    # async def verify(hashed_password: str, password: str) -> bool:
+    @staticmethod
+    async def validate(otp: str, user: dict) -> bool:
+        """Validate otp code"""
+        print(user)
+        user_otp = user.get('otp')
+        print(user_otp)
+        print(otp)
+        return int(otp) == int(user_otp)

@@ -31,6 +31,19 @@ async def user(user_controller):
 
 
 @pytest_asyncio.fixture
+async def cached_user(user_controller, client):
+    credential = create_fake_credential()
+    data = {
+            "email": credential['email'],
+            "first_name": credential['first_name'],
+            "last_name": credential['last_name'],
+            "password": credential['password'],
+    }
+    await client.post("v1/auth/register", json=data)
+    return data
+
+
+@pytest_asyncio.fixture
 async def admin(user_controller):
     """
     Returns a User instance

@@ -16,11 +16,14 @@ class BaseCacheRepository:
         await self.client.hset(key, mapping=data)
         await self.client.expire(key, ttl)
 
-    async def get_cache(self, key: str, field: str):
+    async def get_cache(self, key: str, field: str|None = None):
         """
         Get user from cache.
         """
-        result = await self.client.hget(key, field)
+        if field:
+            result = await self.client.hget(key, field)
+        else:
+            result = await self.client.hgetall(key)
         return result
 
     async def delete_cache(self, key: str):

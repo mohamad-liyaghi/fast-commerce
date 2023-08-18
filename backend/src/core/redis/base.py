@@ -5,4 +5,5 @@ from src.core.config import settings
 redis_pool = ConnectionPool.from_url(
     settings.REDIS_URL,
     max_connections=100,
+    decode_responses=True
 )

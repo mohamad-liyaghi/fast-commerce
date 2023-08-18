@@ -1,7 +1,9 @@
-import pytest_asyncio, pytest, asyncio
+import pytest_asyncio
+import pytest
+import asyncio
 from tests.fixtures.db import get_test_db # noqa
 from tests.fixtures.client import * # noqa
-from tests.fixtures.user import * # noqa
+from tests.fixtures.app import * # noqa
 from tests.fixtures.redis import * # noqa
 
 

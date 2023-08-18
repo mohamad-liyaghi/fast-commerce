@@ -8,6 +8,7 @@ from src.main import app
 redis_pool = ConnectionPool.from_url(
     settings.TEST_REDIS_URL,
     max_connections=100,
+    decode_responses=True
 )
 
 

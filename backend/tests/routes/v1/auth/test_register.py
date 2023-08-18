@@ -1,6 +1,8 @@
 import pytest
 from fastapi import status
 from httpx import AsyncClient
+from tests.utils import create_fake_credential
+
 
 
 @pytest.mark.asyncio
@@ -8,11 +10,12 @@ class TestRegisterRoute:
 
     @pytest.fixture(autouse=True)
     def setup_method(self, client: AsyncClient) -> None:
+        credential = create_fake_credential()
         self.data = {
-            "email": "fake@gmail.com",
-            "first_name": "John",
-            "last_name": "Doe",
-            "password": "password",
+            "email": credential['email'],
+            "first_name": credential['first_name'],
+            "last_name": credential['last_name'],
+            "password": credential['password'],
         }
         self.client = client
         self.url = "v1/auth/register"

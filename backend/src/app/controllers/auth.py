@@ -13,37 +13,68 @@ class AuthController(UserController):
         Create a new user in cache.
         :param data: the user data
         """
-        email = data.pop('email')
+        email = data.get('email')
 
-        # Check if user exists
-        user = await self.retrieve(email=email)
-        if user:
+        # Raise error if user exists in database
+        if await self.retrieve(email=email):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail='User already exists.',
             )
 
-        # Check cache if user exists
-        redis_user = await self.repository.get_cache(key=email, field='verification_code')
-
-        if redis_user:
+        # Raise error if user exists in cache (Pending verification)
+        if await self.repository.get_cache(key=email):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail='User is pending verification.',
             )
 
         # Create and set verification code
-        data.setdefault('verification_code', str(OtpHandler.create()))
+        otp = await OtpHandler.create()
+        data.setdefault('otp', str(otp))
 
-        # Set user in cache
+        # Set user in cache (For 2 minutes)
         await self.repository.create_cache(
             key=email,
             data=data,
             ttl=60 * 2
         )
 
-    def verify(self):
-        pass
+    async def verify(self, email: str, otp: int) -> None:
+        """
+        Verify a user.
+        :param email: the user email
+        :param otp: the user otp
+        """
+
+        # Raise error if user is already verified
+        if await self.retrieve(email=email):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail='User is already verified.',
+            )
+
+        cached_user = await self.repository.get_cache(key=email)
+        # Raise error if user is not in cache
+        if not cached_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='User not found.',
+            )
+
+        # Validate its otp
+        validate_opt = await OtpHandler.validate(otp=otp, user=cached_user)
+
+        # Raise error if otp is invalid
+        if not validate_opt:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail='Invalid OTP.',
+            )
+
+        # Remove otp from dict and create user in database
+        cached_user.pop('otp')
+        await self.create(**cached_user)
 
     def login(self):
         pass
