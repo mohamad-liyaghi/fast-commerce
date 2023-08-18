@@ -1,7 +1,11 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
 from src.core.factory import Factory
-from src.app.schemas import UserRegisterIn, UserVerifyIn
+from src.app.schemas import (
+    UserRegisterIn,
+    UserVerifyIn,
+    UserLoginIn,
+)
 from src.app.controllers import AuthController
 
 
@@ -32,3 +36,18 @@ async def verify(
     """Verify a user by its otp code."""
     await auth_controller.verify(email=request.email, otp=request.otp)
     return {'success': 'user verified.'}
+
+
+@auth_router.post('/login', status_code=status.HTTP_200_OK)
+async def login(
+        request: UserLoginIn,
+        auth_controller: AuthController = Depends(
+            Factory().get_auth_controller
+        ),
+) -> dict:
+    """Login a user."""
+    token = await auth_controller.login(
+        email=request.email,
+        password=request.password
+    )
+    return {'token': token, 'token_type': 'bearer'}

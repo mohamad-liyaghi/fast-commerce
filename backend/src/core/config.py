@@ -21,6 +21,8 @@ class Settings(BaseConfig):
     )
     REDIS_URL: str = env.get('REDIS_URL')
     TEST_REDIS_URL: str = env.get('TEST_REDIS_URL')
+    SECRET_KEY: str = env.get('SECRET_KEY')
+    JWT_ALGORITHM: str = env.get('JWT_ALGORITHM')
 
 
 settings: Settings = Settings()

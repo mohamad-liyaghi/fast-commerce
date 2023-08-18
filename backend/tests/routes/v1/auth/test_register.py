@@ -4,7 +4,6 @@ from httpx import AsyncClient
 from tests.utils import create_fake_credential
 
 
-
 @pytest.mark.asyncio
 class TestRegisterRoute:
 

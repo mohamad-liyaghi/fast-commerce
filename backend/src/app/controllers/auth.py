@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from src.core.handlers import OtpHandler
+from src.core.handlers import OtpHandler, PasswordHandler, JWTHandler
 from src.core.email import send_email
 from .user import UserController
 
@@ -84,5 +84,23 @@ class AuthController(UserController):
         cached_user.pop('otp')
         await self.create(**cached_user)
 
-    def login(self):
-        pass
+    async def login(self, email: str, password: str) -> dict:
+        user = await self.retrieve(email=email)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail='Active User not found.',
+            )
+
+        if not await PasswordHandler.verify_password(
+            password=password,
+            hashed_password=user.password,
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail='Invalid credentials.',
+            )
+
+        return await JWTHandler.create_access_token(
+            data={'user_uuid': str(user.uuid)}
+        )
