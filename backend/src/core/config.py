@@ -8,13 +8,13 @@ class Settings(BaseConfig):
     DEBUG: int = 0
     env: env = env
     POSTGRES_URL: str = (
-        'postgresql://'
+        'postgresql+asyncpg://'
         f'{env.get("POSTGRES_USER")}:{env.get("POSTGRES_PASSWORD")}'
         f'@{env.get("POSTGRES_HOST")}/'
         f'{env.get("POSTGRES_DB")}'
     )
     TEST_POSTGRES_URL: str = (
-        "postgresql://"
+        'postgresql+asyncpg://'
         f"{env.get('TEST_DB_USER')}:{env.get('TEST_DB_PASSWORD')}@"
         f"{env.get('TEST_DB_HOST')}/"
         f"{env.get('TEST_DB_NAME')}"

@@ -1,4 +1,5 @@
 import pytest
+from src.app.models import User
 from tests.utils import create_fake_credential
 
 
@@ -37,9 +38,14 @@ class TestUserController:
         assert result is None
 
     @pytest.mark.asyncio
-    async def test_list(self, user_controller):
+    async def test_list(self, user_controller, user):
         result = await user_controller.list()
         assert result is not None
+
+    @pytest.mark.asyncio
+    async def test_empty_list(self, user_controller):
+        result = await user_controller.list()
+        assert result is None
 
     @pytest.mark.asyncio
     async def test_list_password_is_hashed(self, user_controller):

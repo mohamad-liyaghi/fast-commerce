@@ -9,11 +9,13 @@ async def create_admin(
         first_name: str,
         last_name: str,
         password: str,
-        db=next(get_db()),
+        db=None,
 ) -> User:
     """
     Create an admin user.
     """
+    if not db:
+        db = await get_db()
     # Hash password
     hashed_password = await PasswordHandler.hash_password(password)
 
@@ -26,10 +28,9 @@ async def create_admin(
         is_admin=True,
     )
 
-
     db.add(admin)
-    db.commit()
-    db.refresh(admin)
+    await db.commit()
+    await db.refresh(admin)
 
     print('Admin created successfully')
     return admin

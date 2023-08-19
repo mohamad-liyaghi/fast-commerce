@@ -12,7 +12,7 @@ class OtpHandler:
         return randint(11111, 99999)
 
     @staticmethod
-    async def validate(otp: str, user: dict) -> bool:
+    async def validate(otp: int, user: dict) -> bool:
         """Validate otp code"""
         user_otp = user.get('otp')
         return int(otp) == int(user_otp)

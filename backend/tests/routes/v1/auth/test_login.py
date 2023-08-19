@@ -1,7 +1,6 @@
 import pytest
 from fastapi import status
 from httpx import AsyncClient
-from src.core.handlers import PasswordHandler
 
 
 @pytest.mark.asyncio
@@ -18,15 +17,11 @@ class TestLoginRoute:
         self.url = "v1/auth/login"
 
     @pytest.mark.asyncio
-    async def test_login(self, get_test_db) -> None:
+    async def test_login(self, get_test_db, user_controller) -> None:
         password = '1234'
-        hashed = await PasswordHandler.hash_password(password)
-        # Set password as users password
-        setattr(self.user, 'password', hashed)
+        await user_controller.update(self.user, password=password)
         self.data['password'] = password
-        get_test_db.commit()
-        get_test_db.refresh(self.user)
-        # Request with generated password
+        await get_test_db.refresh(self.user)
         response = await self.client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_200_OK
 
