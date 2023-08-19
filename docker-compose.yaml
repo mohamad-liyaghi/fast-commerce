@@ -3,11 +3,11 @@ version: "3.8"
 services:
   backend:
     container_name: 'fast-commerce-backend'
-    command: sh "scripts/docker/entrypoint.sh"
+    command: sh "docker/scripts/entrypoint.sh"
     tty: true
     build:
       context: .
-      dockerfile: ./backend/Dockerfile
+      dockerfile: ./backend/docker/Dockerfile
     ports:
       - "8000:8000"
     volumes:
@@ -15,11 +15,16 @@ services:
     networks:
         - main
     depends_on:
-        - postgres
-        - postgres-test
-        - redis
-        - redis-test
-        - smtp4dev
+        postgres:
+          condition: service_healthy
+        postgres-test:
+          condition: service_started
+        redis:
+          condition: service_started
+        redis-test:
+            condition: service_started
+        smtp4dev:
+            condition: service_started
 
   postgres:
     container_name: 'fast-commerce-postgres'
@@ -30,6 +35,13 @@ services:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+
     networks:
       - main
 
@@ -68,6 +80,8 @@ services:
       - "5000:80"
       - "25:25"
     restart: always
+    networks:
+      - main
 
 networks:
     main:
