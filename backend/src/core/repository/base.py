@@ -1,8 +1,10 @@
 from sqlalchemy.orm import Session
-from core.database import Base
+from redis import Redis
+from src.core.database import Base
+from .cache import BaseCacheRepository
 
 
-class BaseRepository:
+class BaseRepository(BaseCacheRepository):
     """
     Base repository class
     Methods:
@@ -12,11 +14,12 @@ class BaseRepository:
         retrieve: Retrieve an instance of model
         list: List all instances of model
     """
-    def __init__(self, model: Base, database: Session):
+    def __init__(self, model: Base, database: Session, redis: Redis):
+        super().__init__(redis_client=redis)
         self.model = model
         self.database = database
 
-    def create(self, **data):
+    async def create(self, **data):
         """
         Create a new instance of model
         :param data: data to create new instance
@@ -28,7 +31,7 @@ class BaseRepository:
         self.database.refresh(instance)
         return instance
 
-    def update(self, instance: Base, **data):
+    async def update(self, instance: Base, **data):
         """
         Update an instance of model
         :param instance: instance to update
@@ -41,7 +44,7 @@ class BaseRepository:
         self.database.refresh(instance)
         return instance
 
-    def delete(self, instance: Base):
+    async def delete(self, instance: Base):
         """
         Delete an instance of model
         :param instance: instance to delete
@@ -50,7 +53,7 @@ class BaseRepository:
         self.database.delete(instance)
         self.database.commit()
 
-    def retrieve(self, many: bool = False, **kwargs):
+    async def retrieve(self, many: bool = False, **kwargs):
         """
         Retrieve an instance of model
         :param kwargs: filter parameters
@@ -60,7 +63,7 @@ class BaseRepository:
         query = self.database.query(self.model).filter_by(**kwargs)
         return query.all() if many else query.first()
 
-    def list(self, limit: int = 100, skip: int = 0, **kwargs):
+    async def list(self, limit: int = 100, skip: int = 0, **kwargs):
         """
         List all instances of model
         :param limit: limit of instances
@@ -68,9 +71,5 @@ class BaseRepository:
         :param kwargs: filter parameters
         :return: list of instances
         """
-        query = (self.database.query(self.model).
-                 filter_by(**kwargs).
-                 offset(skip).
-                 limit(limit))
-
+        query = self.database.query(self.model).filter_by(**kwargs).offset(skip).limit(limit)
         return query.all()

@@ -1,5 +1,5 @@
 from uuid import UUID
-from core.repository import BaseRepository
+from src.core.repository import BaseRepository
 
 
 class BaseController:
@@ -15,57 +15,63 @@ class BaseController:
     def __init__(self, repository: BaseRepository):
         self.repository = repository
 
-    def get_by_id(self, _id: int):
+    async def get_by_id(self, _id: int):
         """
         Get an instance by id
         :param _id: id of instance
         :return: instance
         """
-        return self.retrieve(id=_id)
+        result = await self.retrieve(id=_id)
+        return result if result else None
 
-    def get_by_uuid(self, uuid: UUID):
+    async def get_by_uuid(self, uuid: UUID):
         """
         Get an instance by uuid
         :param uuid: uuid of instance
         :return: instance
         """
-        return self.retrieve(uuid=uuid)
+        result = await self.retrieve(uuid=uuid)
+        return result if result else None
 
-    def create(self, **data):
+    async def create(self, **data):
         """
         Create a new instance of model
         :param data: data to create new instance
         :return: created instance
         """
-        return self.repository.create(**data)
+        result = await self.repository.create(**data)
+        return result if result else None
 
-    def update(self, instance, **data):
+    async def update(self, instance, **data):
         """
         Update an instance of model
         :param instance: instance to update
         :param data: data to update
         :return: updated instance
         """
-        return self.repository.update(instance, **data)
+        result = await self.repository.update(instance, **data)
+        return result if result else None
 
-    def delete(self, instance):
+    async def delete(self, instance):
         """
         Delete an instance of model
         :param instance: instance to delete
         :return: None
         """
-        return self.repository.delete(instance)
+        result = await self.repository.delete(instance)
+        return result if result else None
 
-    def retrieve(self, many: bool = False, **kwargs):
+    async def retrieve(self, many: bool = False, **kwargs):
         """
         Retrieve an instance of model
         :param kwargs: filter parameters
         :param many: retrieve many instances
         :return: instance
         """
-        return self.repository.retrieve(many, **kwargs)
+        result = await self.repository.retrieve(many, **kwargs)
+        return result if result else None
 
-    def list(self, limit: int = 100, skip: int = 0, **kwargs):
+    async def list(self, limit: int = 100, skip: int = 0, **kwargs):
         """
         List all instances of model
         :param kwargs: filter parameters
@@ -73,4 +79,24 @@ class BaseController:
         :param skip: skip instances
         :return: instances
         """
-        return self.repository.list(limit=limit, skip=skip, **kwargs)
+        result = await self.repository.list(limit=limit, skip=skip, **kwargs)
+        return result if result else None
+
+    async def create_cache(self, key: str, data: dict, ttl: int = None):
+        """
+        Create a new record in cache.
+        """
+        await self.repository.create_cache(key=key, data=data, ttl=ttl)
+
+    async def get_cache(self, key: str, field: str | None = None):
+        """
+        Get user from cache.
+        """
+        result = await self.repository.get_cache(key=key, field=field)
+        return result
+
+    async def delete_cache(self, key: str):
+        """
+        Delete user from cache.
+        """
+        await self.repository.delete_cache(key=key)

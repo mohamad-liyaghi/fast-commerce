@@ -1,5 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+import pytest
 from src.core.config import settings
 from src.core.database import Base, get_db
 from src.main import app
@@ -14,15 +15,14 @@ TestingSessionLocal = sessionmaker(
     bind=engine
 )
 
-Base.metadata.create_all(bind=engine)
 
-
-def override_get_db() -> TestingSessionLocal:
+def get_test_db() -> TestingSessionLocal:
     """
     Return a TestingSessionLocal instance
     :return: TestingSessionLocal
     """
     try:
+        Base.metadata.create_all(bind=engine)
         db = TestingSessionLocal()
         yield db
     finally:
@@ -30,4 +30,4 @@ def override_get_db() -> TestingSessionLocal:
 
 
 # Override the get_db function
-app.dependency_overrides[get_db] = override_get_db
+app.dependency_overrides[get_db] = get_test_db

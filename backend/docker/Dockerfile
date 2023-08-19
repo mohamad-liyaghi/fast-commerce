@@ -12,4 +12,6 @@ RUN pip install -r requirements.txt
 
 COPY backend /backend
 
+ENV PYTHONPATH=/backend
+
 EXPOSE 8000
