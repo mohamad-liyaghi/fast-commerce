@@ -27,12 +27,13 @@ async def user(user_controller):
     """
     Returns a User instance
     """
-    return await user_controller.create(**create_fake_credential())
+    credentials = await create_fake_credential()
+    return await user_controller.create(**credentials)
 
 
 @pytest_asyncio.fixture
 async def cached_user(user_controller, client):
-    credential = create_fake_credential()
+    credential = await create_fake_credential()
     data = {
             "email": credential['email'],
             "first_name": credential['first_name'],

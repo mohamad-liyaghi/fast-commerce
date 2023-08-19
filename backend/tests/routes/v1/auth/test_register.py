@@ -1,4 +1,5 @@
 import pytest
+import pytest_asyncio
 from fastapi import status
 from httpx import AsyncClient
 from tests.utils import create_fake_credential
@@ -7,9 +8,9 @@ from tests.utils import create_fake_credential
 @pytest.mark.asyncio
 class TestRegisterRoute:
 
-    @pytest.fixture(autouse=True)
-    def setup_method(self, client: AsyncClient) -> None:
-        credential = create_fake_credential()
+    @pytest_asyncio.fixture(autouse=True)
+    async def setup_method(self, client: AsyncClient) -> None:
+        credential = await create_fake_credential()
         self.data = {
             "email": credential['email'],
             "first_name": credential['first_name'],

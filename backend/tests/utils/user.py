@@ -3,7 +3,7 @@ from faker import Faker
 faker = Faker()
 
 
-def create_fake_credential() -> dict:
+async def create_fake_credential() -> dict:
     return {
         'first_name': faker.first_name(),
         'last_name': faker.last_name(),

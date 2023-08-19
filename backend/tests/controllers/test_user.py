@@ -6,7 +6,8 @@ class TestUserController:
 
     @pytest.mark.asyncio
     async def test_create(self, user_controller):
-        user = await user_controller.create(**create_fake_credential())
+        credentials = await create_fake_credential()
+        user = await user_controller.create(**credentials)
         assert user.id is not None
 
     @pytest.mark.asyncio
@@ -42,7 +43,7 @@ class TestUserController:
 
     @pytest.mark.asyncio
     async def test_list_password_is_hashed(self, user_controller):
-        credential = create_fake_credential()
+        credential = await create_fake_credential()
         password = credential.get('password')
 
         user = await user_controller.create(**credential)

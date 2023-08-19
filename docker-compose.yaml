@@ -3,11 +3,11 @@ version: "3.8"
 services:
   backend:
     container_name: 'fast-commerce-backend'
-    command: sh "scripts/docker/entrypoint.sh"
+    command: sh "docker/scripts/entrypoint.sh"
     tty: true
     build:
       context: .
-      dockerfile: ./backend/Dockerfile
+      dockerfile: ./backend/docker/Dockerfile
     ports:
       - "8000:8000"
     volumes:

@@ -7,18 +7,19 @@ class TestAuthController:
 
     @pytest.mark.asyncio
     async def test_register(self, auth_controller):
-        await auth_controller.register(create_fake_credential())
+        credentials = await create_fake_credential()
+        await auth_controller.register(credentials)
 
     @pytest.mark.asyncio
     async def test_register_already_exists(self, auth_controller, user):
-        credential = create_fake_credential()
+        credential = await create_fake_credential()
         credential['email'] = user.email
         with pytest.raises(HTTPException):
             await auth_controller.register(credential)
 
     @pytest.mark.asyncio
     async def test_register_exists_in_cache(self, auth_controller, cached_user):
-        credential = create_fake_credential()
+        credential = await create_fake_credential()
         credential['email'] = cached_user['email']
         with pytest.raises(HTTPException):
             await auth_controller.register(credential)
