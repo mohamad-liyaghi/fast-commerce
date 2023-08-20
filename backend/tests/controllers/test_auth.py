@@ -1,6 +1,8 @@
 import pytest
 from fastapi import HTTPException
 from tests.utils import create_fake_credential
+from src.core.utils import format_key
+from src.core.config import settings
 
 
 class TestAuthController:
@@ -26,13 +28,21 @@ class TestAuthController:
 
     @pytest.mark.asyncio
     async def test_verify(self, auth_controller, cached_user, get_test_redis):
-        cached_user = await get_test_redis.hgetall(cached_user['email'])
+        cache_key = await format_key(
+            key=settings.CACHE_USER_KEY,
+            email=cached_user['email']
+        )
+        cached_user = await get_test_redis.hgetall(cache_key)
         otp = cached_user['otp']
         await auth_controller.verify(email=cached_user['email'], otp=otp)
 
     @pytest.mark.asyncio
     async def test_verify_invalid_coed(self, auth_controller, cached_user, get_test_redis):
-        cached_user = await get_test_redis.hgetall(cached_user['email'])
+        cache_key = await format_key(
+            key=settings.CACHE_USER_KEY,
+            email=cached_user['email']
+        )
+        cached_user = await get_test_redis.hgetall(cache_key)
         invalid_otp = int(cached_user['otp']) + 10
         with pytest.raises(HTTPException):
             await auth_controller.verify(

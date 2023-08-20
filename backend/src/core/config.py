@@ -24,5 +24,8 @@ class Settings(BaseConfig):
     SECRET_KEY: str = env.get('SECRET_KEY')
     JWT_ALGORITHM: str = env.get('JWT_ALGORITHM')
 
+    # Cache Keys:
+    CACHE_USER_KEY: str = env.get('CACHE_USER_KEY')
+
 
 settings: Settings = Settings()

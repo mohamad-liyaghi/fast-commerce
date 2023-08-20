@@ -1,6 +1,8 @@
 import pytest
 from fastapi import status
 from httpx import AsyncClient
+from src.core.utils import format_key
+from src.core.config import settings
 
 
 @pytest.mark.asyncio
@@ -18,14 +20,22 @@ class TestVerifyRoute:
     @pytest.mark.asyncio
     async def test_verify(self, get_test_redis) -> None:
         """Test user creation."""
-        cached_user = await get_test_redis.hgetall(self.data['email'])
+        cache_key = await format_key(
+            key=settings.CACHE_USER_KEY,
+            email=self.data['email']
+        )
+        cached_user = await get_test_redis.hgetall(cache_key)
         self.data['otp'] = cached_user['otp']
         response = await self.client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_200_OK
 
     @pytest.mark.asyncio
     async def test_verify_invalid_code(self, get_test_redis) -> None:
-        cached_user = await get_test_redis.hgetall(self.data['email'])
+        cache_key = await format_key(
+            key=settings.CACHE_USER_KEY,
+            email=self.data['email']
+        )
+        cached_user = await get_test_redis.hgetall(cache_key)
         self.data['otp'] = int(cached_user['otp']) - 2  # Invalid code
         response = await self.client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_403_FORBIDDEN

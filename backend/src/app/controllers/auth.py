@@ -1,4 +1,6 @@
 from fastapi import HTTPException, status
+from src.core.utils import format_key
+from src.core.config import settings
 from src.core.handlers import OtpHandler, PasswordHandler, JWTHandler
 from src.core.email import send_email
 from .user import UserController
@@ -6,25 +8,27 @@ from .user import UserController
 
 class AuthController(UserController):
     """
-    This Controller handles user registration and verification.
+    This Controller handles user registration, verification, and login.
     """
 
     async def register(self, data: dict) -> None:
         """
-        Create a new user in cache.
-        :param data: the user data
+        Create a new user in cache and send a verification email.
         """
         email = data.get('email')
 
-        # Raise error if user exists in database
         if await self.retrieve(email=email):
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail='User already exists.',
             )
 
-        # Raise error if user exists in cache (Pending verification)
-        if await self.repository.get_cache(key=email):
+        cache_key = await format_key(
+            key=settings.CACHE_USER_KEY,
+            email=email
+        )
+
+        if await self.repository.get_cache(key=cache_key):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail='User is pending verification.',
@@ -36,7 +40,7 @@ class AuthController(UserController):
 
         # Set user in cache (For 2 minutes)
         await self.repository.create_cache(
-            key=email,
+            key=cache_key,
             data=data,
             ttl=60 * 2
         )
@@ -50,42 +54,40 @@ class AuthController(UserController):
 
     async def verify(self, email: str, otp: int) -> None:
         """
-        Verify a user.
-        :param email: the user email
-        :param otp: the user otp
+        Verify a user using OTP.
         """
-
-        # Raise error if user is already verified
         if await self.retrieve(email=email):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail='User is already verified.',
             )
 
-        cached_user = await self.repository.get_cache(key=email)
-        # Raise error if user is not in cache
+        cache_key = await format_key(
+            key=settings.CACHE_USER_KEY,
+            email=email
+        )
+        cached_user = await self.repository.get_cache(key=cache_key)
+
         if not cached_user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail='User not found.',
+                detail='User not found in cache.',
             )
 
-        # Validate its otp
-        validate_opt = await OtpHandler.validate(otp=otp, user=cached_user)
-
-        # Raise error if otp is invalid
-        if not validate_opt:
+        # Validate OTP
+        if not await OtpHandler.validate(otp=otp, user=cached_user):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail='Invalid OTP.',
             )
 
-        # Remove otp from dict and create user in database
+        # Remove OTP from cached data and create user in database
         cached_user.pop('otp')
         await self.create(**cached_user)
 
     async def login(self, email: str, password: str) -> dict:
         user = await self.retrieve(email=email)
+
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
@@ -93,8 +95,8 @@ class AuthController(UserController):
             )
 
         if not await PasswordHandler.verify_password(
-            password=password,
-            hashed_password=user.password,
+                password=password,
+                hashed_password=user.password,
         ):
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
