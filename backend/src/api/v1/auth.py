@@ -22,7 +22,7 @@ async def register(
         ),
 ) -> dict:
     """Register a new user."""
-    await auth_controller.register(data=request.dict())
+    await auth_controller.register(data=request.model_dump())
     return {'success': 'user and is pending verification.'}
 
 
@@ -50,4 +50,4 @@ async def login(
         email=request.email,
         password=request.password
     )
-    return {'token': token, 'token_type': 'bearer'}
+    return {'access_token': token, 'token_type': 'bearer'}

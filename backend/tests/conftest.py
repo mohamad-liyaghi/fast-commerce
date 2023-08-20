@@ -1,4 +1,3 @@
-import pytest_asyncio
 import pytest
 import asyncio
 import os

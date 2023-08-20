@@ -49,7 +49,8 @@ async def admin(user_controller):
     """
     Returns a User instance
     """
+    credential = await create_fake_credential()
     return await user_controller.create(
-        **create_fake_credential(),
+        **credential,
         is_admin=True
     )
