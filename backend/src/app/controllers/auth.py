@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from src.core.utils import format_key
 from src.core.config import settings
 from src.core.handlers import OtpHandler, PasswordHandler, JWTHandler
-from src.core.email import send_email
+from src.core.tasks import send_email
 from .user import UserController
 
 
@@ -45,7 +45,7 @@ class AuthController(UserController):
             ttl=60 * 2
         )
 
-        await send_email(
+        send_email.delay(
             subject='Verify your account',
             to_email=email,
             body={'otp': otp, 'first_name': data.get('first_name')},

@@ -24,6 +24,10 @@ class Settings(BaseConfig):
     SECRET_KEY: str = env.get('SECRET_KEY')
     JWT_ALGORITHM: str = env.get('JWT_ALGORITHM')
 
+    # Celery:
+    CELERY_BROKER_URL: str = env.get('CELERY_BROKER_URL')
+    CELERY_RESULT_BACKEND: str = env.get('CELERY_RESULT_BACKEND')
+
     # Cache Keys:
     CACHE_USER_KEY: str = env.get('CACHE_USER_KEY')
 

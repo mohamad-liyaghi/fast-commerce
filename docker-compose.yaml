@@ -83,6 +83,22 @@ services:
     networks:
       - main
 
+  celery:
+    container_name: 'fast-commerce-celery'
+    command: sh "docker/scripts/celery.sh"
+    tty: true
+    build:
+      context: .
+      dockerfile: ./backend/docker/Dockerfile
+    volumes:
+      - ./backend:/backend
+    networks:
+        - main
+    depends_on:
+      - backend
+    env_file:
+      - ./backend/env/.env
+
 networks:
     main:
 

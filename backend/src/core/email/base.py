@@ -3,19 +3,18 @@ from src.core.config import settings
 from .config import mail, template_path
 
 
-async def send_email(
+async def base_send_email(
         subject: str,
         to_email: str,
         body: dict,
         template_name: str = None
 ) -> None:
     """
-    Send email to user.
+    Base function for sending email to user.
     :param subject: Subject of email
     :param to_email: Email address of user
     :param body: Body of email
     :param template_name: Name of template
-    :return:
     """
 
     if settings.env.get('TESTING') == '1':
