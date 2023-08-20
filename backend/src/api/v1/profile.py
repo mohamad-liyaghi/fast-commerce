@@ -1,6 +1,9 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
-from src.core.dependencies import get_current_user
+from uuid import UUID
+from src.core.factory import Factory
+from src.app.controllers import UserController
+from src.core.dependencies import AuthenticationRequired
 from src.app.schemas import ProfileOut
 
 
@@ -9,9 +12,13 @@ profile_router = APIRouter(
 )
 
 
-@profile_router.get('/me', status_code=status.HTTP_200_OK)
+@profile_router.get('/{user_uuid}', status_code=status.HTTP_200_OK)
 async def retrieve_profile(
-        current_user=Depends(get_current_user),
+    user_uuid: UUID,
+    user_controller: UserController = Depends(
+        Factory().get_user_controller
+    ),
+    _: AuthenticationRequired = Depends(AuthenticationRequired)
 ) -> ProfileOut:
-    """Get profile of the current user."""
-    return current_user
+    """Retrieve a profile by its uuid."""
+    return await user_controller.retrieve_profile(user_uuid=user_uuid)
