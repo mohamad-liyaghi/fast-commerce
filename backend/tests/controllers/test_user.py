@@ -1,66 +1,40 @@
 import pytest
-from src.app.models import User
-from tests.utils import create_fake_credential
+from uuid import uuid4
+from fastapi import HTTPException
 
 
 class TestUserController:
-
-    @pytest.mark.asyncio
-    async def test_create(self, user_controller):
-        credentials = await create_fake_credential()
-        user = await user_controller.create(**credentials)
-        assert user.id is not None
-
-    @pytest.mark.asyncio
-    async def test_retrieve(self, user_controller, user):
-        result = await user_controller.retrieve(id=user.id)
-        assert result.id == user.id
-
-    @pytest.mark.asyncio
-    async def test_get_by_id(self, user_controller, user):
-        result = await user_controller.get_by_id(user.id)
-        assert result.id == user.id
-
     @pytest.mark.asyncio
     async def test_get_by_uuid(self, user_controller, user):
-        result = await user_controller.get_by_uuid(user.uuid)
+        result = await user_controller.get_by_uuid(uuid=user.uuid)
         assert result.uuid == user.uuid
 
     @pytest.mark.asyncio
+    async def test_get_by_uuid_not_found(self, user_controller):
+        """
+        Raise HTTPException when user not found
+        """
+        with pytest.raises(HTTPException):
+            await user_controller.get_by_uuid(uuid=uuid4())
+
+    @pytest.mark.asyncio
     async def test_update(self, user_controller, user):
-        new_first_name = 'new name'
-        result = await user_controller.update(user, first_name=new_first_name)
-        assert result.first_name == new_first_name
-
-    @pytest.mark.asyncio
-    async def test_delete(self, user_controller, user):
-        result = await user_controller.delete(user)
-        assert result is None
-
-    @pytest.mark.asyncio
-    async def test_list(self, user_controller, user):
-        result = await user_controller.list()
-        assert result is not None
-
-    @pytest.mark.asyncio
-    async def test_empty_list(self, user_controller):
-        result = await user_controller.list()
-        assert result is None
-
-    @pytest.mark.asyncio
-    async def test_list_password_is_hashed(self, user_controller):
-        credential = await create_fake_credential()
-        password = credential.get('password')
-
-        user = await user_controller.create(**credential)
-        assert user.password != password
-
-    @pytest.mark.asyncio
-    async def test_update_password(self, user_controller, user):
         """
-        When user updates its password, the new pass gets hashed
+        Only profile owner can update its profile
         """
-        password = '1234'
-        result = await user_controller.update(user, password=password)
+        updated_first_name = "updated first name"
+        updated_user = await user_controller.update(
+            uuid=user.uuid, requesting_user=user, first_name=updated_first_name
+        )
+        assert updated_user.first_name == updated_first_name
+        assert updated_user == user
 
-        assert not result.password == password
+    @pytest.mark.asyncio
+    async def test_update_by_others(self, user_controller, user, admin):
+        """
+        No one can update others data
+        """
+        with pytest.raises(HTTPException):
+            await user_controller.update(
+                uuid=user.uuid, requesting_user=admin, first_name="updated one"
+            )

@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from src.core.utils import format_key
-from src.core.config import settings
+from src.core.configs import settings
 from src.core.handlers import OtpHandler, PasswordHandler, JWTHandler
 from src.core.tasks import send_email
 from .user import UserController

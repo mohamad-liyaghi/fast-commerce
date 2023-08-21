@@ -1,10 +1,10 @@
 import pytest
 import asyncio
-import os
 from tests.fixtures.db import get_test_db # noqa
 from tests.fixtures.client import * # noqa
 from tests.fixtures.app import * # noqa
 from tests.fixtures.redis import * # noqa
+from src.core.celery import celery
 
 
 @pytest.fixture(scope='session')
@@ -23,7 +23,7 @@ async def flush_redis(get_test_redis):
 
 
 @pytest_asyncio.fixture(autouse=True)
-async def set_testing_env():
-    os.environ["TESTING"] = "1"
+async def set_celery_eager():
+    celery.conf.task_always_eager = True
     yield
-    os.environ["TESTING"] = "0"
+    celery.conf.task_always_eager = False

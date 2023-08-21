@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from jose import jwt
-from src.core.config import settings
+from src.core.configs import settings
 
 
 class JWTHandler:

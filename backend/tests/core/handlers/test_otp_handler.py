@@ -1,7 +1,7 @@
 import pytest
 from src.core.handlers import OtpHandler
 from src.core.utils import format_key
-from src.core.config import settings
+from src.core.configs import settings
 
 
 class TestOtpHandler:

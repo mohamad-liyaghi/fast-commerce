@@ -1,5 +1,5 @@
 from src.core.handlers import PasswordHandler
-from src.core.repository import BaseRepository
+from src.app.repositories.base import BaseRepository
 
 
 class UserRepository(BaseRepository):

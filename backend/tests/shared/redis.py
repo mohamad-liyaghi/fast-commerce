@@ -1,6 +1,6 @@
 from redis.asyncio import ConnectionPool
 from redis.asyncio.client import Redis
-from src.core.config import settings
+from src.core.configs import settings
 from src.core.redis import get_redis
 from src.main import app
 

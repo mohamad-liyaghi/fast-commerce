@@ -78,7 +78,7 @@ services:
     container_name: 'fast-commerce-smtp4dev'
     ports:
       - "5000:80"
-      - "25:25"
+      - "2525:25"
     restart: always
     networks:
       - main

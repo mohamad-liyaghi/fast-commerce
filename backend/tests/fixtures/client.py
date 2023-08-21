@@ -23,7 +23,7 @@ async def authorized_client(
     Create a new user and login/
     """
     password = '1234'
-    await user_controller.update(user, password=password)
+    await user_controller.repository.update(user, password=password)
 
     response = await client.post(
         "v1/auth/login",

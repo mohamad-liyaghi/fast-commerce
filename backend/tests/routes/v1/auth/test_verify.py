@@ -2,7 +2,7 @@ import pytest
 from fastapi import status
 from httpx import AsyncClient
 from src.core.utils import format_key
-from src.core.config import settings
+from src.core.configs import settings
 
 
 @pytest.mark.asyncio
