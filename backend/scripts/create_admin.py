@@ -5,17 +5,15 @@ from src.core.handlers import PasswordHandler
 
 
 async def create_admin(
-        email: str,
-        first_name: str,
-        last_name: str,
-        password: str,
-        db=None,
+    email: str,
+    first_name: str,
+    last_name: str,
+    password: str,
+    db=get_db,
 ) -> User:
     """
     Create an admin user.
     """
-    if not db:
-        db = await get_db()
     # Hash password
     hashed_password = await PasswordHandler.hash_password(password)
 
@@ -27,23 +25,23 @@ async def create_admin(
         password=hashed_password,
         is_admin=True,
     )
+    async for session in db():
+        session.add(admin)
+        await session.commit()
+        await session.refresh(admin)
 
-    db.add(admin)
-    await db.commit()
-    await db.refresh(admin)
-
-    print('Admin created successfully')
+    print("Admin created successfully")
     return admin
 
 
 def get_admin_inputs():
-    email = input('Enter admin email: ')
-    first_name = input('Enter admin first name: ')
-    last_name = input('Enter admin last name: ')
-    password = input('Enter admin password: ')
+    email = input("Enter admin email: ")
+    first_name = input("Enter admin first name: ")
+    last_name = input("Enter admin last name: ")
+    password = input("Enter admin password: ")
     return email, first_name, last_name, password
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     email, first_name, last_name, password = get_admin_inputs()
     asyncio.run(create_admin(email, first_name, last_name, password))

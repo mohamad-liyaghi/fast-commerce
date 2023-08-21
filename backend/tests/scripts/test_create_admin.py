@@ -1,10 +1,11 @@
 import pytest
 from tests.utils import create_fake_credential
+from tests.shared.db import get_test_db
 from scripts.create_admin import create_admin
 
 
 @pytest.mark.asyncio
-async def test_create_admin(get_test_db):
+async def test_create_admin():
     """
     Test create a new admin
     """
