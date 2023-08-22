@@ -47,3 +47,18 @@ class VendorController(BaseController):
 
         # Create a new vendor and return it
         return await super().create(owner_id=request_user.id, **vendor_data)
+
+    async def update(self, vendor, request_user: User, **data):
+        if data.get("status") and not request_user.is_admin:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Only Admins can update vendor status.",
+            )
+
+        if not data.get("status") and not request_user.id == vendor.owner_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You cannot update others vendor record.",
+            )
+
+        return await super().update(vendor, **data)

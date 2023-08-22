@@ -7,5 +7,9 @@ class VendorCreateIn(VendorBase):
     pass
 
 
+class VendorUpdateIn(VendorBase):
+    pass
+
+
 class VendorUpdateStatusIn(BaseModel):
     status: VendorStatus

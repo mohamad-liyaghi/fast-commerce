@@ -13,6 +13,8 @@ from src.app.schemas import (
     VendorRetrieveOut,
     VendorUpdateStatusIn,
     VendorUpdateStatusOut,
+    VendorUpdateIn,
+    VendorUpdateOut,
 )
 
 router = APIRouter(
@@ -42,6 +44,21 @@ async def get_vendor(
     return await vendor_controller.get_by_uuid(vendor_uuid)
 
 
+@router.put("/{vendor_uuid}", status_code=status.HTTP_200_OK)
+async def update_vendor(
+    vendor_uuid: UUID,
+    request: VendorUpdateIn,
+    _=Depends(AuthenticationRequired),
+    current_user=Depends(get_current_user),
+    vendor_controller=Depends(Factory.get_vendor_controller),
+) -> VendorUpdateOut:
+    """Update a vendor."""
+    vendor = await vendor_controller.get_by_uuid(vendor_uuid)
+    return await vendor_controller.update(
+        vendor=vendor, request_user=current_user, **request.model_dump()
+    )
+
+
 @router.put("/status/{vendor_uuid}", status_code=status.HTTP_200_OK)
 async def update_vendor_status(
     vendor_uuid: UUID,
@@ -54,5 +71,5 @@ async def update_vendor_status(
     """Update a vendors status by admin."""
     vendor = await vendor_controller.get_by_uuid(vendor_uuid)
     return await vendor_controller.update(
-        vendor, request_user=current_user, status=request.status
+        vendor=vendor, request_user=current_user, status=request.status
     )

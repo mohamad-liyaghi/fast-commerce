@@ -12,6 +12,10 @@ class VendorCreateOut(VendorBase):
     created_at: datetime
 
 
+class VendorUpdateOut(VendorCreateOut):
+    pass
+
+
 class VendorRetrieveOut(VendorBase):
     uuid: UUID
     created_at: datetime
