@@ -6,7 +6,7 @@ from datetime import datetime
 from src.core.database import Base
 
 
-class VendorStatusEnum(enum.Enum):
+class VendorStatus(enum.Enum):
     PENDING = "pending"
     ACCEPTED = "accepted"
     REJECTED = "rejected"
@@ -26,7 +26,7 @@ class Vendor(Base):
     domain = Column(String(50), nullable=True)
     address = Column(String(150), nullable=False)
 
-    status = Column(Enum(VendorStatusEnum), default=VendorStatusEnum.PENDING)
+    status = Column(Enum(VendorStatus), default=VendorStatus.PENDING)
 
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     owner = relationship("User", back_populates="vendors", foreign_keys=[owner_id])

@@ -1,6 +1,6 @@
 import pytest_asyncio
 from datetime import datetime
-from src.app.models import Vendor, VendorStatusEnum
+from src.app.models import Vendor, VendorStatus
 from src.app.controllers import VendorController
 from src.app.repositories import VendorRepository
 
@@ -45,7 +45,7 @@ async def accepted_vendor(vendor_controller, user, admin):
         domain="test.com",
         address="Test Address",
         reviewer_id=admin.id,
-        status=VendorStatusEnum.ACCEPTED,
+        status=VendorStatus.ACCEPTED,
         reviewed_at=datetime.utcnow(),
     )
     return vendor
@@ -63,7 +63,7 @@ async def rejected_vendor(vendor_controller, user, admin):
         domain="test.com",
         address="Test Address",
         reviewer_id=admin.id,
-        status=VendorStatusEnum.REJECTED,
+        status=VendorStatus.REJECTED,
         reviewed_at=datetime.utcnow(),
     )
     return vendor

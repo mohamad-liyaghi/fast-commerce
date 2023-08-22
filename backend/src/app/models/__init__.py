@@ -1,8 +1,8 @@
 from .user import User
-from .vendor import Vendor, VendorStatusEnum
+from .vendor import Vendor, VendorStatus
 
 __all__ = [
     "User",
     "Vendor",
-    "VendorStatusEnum",
+    "VendorStatus",
 ]

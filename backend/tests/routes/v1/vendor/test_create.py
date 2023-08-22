@@ -3,7 +3,7 @@ from faker import Faker
 from datetime import datetime, timedelta
 import pytest
 from httpx import AsyncClient
-from src.app.models import VendorStatusEnum
+from src.app.models import VendorStatus
 
 faker = Faker()  # TODO: Create a single instance of faker
 
@@ -34,19 +34,19 @@ class TestCreateVendorRoute:
     async def test_create_pending_exists(self, authorized_client, pending_vendor):
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert pending_vendor.status == VendorStatusEnum.PENDING
+        assert pending_vendor.status == VendorStatus.PENDING
 
     @pytest.mark.asyncio
     async def test_create_accepted_exists(self, authorized_client, accepted_vendor):
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED
+        assert accepted_vendor.status == VendorStatus.ACCEPTED
 
     @pytest.mark.asyncio
     async def test_create_rejected_exists(self, authorized_client, rejected_vendor):
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert rejected_vendor.status == VendorStatusEnum.REJECTED
+        assert rejected_vendor.status == VendorStatus.REJECTED
 
     @pytest.mark.asyncio
     async def test_create_old_rejected_exist(
@@ -58,4 +58,4 @@ class TestCreateVendorRoute:
         )
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert rejected_vendor.status == VendorStatusEnum.REJECTED
+        assert rejected_vendor.status == VendorStatus.REJECTED

@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from src.app.controllers.base import BaseController
-from src.app.models import User, VendorStatusEnum
+from src.app.models import User, VendorStatus
 from datetime import datetime, timedelta
 
 
@@ -23,18 +23,18 @@ class VendorController(BaseController):
         ten_days_ago = datetime.utcnow() - timedelta(days=10)
 
         if existing_vendor:
-            if existing_vendor.status == VendorStatusEnum.PENDING:
+            if existing_vendor.status == VendorStatus.PENDING:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="You already have a pending vendor registration request.",
                 )
-            elif existing_vendor.status == VendorStatusEnum.ACCEPTED:
+            elif existing_vendor.status == VendorStatus.ACCEPTED:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail="You already have a vendor registered.",
                 )
             elif (
-                existing_vendor.status == VendorStatusEnum.REJECTED
+                existing_vendor.status == VendorStatus.REJECTED
                 and existing_vendor.reviewed_at > ten_days_ago
             ):
                 raise HTTPException(

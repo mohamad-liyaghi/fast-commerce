@@ -9,16 +9,6 @@ class UserController(BaseController):
     User controller is responsible for handling user CRUD operations.
     """
 
-    async def get_by_uuid(self, uuid: UUID):
-        user = await super().get_by_uuid(uuid)
-
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="user not found."
-            )
-
-        return user
-
     async def update(self, uuid: UUID, requesting_user: User, **kwargs) -> User:
         """
         Update the user's profile if they have permission.

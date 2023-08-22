@@ -1,8 +1,9 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
+from uuid import UUID
 from src.core.factory import Factory
 from src.core.dependencies import AuthenticationRequired, get_current_user
-from src.app.schemas import VendorCreateIn, VendorCreateOut
+from src.app.schemas import VendorCreateIn, VendorCreateOut, VendorRetrieveOut
 
 router = APIRouter(
     tags=["Vendors"],
@@ -20,3 +21,12 @@ async def create_vendor(
     return await vendor_controller.create(
         request_user=current_user, **request.model_dump()
     )
+
+
+@router.get("/{vendor_uuid}")
+async def get_vendor(
+    vendor_uuid: UUID,
+    vendor_controller=Depends(Factory.get_vendor_controller),
+) -> VendorRetrieveOut:
+    """Get a vendor."""
+    return await vendor_controller.get_by_uuid(vendor_uuid)

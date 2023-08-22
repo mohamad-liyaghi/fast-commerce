@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from uuid import UUID
 from src.app.repositories.base import BaseRepository
 from .cache import BaseCacheController
@@ -33,7 +34,11 @@ class BaseController(BaseCacheController):
         :return: instance
         """
         result = await self.retrieve(uuid=uuid)
-        return result if result else None
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="user not found."
+            )
+        return result
 
     async def create(self, **data):
         """
