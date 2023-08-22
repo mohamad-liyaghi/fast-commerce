@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
@@ -18,3 +19,7 @@ class VendorRetrieveOut(VendorBase):
     status: VendorStatus
     owner_id: int
     reviewer_id: Optional[int] = None  # TODO: Make this nested
+
+
+class VendorUpdateStatusOut(VendorCreateOut):
+    pass

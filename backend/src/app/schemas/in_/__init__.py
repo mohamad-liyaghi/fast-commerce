@@ -1,6 +1,6 @@
 from .auth import UserRegisterIn, UserVerifyIn, UserLoginIn
 from .profile import ProfileUpdateIn
-from .vendor import VendorCreateIn
+from .vendor import VendorCreateIn, VendorUpdateStatusIn
 
 __all__ = [
     "UserRegisterIn",
@@ -8,4 +8,5 @@ __all__ = [
     "UserLoginIn",
     "ProfileUpdateIn",
     "VendorCreateIn",
+    "VendorUpdateStatusIn",
 ]

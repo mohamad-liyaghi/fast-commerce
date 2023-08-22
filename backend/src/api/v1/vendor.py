@@ -2,8 +2,18 @@ from fastapi import Depends, status
 from fastapi.routing import APIRouter
 from uuid import UUID
 from src.core.factory import Factory
-from src.core.dependencies import AuthenticationRequired, get_current_user
-from src.app.schemas import VendorCreateIn, VendorCreateOut, VendorRetrieveOut
+from src.core.dependencies import (
+    AuthenticationRequired,
+    get_current_user,
+    AdminRequired,
+)
+from src.app.schemas import (
+    VendorCreateIn,
+    VendorCreateOut,
+    VendorRetrieveOut,
+    VendorUpdateStatusIn,
+    VendorUpdateStatusOut,
+)
 
 router = APIRouter(
     tags=["Vendors"],
@@ -23,10 +33,26 @@ async def create_vendor(
     )
 
 
-@router.get("/{vendor_uuid}")
+@router.get("/{vendor_uuid}", status_code=status.HTTP_200_OK)
 async def get_vendor(
     vendor_uuid: UUID,
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorRetrieveOut:
     """Get a vendor."""
     return await vendor_controller.get_by_uuid(vendor_uuid)
+
+
+@router.put("/status/{vendor_uuid}", status_code=status.HTTP_200_OK)
+async def update_vendor_status(
+    vendor_uuid: UUID,
+    request: VendorUpdateStatusIn,
+    _=Depends(AuthenticationRequired),
+    __=Depends(AdminRequired),
+    current_user=Depends(get_current_user),
+    vendor_controller=Depends(Factory.get_vendor_controller),
+) -> VendorUpdateStatusOut:
+    """Update a vendors status by admin."""
+    vendor = await vendor_controller.get_by_uuid(vendor_uuid)
+    return await vendor_controller.update(
+        vendor, request_user=current_user, status=request.status
+    )
