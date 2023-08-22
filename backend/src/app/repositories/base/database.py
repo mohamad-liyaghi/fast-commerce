@@ -1,5 +1,4 @@
-from sqlalchemy import select
-from sqlalchemy import and_
+from sqlalchemy import and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from redis import Redis
 from src.core.database import Base
@@ -16,6 +15,7 @@ class BaseRepository(BaseCacheRepository):
         retrieve: Retrieve an instance of model
         list: List all instances of model
     """
+
     def __init__(self, model: Base, database: AsyncSession, redis: Redis):
         super().__init__(redis_client=redis)
         self.model = model
@@ -55,17 +55,26 @@ class BaseRepository(BaseCacheRepository):
         self.database.delete(instance)
         await self.database.commit()
 
-    async def retrieve(self, many: bool = False, **kwargs):
+    async def retrieve(self, many: bool = False, last: bool = False, **kwargs):
         """
-        Retrieve an instance of model
-        :param kwargs: filter parameters
-        :param many: retrieve many instances
-        :return: instance
+        Retrieve instance(s) of model based on given filters.
+        :param many: Retrieve many instances if True, else single instance
+        :param last: Retrieve the last instance if True (requires many=False)
+        :param kwargs: Filter parameters
+        :return: Instance(s)
         """
         filters = await self._make_filter(self.model, kwargs)
         query = select(self.model).where(and_(*filters))
+
+        if last:
+            query = query.order_by(desc(self.model.id))
+
         result = await self.database.execute(query)
-        return result.scalars().all() if many else result.scalars().first()
+
+        if result:
+            if many:
+                return result.scalars().all()
+            return result.scalars().first()
 
     async def list(self, limit: int = 100, skip: int = 0, **kwargs):
         """
@@ -75,9 +84,7 @@ class BaseRepository(BaseCacheRepository):
         :param kwargs: filter parameters
         :return: list of instances
         """
-        query = select(self.model).where(
-            **kwargs
-        ).offset(skip).limit(limit)
+        query = select(self.model).where(**kwargs).offset(skip).limit(limit)
 
         result = await self.database.execute(query)
         instances = result.scalars().all()
@@ -86,13 +93,10 @@ class BaseRepository(BaseCacheRepository):
     @staticmethod
     async def _make_filter(model, filters: dict) -> list:
         """
-        Make filter for query
+        Generate filters for query based on given dictionary.
         eg: {'id': 1, 'name': 'test'} -> [model.id == 1, model.name == 'test']
-        :param model:
-        :param filters:
-        :return:
+        :param model: SQLAlchemy model
+        :param filters: Dictionary containing filter fields and values
+        :return: List of filter conditions
         """
-        return [
-            getattr(model, field) == value
-            for field, value in filters.items()
-        ]
+        return [getattr(model, field) == value for field, value in filters.items()]

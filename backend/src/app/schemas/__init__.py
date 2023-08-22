@@ -1,5 +1,11 @@
-from .in_ import UserRegisterIn, UserVerifyIn, UserLoginIn, ProfileUpdateIn
-from .out import ProfileOut
+from .in_ import (
+    UserRegisterIn,
+    UserVerifyIn,
+    UserLoginIn,
+    ProfileUpdateIn,
+    VendorCreateIn,
+)
+from .out import ProfileOut, VendorCreateOut
 from .base import CurrentUser
 
 __all__ = [
@@ -9,4 +15,6 @@ __all__ = [
     "ProfileUpdateIn",
     "ProfileOut",
     "CurrentUser",
+    "VendorCreateIn",
+    "VendorCreateOut",
 ]

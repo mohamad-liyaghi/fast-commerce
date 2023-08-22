@@ -20,8 +20,8 @@ class Vendor(Base):
 
     name = Column(String(50), nullable=False)
     description = Column(String(300), nullable=False)
-    created_at = Column(DateTime, nullable=False)
-    reviewed_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    reviewed_at = Column(DateTime, nullable=True)
 
     domain = Column(String(50), nullable=True)
     address = Column(String(150), nullable=False)
@@ -31,7 +31,7 @@ class Vendor(Base):
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     owner = relationship("User", back_populates="vendors", foreign_keys=[owner_id])
 
-    reviewer_id = Column(Integer, ForeignKey("users.id"))
+    reviewer_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     reviewer = relationship(
         "User", back_populates="approved_vendors", foreign_keys=[reviewer_id]
     )

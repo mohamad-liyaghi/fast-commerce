@@ -6,12 +6,12 @@ from src.app.controllers import UserController
 from src.core.dependencies import AuthenticationRequired, get_current_user
 from src.app.schemas import ProfileOut, ProfileUpdateIn
 
-profile_router = APIRouter(
+router = APIRouter(
     tags=["Profiles"],
 )
 
 
-@profile_router.get("/{user_uuid}", status_code=status.HTTP_200_OK)
+@router.get("/{user_uuid}", status_code=status.HTTP_200_OK)
 async def retrieve_profile(
     user_uuid: UUID,
     user_controller: UserController = Depends(Factory().get_user_controller),
@@ -21,7 +21,7 @@ async def retrieve_profile(
     return await user_controller.get_by_uuid(uuid=user_uuid)
 
 
-@profile_router.put("/{user_uuid}", status_code=status.HTTP_200_OK)
+@router.put("/{user_uuid}", status_code=status.HTTP_200_OK)
 async def update_profile(
     request: ProfileUpdateIn,
     user_uuid: UUID,
