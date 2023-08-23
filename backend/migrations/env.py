@@ -5,12 +5,11 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 from src.core.configs import settings
 from src.core.database import Base
+from src.app.models import User
 
 
 config = context.config
-config.set_main_option(
-    "sqlalchemy.url", settings.POSTGRES_URL
-)
+config.set_main_option("sqlalchemy.url", settings.POSTGRES_URL)
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
@@ -54,10 +53,7 @@ async def run_migrations_online():
     In this scenario we need to create an Engine
     and associate a connection with the context.
     """
-    connectable = create_async_engine(
-        settings.POSTGRES_URL,
-        poolclass=pool.NullPool
-    )
+    connectable = create_async_engine(settings.POSTGRES_URL, poolclass=pool.NullPool)
 
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)

@@ -1,6 +1,7 @@
 from httpx import AsyncClient
 import pytest_asyncio
 from src.main import app
+from src.core.handlers import JWTHandler
 
 
 @pytest_asyncio.fixture(scope="function")
@@ -14,24 +15,24 @@ async def client() -> AsyncClient:
 
 
 @pytest_asyncio.fixture
-async def authorized_client(
-        client: AsyncClient,
-        user,
-        user_controller
-) -> AsyncClient:
+async def authorized_client(user, client) -> AsyncClient:
     """
-    Create a new user and login/
+    Create a new user and login
     """
-    password = '1234'
-    await user_controller.repository.update(user, password=password)
-
-    response = await client.post(
-        "v1/auth/login",
-        json={'email': user.email, 'password': password}
+    access_token = await JWTHandler.create_access_token(
+        data={"user_uuid": str(user.uuid)}
     )
+    client.headers.update({"Authorization": f"Bearer {access_token}"})
+    return client
 
-    assert response.status_code == 200
-    access_token = response.json()["access_token"]
 
+@pytest_asyncio.fixture
+async def admin_client(admin, client) -> AsyncClient:
+    """
+    Create a new admin and login
+    """
+    access_token = await JWTHandler.create_access_token(
+        data={"user_uuid": str(admin.uuid)}
+    )
     client.headers.update({"Authorization": f"Bearer {access_token}"})
     return client

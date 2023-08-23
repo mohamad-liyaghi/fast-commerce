@@ -1,12 +1,15 @@
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, UUID
+from sqlalchemy.orm import relationship
 from uuid import uuid4
 from typing import Optional
 from datetime import datetime
 from src.core.database import Base
+from .vendor import Vendor  # noqa: F401
 
 
 class User(Base):
-    __tablename__ = 'users'
+    __tablename__ = "users"
+
     id: int = Column(Integer, primary_key=True, index=True)
     uuid: UUID = Column(UUID(as_uuid=True), default=uuid4, unique=True)
     email: str = Column(String, unique=True, index=True)
@@ -15,3 +18,10 @@ class User(Base):
     is_admin: bool = Column(Boolean, default=False)
     date_joined: datetime = Column(DateTime, default=datetime.utcnow)
     password: str = Column(String)
+
+    vendors = relationship(
+        "Vendor", back_populates="owner", foreign_keys="Vendor.owner_id"
+    )
+    approved_vendors = relationship(
+        "Vendor", back_populates="reviewer", foreign_keys="Vendor.reviewer_id"
+    )

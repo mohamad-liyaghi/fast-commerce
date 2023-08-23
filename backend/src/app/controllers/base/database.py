@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from uuid import UUID
 from src.app.repositories.base import BaseRepository
 from .cache import BaseCacheController
@@ -13,6 +14,7 @@ class BaseController(BaseCacheController):
         retrieve: Retrieve an instance of model
         list: List all instances of model
     """
+
     def __init__(self, repository: BaseRepository):
         self.repository = repository
 
@@ -32,7 +34,11 @@ class BaseController(BaseCacheController):
         :return: instance
         """
         result = await self.retrieve(uuid=uuid)
-        return result if result else None
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="user not found."
+            )
+        return result
 
     async def create(self, **data):
         """
@@ -62,14 +68,15 @@ class BaseController(BaseCacheController):
         result = await self.repository.delete(instance)
         return result if result else None
 
-    async def retrieve(self, many: bool = False, **kwargs):
+    async def retrieve(self, many: bool = False, last: bool = False, **kwargs):
         """
         Retrieve an instance of model
         :param kwargs: filter parameters
         :param many: retrieve many instances
+        :param last: retrieve last instance
         :return: instance
         """
-        result = await self.repository.retrieve(many, **kwargs)
+        result = await self.repository.retrieve(many, last, **kwargs)
         return result if result else None
 
     async def list(self, limit: int = 100, skip: int = 0, **kwargs):
