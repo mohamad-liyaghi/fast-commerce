@@ -72,9 +72,7 @@ class BaseRepository(BaseCacheRepository):
         result = await self.database.execute(query)
 
         if result:
-            if many:
-                return result.scalars().all()
-            return result.scalars().first()
+            return result.scalars().all() if many else result.scalars().first()
 
     async def list(self, limit: int = 100, skip: int = 0, **kwargs):
         """

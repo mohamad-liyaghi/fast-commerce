@@ -43,7 +43,7 @@ class TestVendorController:
         assert rejected_vendor.status == VendorStatus.REJECTED
         reviewed_at = datetime.utcnow() - timedelta(days=11)
         await self.controller.repository.update(
-            rejected_vendor, reviewed_at=reviewed_at
+            instance=rejected_vendor, reviewed_at=reviewed_at
         )
         assert await self.controller.list() is not None
 
@@ -51,7 +51,9 @@ class TestVendorController:
     async def test_update_by_owner(self, accepted_vendor):
         domain = "https://www.updated.com"
         updated_vendor = await self.controller.update(
-            request_user=accepted_vendor.owner, domain=domain, vendor=accepted_vendor
+            request_user=accepted_vendor.owner,
+            domain=domain,
+            vendor_uuid=accepted_vendor.uuid,
         )
         assert updated_vendor.domain == domain
 
@@ -63,7 +65,7 @@ class TestVendorController:
         with pytest.raises(HTTPException):
             await self.controller.update(
                 request_user=admin,
-                vendor=accepted_vendor,
+                vendor_uuid=accepted_vendor.uuid,
                 domain="https://www.updated.com",
             )
 
@@ -74,7 +76,7 @@ class TestVendorController:
         """
         updated_vendor = await self.controller.update(
             request_user=admin,
-            vendor=accepted_vendor,
+            vendor_uuid=accepted_vendor.uuid,
             status=VendorStatus.REJECTED,
         )
         assert updated_vendor.status == VendorStatus.REJECTED
@@ -85,6 +87,6 @@ class TestVendorController:
         with pytest.raises(HTTPException):
             await self.controller.update(
                 request_user=accepted_vendor.owner,
-                vendor=accepted_vendor,
+                vendor_uuid=accepted_vendor.uuid,
                 status=VendorStatus.REJECTED,
             )

@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+from uuid import UUID
 from src.app.controllers.base import BaseController
 from src.app.models import User, VendorStatus
 from datetime import datetime, timedelta
@@ -48,7 +49,9 @@ class VendorController(BaseController):
         # Create a new vendor and return it
         return await super().create(owner_id=request_user.id, **vendor_data)
 
-    async def update(self, vendor, request_user: User, **data):
+    async def update(self, vendor_uuid: UUID, request_user: User, **data):
+        vendor = await self.get_by_uuid(vendor_uuid)
+
         if data.get("status") and not request_user.is_admin:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

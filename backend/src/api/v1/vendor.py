@@ -79,9 +79,8 @@ async def update_vendor(
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorUpdateOut:
     """Update a vendor information by owner."""
-    vendor = await vendor_controller.get_by_uuid(vendor_uuid)
     return await vendor_controller.update(
-        vendor=vendor, request_user=current_user, **request.model_dump()
+        vendor_uuid=vendor_uuid, request_user=current_user, **request.model_dump()
     )
 
 
@@ -95,7 +94,6 @@ async def update_vendor_status(
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorUpdateStatusOut:
     """Update a vendors status by admin."""
-    vendor = await vendor_controller.get_by_uuid(vendor_uuid)
     return await vendor_controller.update(
-        vendor=vendor, request_user=current_user, status=request.status
+        vendor_uuid=vendor_uuid, request_user=current_user, status=request.status
     )
