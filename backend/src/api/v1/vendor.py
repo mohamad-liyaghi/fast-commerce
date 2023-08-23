@@ -2,6 +2,7 @@ from fastapi import Depends, status
 from fastapi.routing import APIRouter
 from uuid import UUID
 from src.core.factory import Factory
+from src.app.models import VendorStatus
 from src.core.dependencies import (
     AuthenticationRequired,
     get_current_user,
@@ -44,6 +45,17 @@ async def get_vendor_list(
 ) -> Union[List[VendorRetrieveOut], None]:
     """Return a users vendor requests list"""
     return await vendor_controller.retrieve(owner_id=current_user.id, many=True)
+
+
+@router.get("/requests/", status_code=status.HTTP_200_OK)
+async def get_vendor_requests(
+    _=Depends(AuthenticationRequired),
+    __=Depends(AdminRequired),
+    vendor_controller=Depends(Factory.get_vendor_controller),
+    status: VendorStatus = VendorStatus.PENDING,
+) -> Union[List[VendorRetrieveOut], None]:
+    """Return a users vendor requests list"""
+    return await vendor_controller.retrieve(status=status, many=True)
 
 
 @router.get("/{vendor_uuid}", status_code=status.HTTP_200_OK)
