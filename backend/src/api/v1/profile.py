@@ -4,7 +4,8 @@ from uuid import UUID
 from src.core.factory import Factory
 from src.app.controllers import UserController
 from src.core.dependencies import AuthenticationRequired, get_current_user
-from src.app.schemas import ProfileOut, ProfileUpdateIn
+from src.app.schemas.in_ import ProfileUpdateIn
+from src.app.schemas.out import ProfileOut
 
 router = APIRouter(
     tags=["Profiles"],
@@ -14,8 +15,8 @@ router = APIRouter(
 @router.get("/{user_uuid}", status_code=status.HTTP_200_OK)
 async def retrieve_profile(
     user_uuid: UUID,
-    user_controller: UserController = Depends(Factory().get_user_controller),
     _: AuthenticationRequired = Depends(AuthenticationRequired),
+    user_controller: UserController = Depends(Factory().get_user_controller),
 ) -> ProfileOut:
     """Retrieve a profile by its uuid."""
     return await user_controller.get_by_uuid(uuid=user_uuid)
@@ -29,7 +30,7 @@ async def update_profile(
     _: AuthenticationRequired = Depends(AuthenticationRequired),
     current_user=Depends(get_current_user),
 ) -> ProfileOut:
-    """Update a profile by its uuid."""
+    """Update a profile by its owner."""
     return await user_controller.update(
         uuid=user_uuid, requesting_user=current_user, **request.model_dump()
     )

@@ -8,14 +8,17 @@ from src.core.dependencies import (
     get_current_user,
     AdminRequired,
 )
-from src.app.schemas import (
+from src.app.schemas.in_ import (
     VendorCreateIn,
+    VendorUpdateStatusIn,
+    VendorUpdateIn,
+)
+from src.app.schemas.out import (
     VendorCreateOut,
     VendorRetrieveOut,
-    VendorUpdateStatusIn,
     VendorUpdateStatusOut,
-    VendorUpdateIn,
     VendorUpdateOut,
+    VendorListOut,
 )
 from typing import List, Union
 
@@ -31,7 +34,7 @@ async def create_vendor(
     current_user=Depends(get_current_user),
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorCreateOut:
-    """Register for creating a vendor."""
+    """Create a new pending vendor."""
     return await vendor_controller.create(
         request_user=current_user, **request.model_dump()
     )
@@ -42,8 +45,8 @@ async def get_vendor_list(
     _=Depends(AuthenticationRequired),
     current_user=Depends(get_current_user),
     vendor_controller=Depends(Factory.get_vendor_controller),
-) -> Union[List[VendorRetrieveOut], None]:
-    """Return a users vendor requests list"""
+) -> Union[VendorListOut, None]:
+    """List of a users vendor requests."""
     return await vendor_controller.retrieve(owner_id=current_user.id, many=True)
 
 
@@ -53,8 +56,8 @@ async def get_vendor_requests(
     __=Depends(AdminRequired),
     vendor_controller=Depends(Factory.get_vendor_controller),
     status: VendorStatus = VendorStatus.PENDING,
-) -> Union[List[VendorRetrieveOut], None]:
-    """Return a users vendor requests list"""
+) -> Union[VendorListOut, None]:
+    """List of all [pending] vendor requests. (can be filtered by status in args)"""
     return await vendor_controller.retrieve(status=status, many=True)
 
 
@@ -63,7 +66,7 @@ async def get_vendor(
     vendor_uuid: UUID,
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorRetrieveOut:
-    """Get a vendor."""
+    """Retrieve a vendor if exists."""
     return await vendor_controller.get_by_uuid(vendor_uuid)
 
 
@@ -75,7 +78,7 @@ async def update_vendor(
     current_user=Depends(get_current_user),
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorUpdateOut:
-    """Update a vendor."""
+    """Update a vendor information by owner."""
     vendor = await vendor_controller.get_by_uuid(vendor_uuid)
     return await vendor_controller.update(
         vendor=vendor, request_user=current_user, **request.model_dump()

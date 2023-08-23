@@ -4,12 +4,22 @@ from .vendor import (
     VendorUpdateOut,
     VendorRetrieveOut,
     VendorUpdateStatusOut,
+    VendorListOut,
 )
 
-__all__ = [
+profile = [
     "ProfileOut",
+]
+
+vendor = [
     "VendorCreateOut",
+    "VendorUpdateOut",
     "VendorRetrieveOut",
     "VendorUpdateStatusOut",
-    "VendorUpdateOut",
+    "VendorListOut",
+]
+
+__all__ = [
+    *profile,
+    *vendor,
 ]

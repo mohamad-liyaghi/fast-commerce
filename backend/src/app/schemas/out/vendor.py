@@ -1,32 +1,24 @@
-from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
-from uuid import UUID
-from src.app.schemas.base import VendorBase, UserBase
-from src.app.models import VendorStatus
+from typing import Optional, List
+from src.app.schemas.base import VendorBaseOut
 
 
-class VendorCreateOut(VendorBase):
-    uuid: UUID
-    status: VendorStatus
-    created_at: datetime
-
-
-class VendorUpdateOut(VendorCreateOut):
+class VendorCreateOut(VendorBaseOut):
     pass
 
 
-class VendorRetrieveOut(VendorBase):
-    uuid: UUID
-    created_at: datetime
+class VendorUpdateOut(VendorBaseOut):
+    pass
+
+
+class VendorRetrieveOut(VendorBaseOut):
     reviewed_at: Optional[datetime] = None
-    status: VendorStatus
     owner_id: int
     reviewer_id: Optional[int] = None  # TODO: Make this nested
 
 
-class VendorUpdateStatusOut(VendorCreateOut):
+class VendorUpdateStatusOut(VendorBaseOut):
     pass
 
 
-# TODO: Add list out
+VendorListOut = List[VendorRetrieveOut]

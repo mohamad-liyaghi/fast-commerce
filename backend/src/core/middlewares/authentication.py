@@ -1,13 +1,11 @@
 from typing import Optional, Tuple
-
 from jose import JWTError, jwt
 from starlette.authentication import AuthenticationBackend
 from starlette.middleware.authentication import (
     AuthenticationMiddleware as BaseAuthenticationMiddleware,
 )
 from starlette.requests import HTTPConnection
-
-from src.app.schemas import CurrentUser
+from src.app.schemas.base import CurrentUser
 from src.core.configs import settings
 
 

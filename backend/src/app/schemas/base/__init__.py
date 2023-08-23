@@ -1,8 +1,16 @@
-from .user import UserBase, CurrentUser
-from .vendor import VendorBase
+from .user import UserBaseEmail, UserBasePassword, UserBase, CurrentUser
+from .vendor import VendorBase, VendorBaseOut
 
-__all__ = [
+vendors = [
+    "VendorBase",
+    "VendorBaseOut",
+]
+
+users = [
+    "UserBaseEmail",
+    "UserBasePassword",
     "UserBase",
     "CurrentUser",
-    "VendorBase",
 ]
+
+__all__ = vendors + users

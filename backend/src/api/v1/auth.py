@@ -1,7 +1,7 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
 from src.core.factory import Factory
-from src.app.schemas import (
+from src.app.schemas.in_ import (
     UserRegisterIn,
     UserVerifyIn,
     UserLoginIn,
