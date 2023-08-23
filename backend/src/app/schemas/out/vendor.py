@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
-from src.app.schemas.base import VendorBase
+from src.app.schemas.base import VendorBase, UserBase
 from src.app.models import VendorStatus
 
 
@@ -27,3 +27,6 @@ class VendorRetrieveOut(VendorBase):
 
 class VendorUpdateStatusOut(VendorCreateOut):
     pass
+
+
+# TODO: Add list out

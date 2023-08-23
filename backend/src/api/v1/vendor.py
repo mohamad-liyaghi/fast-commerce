@@ -16,6 +16,7 @@ from src.app.schemas import (
     VendorUpdateIn,
     VendorUpdateOut,
 )
+from typing import List, Union
 
 router = APIRouter(
     tags=["Vendors"],
@@ -33,6 +34,16 @@ async def create_vendor(
     return await vendor_controller.create(
         request_user=current_user, **request.model_dump()
     )
+
+
+@router.get("/", status_code=status.HTTP_200_OK)
+async def get_vendor_list(
+    _=Depends(AuthenticationRequired),
+    current_user=Depends(get_current_user),
+    vendor_controller=Depends(Factory.get_vendor_controller),
+) -> Union[List[VendorRetrieveOut], None]:
+    """Return a users vendor requests list"""
+    return await vendor_controller.retrieve(owner_id=current_user.id, many=True)
 
 
 @router.get("/{vendor_uuid}", status_code=status.HTTP_200_OK)
