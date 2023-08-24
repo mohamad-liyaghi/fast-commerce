@@ -31,7 +31,6 @@ class User(Base):
     products = relationship(
         "Product",
         back_populates="user",
-        lazy="selectin",
         foreign_keys="Product.user_id",
     )
 
