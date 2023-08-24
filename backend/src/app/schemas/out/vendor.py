@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional, List
-from src.app.schemas.base import VendorBaseOut
+from src.app.schemas.base import VendorBaseOut, UserBase
 
 
 class VendorCreateOut(VendorBaseOut):
@@ -13,8 +13,8 @@ class VendorUpdateOut(VendorBaseOut):
 
 class VendorRetrieveOut(VendorBaseOut):
     reviewed_at: Optional[datetime] = None
-    owner_id: int
-    reviewer_id: Optional[int] = None  # TODO: Make this nested
+    owner: UserBase
+    reviewer: Optional[UserBase] = None
 
 
 class VendorUpdateStatusOut(VendorBaseOut):

@@ -29,9 +29,17 @@ class Vendor(Base):
     status = Column(Enum(VendorStatus), default=VendorStatus.PENDING)
 
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
-    owner = relationship("User", back_populates="vendors", foreign_keys=[owner_id])
+    owner = relationship(
+        "User",
+        back_populates="vendors",
+        foreign_keys=[owner_id],
+        lazy="selectin",
+    )
 
     reviewer_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     reviewer = relationship(
-        "User", back_populates="approved_vendors", foreign_keys=[reviewer_id]
+        "User",
+        back_populates="approved_vendors",
+        foreign_keys=[reviewer_id],
+        lazy="selectin",
     )
