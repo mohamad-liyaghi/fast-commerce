@@ -27,7 +27,9 @@ class BaseController(BaseCacheController):
         result = await self.retrieve(id=_id)
         return result if result else None
 
-    async def get_by_uuid(self, uuid: UUID):
+    async def get_by_uuid(
+        self, uuid: UUID, not_found_status: status = status.HTTP_404_NOT_FOUND
+    ):
         """
         Get an instance by uuid
         :param uuid: uuid of instance
@@ -35,9 +37,7 @@ class BaseController(BaseCacheController):
         """
         result = await self.retrieve(uuid=uuid)
         if not result:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="user not found."
-            )
+            raise HTTPException(status_code=not_found_status, detail="item not found.")
         return result
 
     async def create(self, **data):

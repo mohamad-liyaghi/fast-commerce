@@ -5,7 +5,6 @@ from src.core.factory import Factory
 from src.app.models import VendorStatus
 from src.core.dependencies import (
     AuthenticationRequired,
-    get_current_user,
     AdminRequired,
 )
 from src.app.schemas.in_ import (
@@ -20,7 +19,7 @@ from src.app.schemas.out import (
     VendorUpdateOut,
     VendorListOut,
 )
-from typing import List, Union
+from typing import Union
 
 router = APIRouter(
     tags=["Vendors"],
@@ -30,8 +29,7 @@ router = APIRouter(
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_vendor(
     request: VendorCreateIn,
-    _=Depends(AuthenticationRequired),
-    current_user=Depends(get_current_user),
+    current_user=Depends(AuthenticationRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorCreateOut:
     """Create a new pending vendor."""
@@ -42,8 +40,7 @@ async def create_vendor(
 
 @router.get("/", status_code=status.HTTP_200_OK)
 async def get_vendor_list(
-    _=Depends(AuthenticationRequired),
-    current_user=Depends(get_current_user),
+    current_user=Depends(AuthenticationRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> Union[VendorListOut, None]:
     """List of a users vendor requests."""
@@ -52,8 +49,8 @@ async def get_vendor_list(
 
 @router.get("/requests/", status_code=status.HTTP_200_OK)
 async def get_vendor_requests(
-    _=Depends(AuthenticationRequired),
-    __=Depends(AdminRequired),
+    __=Depends(AdminRequired()),
+    _=Depends(AuthenticationRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
     status: VendorStatus = VendorStatus.PENDING,
 ) -> Union[VendorListOut, None]:
@@ -74,8 +71,7 @@ async def get_vendor(
 async def update_vendor(
     vendor_uuid: UUID,
     request: VendorUpdateIn,
-    _=Depends(AuthenticationRequired),
-    current_user=Depends(get_current_user),
+    current_user=Depends(AuthenticationRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorUpdateOut:
     """Update a vendor information by owner."""
@@ -88,9 +84,8 @@ async def update_vendor(
 async def update_vendor_status(
     vendor_uuid: UUID,
     request: VendorUpdateStatusIn,
-    _=Depends(AuthenticationRequired),
-    __=Depends(AdminRequired),
-    current_user=Depends(get_current_user),
+    current_user=Depends(AuthenticationRequired()),
+    __=Depends(AdminRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorUpdateStatusOut:
     """Update a vendors status by admin."""
