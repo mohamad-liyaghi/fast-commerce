@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from uuid import uuid4
 from datetime import datetime
 from src.core.database import Base
+from .product import Product  # noqa: F401
 
 
 class VendorStatus(enum.Enum):
@@ -35,7 +36,6 @@ class Vendor(Base):
         foreign_keys=[owner_id],
         lazy="selectin",
     )
-
     reviewer_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     reviewer = relationship(
         "User",
@@ -43,3 +43,7 @@ class Vendor(Base):
         foreign_keys=[reviewer_id],
         lazy="selectin",
     )
+    products = relationship("Product", back_populates="vendor")
+
+    def __repr__(self):
+        return f"<Vendor {self.name}>"

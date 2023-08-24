@@ -28,6 +28,12 @@ class User(Base):
     approved_vendors = relationship(
         "Vendor", back_populates="reviewer", foreign_keys="Vendor.reviewer_id"
     )
+    products = relationship(
+        "Product",
+        back_populates="user",
+        lazy="selectin",
+        foreign_keys="Product.user_id",
+    )
 
     def __repr__(self):
         return f"<User {self.email}>"

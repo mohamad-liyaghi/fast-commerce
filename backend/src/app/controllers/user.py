@@ -22,8 +22,3 @@ class UserController(BaseController):
             )
 
         return await super().update(user, **kwargs)
-
-    async def get_by_uuid(
-        self, uuid: UUID, not_found_status: status = status.HTTP_403_FORBIDDEN
-    ):
-        return await super().get_by_uuid(uuid, not_found_status)
