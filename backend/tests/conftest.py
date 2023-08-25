@@ -1,13 +1,13 @@
 import pytest
 import asyncio
-from tests.fixtures.db import get_test_db # noqa
-from tests.fixtures.client import * # noqa
-from tests.fixtures.app import * # noqa
-from tests.fixtures.redis import * # noqa
+from tests.fixtures.db import get_test_db  # noqa
+from tests.fixtures.client import *  # noqa
+from tests.fixtures.app import *  # noqa
+from tests.fixtures.redis import *  # noqa
 from src.core.celery import celery
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def event_loop():
     loop = asyncio.new_event_loop()
     yield loop
