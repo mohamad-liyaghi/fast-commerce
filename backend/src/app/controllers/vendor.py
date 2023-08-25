@@ -66,24 +66,6 @@ class VendorController(BaseController):
 
         return await super().update(vendor, **data)
 
-    async def get_by_uuid(self, vendor_uuid: UUID):
-        vendor = await self.retrieve_and_join(uuid=vendor_uuid)
-        if not vendor:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Vendor not found.",
-            )
-        return vendor
-
-    async def retrieve_and_join(self, **kwargs):
-        """
-        Retrieve a vendor and join the owner.
-        """
-        join_query = selectinload(self.repository.model.owner)
-
-        vendor = await self.retrieve(join_query=join_query, **kwargs)
-        return vendor
-
     async def retrieve_accepted_vendor(self, user: User):
         """
         Retrieve a vendor and join the owner.

@@ -1,7 +1,7 @@
 from sqlalchemy import and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from typing import Optional
+from typing import List, Optional
 from redis import Redis
 from src.core.database import Base
 from .cache import BaseCacheRepository
@@ -21,7 +21,7 @@ class BaseRepository(BaseCacheRepository):
     def __init__(self, model: Base, database: AsyncSession, redis: Redis):
         super().__init__(redis_client=redis)
         self.model = model
-        self.database = database
+        self.database = database  # Database session
 
     async def create(self, **data):
         """
@@ -59,30 +59,30 @@ class BaseRepository(BaseCacheRepository):
 
     async def retrieve(
         self,
-        join_query: Optional[selectinload] = None,
+        join_fields: Optional[List[str]] = None,
         many: bool = False,
         last: bool = False,
         **kwargs
     ):
         """
         Retrieve instance(s) of model based on given filters.
-        :param join_query: Join query to be used for eager loading
+        :param join_fields: List of fields to join
         :param many: Retrieve many instances if True, else single instance
         :param last: Retrieve the last instance if True (requires many=False)
         :param kwargs: Filter parameters
         :return: Instance(s)
         """
+        # Make filters
         filters = await self._make_filter(self.model, kwargs)
-        query = select(self.model).where(and_(*filters))
-
-        if join_query:
-            query = query.options(join_query)
-
+        # Apply filters
+        filtered_query = select(self.model).where(and_(*filters))
+        # make joins
+        query = await self._make_joins(self.model, filtered_query, join_fields)
         if last:
+            # Order by id desc if last=True
             query = query.order_by(desc(self.model.id))
 
         result = await self.database.execute(query)
-
         if result:
             return result.scalars().all() if many else result.scalars().first()
 
@@ -110,3 +110,17 @@ class BaseRepository(BaseCacheRepository):
         :return: List of filter conditions
         """
         return [getattr(model, field) == value for field, value in filters.items()]
+
+    @staticmethod
+    async def _make_joins(model, query, join_fields: Optional[List[str]] = None):
+        """
+        Make joins for query based on given list of fields.
+        :param model: SQLAlchemy model
+        :param query: Query to apply joins
+        :param join_fields: List of fields to join
+        :return: Query with joins
+        """
+        if join_fields is not None:
+            for field in join_fields:
+                query = query.options(selectinload(getattr(model, field)))
+        return query

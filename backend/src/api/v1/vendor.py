@@ -44,7 +44,9 @@ async def get_vendor_list(
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> Union[VendorListOut, None]:
     """List of a users vendor requests."""
-    return await vendor_controller.retrieve(owner_id=current_user.id, many=True)
+    return await vendor_controller.retrieve(
+        owner_id=current_user.id, many=True, join_fields=["owner", "reviewer"]
+    )
 
 
 @router.get("/requests/", status_code=status.HTTP_200_OK)
@@ -55,7 +57,9 @@ async def get_vendor_requests(
     status: VendorStatus = VendorStatus.PENDING,
 ) -> Union[VendorListOut, None]:
     """List of all [pending] vendor requests. (can be filtered by status in args)"""
-    return await vendor_controller.retrieve_and_join(status=status, many=True)
+    return await vendor_controller.retrieve(
+        status=status, many=True, join_fields=["owner"]
+    )
 
 
 @router.get("/{vendor_uuid}", status_code=status.HTTP_200_OK)
@@ -64,7 +68,9 @@ async def get_vendor(
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorRetrieveOut:
     """Retrieve a vendor if exists."""
-    return await vendor_controller.get_by_uuid(vendor_uuid)
+    return await vendor_controller.get_by_uuid(
+        vendor_uuid, join_fields=["owner", "reviewer"]
+    )
 
 
 @router.put("/{vendor_uuid}", status_code=status.HTTP_200_OK)

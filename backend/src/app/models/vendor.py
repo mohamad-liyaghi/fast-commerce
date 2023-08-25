@@ -40,7 +40,6 @@ class Vendor(Base):
         "User",
         back_populates="approved_vendors",
         foreign_keys=[reviewer_id],
-        lazy="selectin",
     )
     products = relationship("Product", back_populates="vendor")
 

@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import selectinload
-from typing import Optional
+from typing import Optional, List
 from uuid import UUID
 from src.app.repositories.base import BaseRepository
 from .cache import BaseCacheController
@@ -20,22 +20,28 @@ class BaseController(BaseCacheController):
     def __init__(self, repository: BaseRepository):
         self.repository = repository
 
-    async def get_by_id(self, _id: int):
+    async def get_by_id(self, _id: int, join_fields: Optional[List[str]] = None):
         """
         Get an instance by id
         :param _id: id of instance
+        :param join_fields: fields to join
         :return: instance
         """
-        result = await self.retrieve(id=_id)
-        return result if result else None
+        result = await self.retrieve(id=_id, join_fields=join_fields)
+        if not result:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="item not found."
+            )
+        return result
 
-    async def get_by_uuid(self, uuid: UUID):
+    async def get_by_uuid(self, uuid: UUID, join_fields: Optional[List[str]] = None):
         """
         Get an instance by uuid
         :param uuid: uuid of instance
+        :param join_fields: fields to join
         :return: instance
         """
-        result = await self.retrieve(uuid=uuid)
+        result = await self.retrieve(uuid=uuid, join_fields=join_fields)
         if not result:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="item not found."
@@ -49,7 +55,7 @@ class BaseController(BaseCacheController):
         :return: created instance
         """
         result = await self.repository.create(**data)
-        return result if result else None
+        return result
 
     async def update(self, instance, **data):
         """
@@ -59,7 +65,7 @@ class BaseController(BaseCacheController):
         :return: updated instance
         """
         result = await self.repository.update(instance, **data)
-        return result if result else None
+        return result
 
     async def delete(self, instance):
         """
@@ -67,12 +73,12 @@ class BaseController(BaseCacheController):
         :param instance: instance to delete
         :return: None
         """
-        result = await self.repository.delete(instance)
-        return result if result else None
+        await self.repository.delete(instance)
+        return
 
     async def retrieve(
         self,
-        join_query: Optional[selectinload] = None,
+        join_fields: Optional[selectinload] = None,
         many: bool = False,
         last: bool = False,
         **kwargs
@@ -80,13 +86,13 @@ class BaseController(BaseCacheController):
         """
         Retrieve an instance of model
         :param kwargs: filter parameters
-        :param join_query: join query
+        :param join_fields: fields to join
         :param many: retrieve many instances
         :param last: retrieve last instance
         :return: instance
         """
         result = await self.repository.retrieve(
-            join_query, many=many, last=last, **kwargs
+            join_fields, many=many, last=last, **kwargs
         )
         return result if result else None
 
