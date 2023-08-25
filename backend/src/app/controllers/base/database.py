@@ -1,4 +1,6 @@
 from fastapi import HTTPException, status
+from sqlalchemy.orm import selectinload
+from typing import Optional
 from uuid import UUID
 from src.app.repositories.base import BaseRepository
 from .cache import BaseCacheController
@@ -68,15 +70,24 @@ class BaseController(BaseCacheController):
         result = await self.repository.delete(instance)
         return result if result else None
 
-    async def retrieve(self, many: bool = False, last: bool = False, **kwargs):
+    async def retrieve(
+        self,
+        join_query: Optional[selectinload] = None,
+        many: bool = False,
+        last: bool = False,
+        **kwargs
+    ):
         """
         Retrieve an instance of model
         :param kwargs: filter parameters
+        :param join_query: join query
         :param many: retrieve many instances
         :param last: retrieve last instance
         :return: instance
         """
-        result = await self.repository.retrieve(many, last, **kwargs)
+        result = await self.repository.retrieve(
+            join_query, many=many, last=last, **kwargs
+        )
         return result if result else None
 
     async def list(self, limit: int = 100, skip: int = 0, **kwargs):

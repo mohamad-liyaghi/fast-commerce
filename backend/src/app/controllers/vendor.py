@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from uuid import UUID
+from sqlalchemy.orm import selectinload
 from src.app.controllers.base import BaseController
 from src.app.models import User, VendorStatus
 from datetime import datetime, timedelta
@@ -21,7 +22,6 @@ class VendorController(BaseController):
 
         # Check if the user has a pending, accepted, or recently rejected vendor request
         existing_vendor = await self.retrieve(owner_id=request_user.id, last=True)
-        ten_days_ago = datetime.utcnow() - timedelta(days=10)
 
         if existing_vendor:
             if existing_vendor.status == VendorStatus.PENDING:
@@ -36,7 +36,7 @@ class VendorController(BaseController):
                 )
             elif (
                 existing_vendor.status == VendorStatus.REJECTED
-                and existing_vendor.reviewed_at > ten_days_ago
+                and existing_vendor.reviewed_at > datetime.utcnow() - timedelta(days=10)
             ):
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -65,3 +65,27 @@ class VendorController(BaseController):
             )
 
         return await super().update(vendor, **data)
+
+    async def get_by_uuid(self, vendor_uuid: UUID):
+        vendor = await self.retrieve_and_join(uuid=vendor_uuid)
+        if not vendor:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Vendor not found.",
+            )
+        return vendor
+
+    async def retrieve_and_join(self, **kwargs):
+        """
+        Retrieve a vendor and join the owner.
+        """
+        join_query = selectinload(self.repository.model.owner)
+
+        vendor = await self.retrieve(join_query=join_query, **kwargs)
+        return vendor
+
+    async def retrieve_accepted_vendor(self, user: User):
+        """
+        Retrieve a vendor and join the owner.
+        """
+        return await self.retrieve(owner_id=user.id, status=VendorStatus.ACCEPTED)

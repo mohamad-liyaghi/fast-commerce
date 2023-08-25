@@ -1,5 +1,7 @@
 from sqlalchemy import and_, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+from typing import Optional
 from redis import Redis
 from src.core.database import Base
 from .cache import BaseCacheRepository
@@ -55,9 +57,16 @@ class BaseRepository(BaseCacheRepository):
         self.database.delete(instance)
         await self.database.commit()
 
-    async def retrieve(self, many: bool = False, last: bool = False, **kwargs):
+    async def retrieve(
+        self,
+        join_query: Optional[selectinload] = None,
+        many: bool = False,
+        last: bool = False,
+        **kwargs
+    ):
         """
         Retrieve instance(s) of model based on given filters.
+        :param join_query: Join query to be used for eager loading
         :param many: Retrieve many instances if True, else single instance
         :param last: Retrieve the last instance if True (requires many=False)
         :param kwargs: Filter parameters
@@ -65,6 +74,9 @@ class BaseRepository(BaseCacheRepository):
         """
         filters = await self._make_filter(self.model, kwargs)
         query = select(self.model).where(and_(*filters))
+
+        if join_query:
+            query = query.options(join_query)
 
         if last:
             query = query.order_by(desc(self.model.id))

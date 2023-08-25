@@ -34,7 +34,6 @@ class Vendor(Base):
         "User",
         back_populates="vendors",
         foreign_keys=[owner_id],
-        lazy="selectin",
     )
     reviewer_id = Column(Integer, ForeignKey("users.id"), nullable=True)
     reviewer = relationship(

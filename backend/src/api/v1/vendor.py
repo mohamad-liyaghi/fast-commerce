@@ -55,7 +55,7 @@ async def get_vendor_requests(
     status: VendorStatus = VendorStatus.PENDING,
 ) -> Union[VendorListOut, None]:
     """List of all [pending] vendor requests. (can be filtered by status in args)"""
-    return await vendor_controller.retrieve(status=status, many=True)
+    return await vendor_controller.retrieve_and_join(status=status, many=True)
 
 
 @router.get("/{vendor_uuid}", status_code=status.HTTP_200_OK)

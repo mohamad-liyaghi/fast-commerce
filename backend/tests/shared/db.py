@@ -16,5 +16,6 @@ async def get_test_db() -> async_session:
     async with async_session() as session:
         yield session
 
+
 # Override the get_db function
 app.dependency_overrides[get_db] = get_test_db
