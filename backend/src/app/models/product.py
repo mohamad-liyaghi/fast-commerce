@@ -24,4 +24,4 @@ class Product(Base):
     user = relationship("User", back_populates="products")
 
     def __repr__(self):
-        return f"<Product {self.name}>"
+        return f"<Product {self.title}>"

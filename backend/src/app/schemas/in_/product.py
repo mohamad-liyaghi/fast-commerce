@@ -1,5 +1,5 @@
-from src.app.schemas.base import BaseProduct
+from src.app.schemas.base import BaseProductCreate
 
 
-class ProductCreateIn(BaseProduct):
+class ProductCreateIn(BaseProductCreate):
     pass
