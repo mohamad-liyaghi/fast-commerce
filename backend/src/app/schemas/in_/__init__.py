@@ -1,6 +1,7 @@
 from .auth import UserRegisterIn, UserVerifyIn, UserLoginIn
 from .profile import ProfileUpdateIn
 from .vendor import VendorCreateIn, VendorUpdateStatusIn, VendorUpdateIn
+from .product import ProductCreateIn
 
 auth = [
     "UserRegisterIn",
@@ -19,8 +20,8 @@ vendor = [
 ]
 
 
-__all__ = [
-    *auth,
-    *profile,
-    *vendor,
+product = [
+    "ProductCreateIn",
 ]
+
+__all__ = auth + profile + vendor + product

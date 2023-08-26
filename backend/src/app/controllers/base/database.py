@@ -1,5 +1,4 @@
 from fastapi import HTTPException, status
-from sqlalchemy.orm import selectinload
 from typing import Optional, List
 from uuid import UUID
 from src.app.repositories.base import BaseRepository
@@ -78,7 +77,7 @@ class BaseController(BaseCacheController):
 
     async def retrieve(
         self,
-        join_fields: Optional[selectinload] = None,
+        join_fields: Optional[List[str]] = None,
         many: bool = False,
         last: bool = False,
         **kwargs

@@ -32,7 +32,6 @@ class TestVerifyRoute:
         cached_user = await get_test_redis.hgetall(cache_key)
         self.data["otp"] = int(cached_user["otp"]) - 2  # Invalid code
         response = await self.client.post(self.url, json=self.data)
-        print(response.json())
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.asyncio

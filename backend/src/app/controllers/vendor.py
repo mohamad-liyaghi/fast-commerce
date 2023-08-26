@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
 from uuid import UUID
-from sqlalchemy.orm import selectinload
 from src.app.controllers.base import BaseController
 from src.app.models import User, VendorStatus
 from datetime import datetime, timedelta

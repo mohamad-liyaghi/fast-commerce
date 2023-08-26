@@ -1,6 +1,7 @@
 from fastapi import status, HTTPException, Depends
 from .authentication import AuthenticationRequired
 from src.app.controllers import VendorController
+from src.core.factory import Factory
 from src.app.models import User, Vendor
 
 
@@ -12,7 +13,7 @@ class VendorRequired:
     async def __call__(
         self,
         user: User = Depends(AuthenticationRequired()),
-        vendor_controller: VendorController = Depends(VendorController),
+        vendor_controller: VendorController = Depends(Factory.get_vendor_controller),
     ) -> Vendor:
         # Get the accepted vendor for the user.
         vendor = await vendor_controller.retrieve_accepted_vendor(user=user)
