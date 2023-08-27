@@ -1,7 +1,12 @@
 from fastapi import Depends
-from src.app.controllers import UserController, AuthController, VendorController
+from src.app.controllers import (
+    UserController,
+    AuthController,
+    VendorController,
+    ProductController,
+)
 from src.app.repositories import UserRepository, VendorRepository
-from src.app.models import User, Vendor
+from src.app.models import User, Vendor, Product
 from src.core.database import get_db
 from src.core.redis import get_redis
 
@@ -42,4 +47,15 @@ class Factory:
         """
         return VendorController(
             repository=VendorRepository(model=Vendor, database=db, redis=redis)
+        )
+
+    @staticmethod
+    def get_product_controller(
+        db: Depends = Depends(get_db), redis: Depends = Depends(get_redis)
+    ) -> ProductController:
+        """
+        Returns a ProductController instance
+        """
+        return ProductController(
+            repository=VendorRepository(model=Product, database=db, redis=redis)
         )

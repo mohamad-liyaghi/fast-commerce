@@ -6,6 +6,12 @@ from .vendor import (
     VendorUpdateStatusOut,
     VendorListOut,
 )
+from .product import (
+    ProductCreateOut,
+    ProductListOut,
+    ProductRetrieveOut,
+    ProductUpdateOut,
+)
 
 profile = [
     "ProfileOut",
@@ -19,7 +25,11 @@ vendor = [
     "VendorListOut",
 ]
 
-__all__ = [
-    *profile,
-    *vendor,
+product = [
+    "ProductCreateOut",
+    "ProductListOut",
+    "ProductRetrieveOut",
+    "ProductUpdateOut",
 ]
+
+__all__ = profile + vendor + product

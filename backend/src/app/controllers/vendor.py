@@ -21,7 +21,6 @@ class VendorController(BaseController):
 
         # Check if the user has a pending, accepted, or recently rejected vendor request
         existing_vendor = await self.retrieve(owner_id=request_user.id, last=True)
-        ten_days_ago = datetime.utcnow() - timedelta(days=10)
 
         if existing_vendor:
             if existing_vendor.status == VendorStatus.PENDING:
@@ -36,7 +35,7 @@ class VendorController(BaseController):
                 )
             elif (
                 existing_vendor.status == VendorStatus.REJECTED
-                and existing_vendor.reviewed_at > ten_days_ago
+                and existing_vendor.reviewed_at > datetime.utcnow() - timedelta(days=10)
             ):
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
@@ -65,3 +64,9 @@ class VendorController(BaseController):
             )
 
         return await super().update(vendor, **data)
+
+    async def retrieve_accepted_vendor(self, user: User):
+        """
+        Retrieve a vendor and join the owner.
+        """
+        return await self.retrieve(owner_id=user.id, status=VendorStatus.ACCEPTED)

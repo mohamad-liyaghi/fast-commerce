@@ -1,6 +1,7 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
 from uuid import UUID
+from typing import List, Optional
 from src.core.factory import Factory
 from src.app.models import VendorStatus
 from src.core.dependencies import (
@@ -19,7 +20,6 @@ from src.app.schemas.out import (
     VendorUpdateOut,
     VendorListOut,
 )
-from typing import Union
 
 router = APIRouter(
     tags=["Vendors"],
@@ -42,7 +42,7 @@ async def create_vendor(
 async def get_vendor_list(
     current_user=Depends(AuthenticationRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
-) -> Union[VendorListOut, None]:
+) -> Optional[List[VendorListOut]]:
     """List of a users vendor requests."""
     return await vendor_controller.retrieve(owner_id=current_user.id, many=True)
 
@@ -53,9 +53,11 @@ async def get_vendor_requests(
     _=Depends(AuthenticationRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
     status: VendorStatus = VendorStatus.PENDING,
-) -> Union[VendorListOut, None]:
+) -> Optional[List[VendorListOut]]:
     """List of all [pending] vendor requests. (can be filtered by status in args)"""
-    return await vendor_controller.retrieve(status=status, many=True)
+    return await vendor_controller.retrieve(
+        status=status, many=True, join_fields=["owner"]
+    )
 
 
 @router.get("/{vendor_uuid}", status_code=status.HTTP_200_OK)
@@ -64,7 +66,9 @@ async def get_vendor(
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorRetrieveOut:
     """Retrieve a vendor if exists."""
-    return await vendor_controller.get_by_uuid(vendor_uuid)
+    return await vendor_controller.get_by_uuid(
+        vendor_uuid, join_fields=["owner", "reviewer"]
+    )
 
 
 @router.put("/{vendor_uuid}", status_code=status.HTTP_200_OK)

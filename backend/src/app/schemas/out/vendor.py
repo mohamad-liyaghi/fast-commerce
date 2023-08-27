@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Optional, List
+from pydantic import BaseModel
 from src.app.schemas.base import VendorBaseOut, UserBase
 
 
@@ -21,4 +22,5 @@ class VendorUpdateStatusOut(VendorBaseOut):
     pass
 
 
-VendorListOut = List[VendorRetrieveOut]
+class VendorListOut(VendorBaseOut):
+    pass

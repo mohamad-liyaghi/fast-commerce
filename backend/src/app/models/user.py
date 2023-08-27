@@ -23,20 +23,15 @@ class User(Base):
         "Vendor",
         back_populates="owner",
         foreign_keys="Vendor.owner_id",
-        lazy="selectin",
     )
     approved_vendors = relationship(
         "Vendor", back_populates="reviewer", foreign_keys="Vendor.reviewer_id"
     )
+    products = relationship(
+        "Product",
+        back_populates="user",
+        foreign_keys="Product.user_id",
+    )
 
     def __repr__(self):
         return f"<User {self.email}>"
-
-    async def get_accepted_vendor(self) -> Union[Vendor, None]:
-        """
-        Returns the accepted vendor associated with the user
-        """
-        accepted_vendor = filter(
-            lambda vendor: vendor.status == VendorStatus.ACCEPTED, self.vendors
-        )
-        return next(accepted_vendor, None)
