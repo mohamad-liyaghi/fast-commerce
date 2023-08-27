@@ -1,5 +1,6 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
+from typing import List, Optional
 from src.core.factory import Factory
 from src.core.dependencies import AuthenticationRequired, VendorRequired
 from src.app.controllers import ProductController
@@ -27,5 +28,5 @@ async def create_product(
 @router.get("/", status_code=status.HTTP_200_OK)
 async def get_product_list(
     product_controller: ProductController = Depends(Factory.get_product_controller),
-) -> ProductListOut:
+) -> Optional[List[ProductListOut]]:
     return await product_controller.list()  # TODO: add order

@@ -1,6 +1,6 @@
 from uuid import UUID
 from datetime import datetime
-from typing import List, Optional
+from pydantic import BaseModel
 from src.app.schemas.base import BaseProductCreate, BaseProduct
 
 
@@ -9,5 +9,5 @@ class ProductCreateOut(BaseProductCreate):
     created_at: datetime
 
 
-ProductListOut = Optional[List[BaseProduct]]
-# TODO: Add uuid for this
+class ProductListOut(BaseModel):
+    uuid: UUID
