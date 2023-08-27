@@ -58,7 +58,6 @@ class TestCreateProductRoute:
         Test that an accepted vendor can create a product
         """
         response = await authorized_client.post(self.url, json=self.data)
-        print(response.json())
         assert response.status_code == status.HTTP_201_CREATED
 
     @pytest.mark.asyncio

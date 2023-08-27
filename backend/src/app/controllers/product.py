@@ -29,3 +29,17 @@ class ProductController(BaseController):
             )
 
         return await super().update(product, **data)
+
+    async def delete(self, uuid: UUID, request_user: User):
+        """
+        Delete a product.
+        """
+        product = await self.get_by_uuid(uuid=uuid)
+
+        if product.user_id != request_user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not allowed to delete this product.",
+            )
+
+        return await super().delete(product)

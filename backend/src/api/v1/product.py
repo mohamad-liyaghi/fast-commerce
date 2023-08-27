@@ -64,3 +64,13 @@ async def update_product(
         request_user=current_user,
         data=request.model_dump(),
     )
+
+
+@router.delete("/{product_uuid}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_product(
+    product_uuid: UUID,
+    current_user: AuthenticationRequired = Depends(AuthenticationRequired()),
+    product_controller: ProductController = Depends(Factory.get_product_controller),
+) -> None:
+    """Delete a product."""
+    await product_controller.delete(uuid=product_uuid, request_user=current_user)

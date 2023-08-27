@@ -54,7 +54,7 @@ class BaseRepository(BaseCacheRepository):
         :param instance: instance to delete
         :return: None
         """
-        self.database.delete(instance)
+        await self.database.delete(instance)
         await self.database.commit()
 
     async def retrieve(
