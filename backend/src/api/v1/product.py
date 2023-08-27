@@ -5,8 +5,13 @@ from uuid import UUID
 from src.core.factory import Factory
 from src.core.dependencies import AuthenticationRequired, VendorRequired
 from src.app.controllers import ProductController
-from src.app.schemas.in_ import ProductCreateIn
-from src.app.schemas.out import ProductCreateOut, ProductListOut, ProductRetrieveOut
+from src.app.schemas.in_ import ProductCreateIn, ProductUpdateIn
+from src.app.schemas.out import (
+    ProductCreateOut,
+    ProductListOut,
+    ProductRetrieveOut,
+    ProductUpdateOut,
+)
 
 
 router = APIRouter(
@@ -43,4 +48,19 @@ async def retrieve_product(
     """Retrieve a product."""
     return await product_controller.get_by_uuid(
         uuid=product_uuid, join_fields=["vendor", "user"]
+    )
+
+
+@router.put("/{product_uuid}", status_code=status.HTTP_200_OK)
+async def update_product(
+    product_uuid: UUID,
+    request: ProductUpdateIn,
+    current_user: AuthenticationRequired = Depends(AuthenticationRequired()),
+    product_controller: ProductController = Depends(Factory.get_product_controller),
+) -> ProductUpdateOut:
+    """Update a product."""
+    return await product_controller.update(
+        uuid=product_uuid,
+        request_user=current_user,
+        data=request.model_dump(),
     )

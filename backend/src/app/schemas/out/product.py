@@ -9,6 +9,10 @@ class ProductCreateOut(BaseProductSpecs):
     created_at: datetime
 
 
+class ProductUpdateOut(BaseProductSpecs):
+    uuid: UUID
+
+
 class ProductRetrieveOut(BaseProductSpecs):
     uuid: UUID
     created_at: datetime
