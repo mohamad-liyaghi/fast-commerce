@@ -8,5 +8,5 @@ class BaseProduct(BaseModel):
     price: int = Field(gt=0, lt=1_000_000)
 
 
-class BaseProductCreate(BaseProduct):
+class BaseProductSpecs(BaseProduct):
     specs: Dict[str, Any] = Field(default={})

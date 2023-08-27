@@ -1,6 +1,6 @@
 from .user import UserBaseEmail, UserBasePassword, UserBase, CurrentUser
 from .vendor import VendorBase, VendorBaseOut
-from .product import BaseProduct, BaseProductCreate
+from .product import BaseProduct, BaseProductSpecs
 
 vendors = [
     "VendorBase",
@@ -16,7 +16,7 @@ users = [
 
 products = [
     "BaseProduct",
-    "BaseProductCreate",
+    "BaseProductSpecs",
 ]
 
 __all__ = vendors + users + products
