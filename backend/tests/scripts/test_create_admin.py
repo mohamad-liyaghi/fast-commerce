@@ -1,5 +1,5 @@
 import pytest
-from tests.utils import create_fake_credential
+from tests.utils.mocking import create_fake_credential
 from tests.shared.db import get_test_db
 from scripts.create_admin import create_admin
 

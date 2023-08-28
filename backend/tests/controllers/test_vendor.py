@@ -12,7 +12,7 @@ class TestVendorController:
             "description": "Test Description",
             "domain": "test.com",
             "address": "Test Address",
-        }  # TODO: Update this information with faker
+        }
         self.controller = vendor_controller
 
     @pytest.mark.asyncio

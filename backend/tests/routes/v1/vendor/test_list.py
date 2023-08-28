@@ -1,7 +1,5 @@
 import pytest
-from uuid import uuid4
 from fastapi import status
-from httpx import AsyncClient
 
 
 @pytest.mark.asyncio

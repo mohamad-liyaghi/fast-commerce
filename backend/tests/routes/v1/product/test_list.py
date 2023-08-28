@@ -1,11 +1,6 @@
 from fastapi import status
-from faker import Faker
-from datetime import datetime, timedelta
 import pytest
 from httpx import AsyncClient
-from src.app.models import VendorStatus
-
-faker = Faker()  # TODO: Create a single instance of faker
 
 
 class TestCreateProductRoute:
@@ -27,3 +22,4 @@ class TestCreateProductRoute:
         response = await client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == 1
+        assert product is not None

@@ -1,17 +1,14 @@
 import pytest
-from tests.utils import create_fake_credential
+from tests.utils.mocking import create_fake_credential
 from src.app.repositories import BaseRepository
 from src.app.models import User
 
 
 class TestBaseRepository:
-
     @pytest.fixture(autouse=True)
     def setup(self, get_test_db, get_test_redis):
         self.repository = BaseRepository(
-            model=User,
-            database=get_test_db,
-            redis=get_test_redis
+            model=User, database=get_test_db, redis=get_test_redis
         )
 
     @pytest.mark.asyncio
@@ -27,7 +24,7 @@ class TestBaseRepository:
 
     @pytest.mark.asyncio
     async def test_update(self, user):
-        new_first_name = 'new name'
+        new_first_name = "new name"
         result = await self.repository.update(user, first_name=new_first_name)
         assert result.first_name == new_first_name
 

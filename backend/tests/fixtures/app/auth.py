@@ -1,10 +1,7 @@
 import pytest_asyncio
-from faker import Faker
 from src.app.models import User
 from src.app.controllers import AuthController
 from src.app.repositories import UserRepository
-
-faker = Faker()
 
 
 @pytest_asyncio.fixture
@@ -14,8 +11,6 @@ async def auth_controller(get_test_db, get_test_redis):
     """
     return AuthController(
         repository=UserRepository(
-            model=User,
-            database=get_test_db,
-            redis=get_test_redis
+            model=User, database=get_test_db, redis=get_test_redis
         )
     )

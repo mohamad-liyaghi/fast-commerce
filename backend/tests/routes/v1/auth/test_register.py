@@ -2,20 +2,19 @@ import pytest
 import pytest_asyncio
 from fastapi import status
 from httpx import AsyncClient
-from tests.utils import create_fake_credential
+from tests.utils.mocking import create_fake_credential
 
 
 @pytest.mark.asyncio
 class TestRegisterRoute:
-
     @pytest_asyncio.fixture(autouse=True)
     async def setup_method(self, client: AsyncClient) -> None:
         credential = await create_fake_credential()
         self.data = {
-            "email": credential['email'],
-            "first_name": credential['first_name'],
-            "last_name": credential['last_name'],
-            "password": credential['password'],
+            "email": credential["email"],
+            "first_name": credential["first_name"],
+            "last_name": credential["last_name"],
+            "password": credential["password"],
         }
         self.client = client
         self.url = "v1/auth/register"
@@ -34,7 +33,7 @@ class TestRegisterRoute:
 
     @pytest.mark.asyncio
     async def test_register_existing_email(self, user):
-        self.data['email'] = user.email
+        self.data["email"] = user.email
         response = await self.client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_409_CONFLICT
 

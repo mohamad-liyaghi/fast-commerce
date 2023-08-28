@@ -2,6 +2,7 @@ import pytest_asyncio
 from src.app.models import Product
 from src.app.controllers import ProductController
 from src.app.repositories import ProductRepository
+from tests.utils.mocking import create_product_credential
 
 
 @pytest_asyncio.fixture
@@ -21,15 +22,11 @@ async def product(product_controller, accepted_vendor, user):
     """
     Create and return a product
     """
+    credentials = await create_product_credential()
     product = await product_controller.create(
         request_user=user,
         request_vendor=accepted_vendor,
-        data={
-            "title": "Test Product",
-            "description": "Test Product Description",
-            "price": 100,
-            "specs": {"test": "test"},
-        },
+        data={**credentials},
     )
 
     return product

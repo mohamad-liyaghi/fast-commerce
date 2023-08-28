@@ -1,9 +1,8 @@
 import pytest
-from tests.utils import create_fake_credential
+from tests.utils.mocking import create_fake_credential
 
 
 class TestBaseController:
-
     @pytest.fixture(autouse=True)
     def setup(self, user_controller):
         # NOTE: We can use any controller cuz
@@ -33,8 +32,10 @@ class TestBaseController:
 
     @pytest.mark.asyncio
     async def test_update(self, user):
-        new_first_name = 'new name'
-        result = await self.controller.repository.update(user, first_name=new_first_name)
+        new_first_name = "new name"
+        result = await self.controller.repository.update(
+            user, first_name=new_first_name
+        )
         assert result.first_name == new_first_name
 
     @pytest.mark.asyncio
@@ -55,7 +56,7 @@ class TestBaseController:
     @pytest.mark.asyncio
     async def test_list_password_is_hashed(self):
         credential = await create_fake_credential()
-        password = credential.get('password')
+        password = credential.get("password")
 
         user = await self.controller.create(**credential)
         assert user.password != password
@@ -65,7 +66,7 @@ class TestBaseController:
         """
         When user updates its password, the new pass gets hashed
         """
-        password = '1234'
+        password = "1234"
         result = await self.controller.repository.update(user, password=password)
 
         assert not result.password == password
