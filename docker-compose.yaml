@@ -31,8 +31,8 @@ services:
     image: postgres:15.4-alpine
     env_file:
       - ./backend/env/.env
-    ports:
-      - "5432:5432"
+    expose:
+      - "5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
@@ -48,8 +48,8 @@ services:
   postgres-test:
     container_name: 'fast-commerce-postgres-test'
     image: postgres:15.4-alpine
-    ports:
-      - "5433:5432"
+    expose:
+      - "5432"
     environment:
       - 'POSTGRES_HOST_AUTH_METHOD=trust'
     networks:
@@ -58,8 +58,8 @@ services:
   redis:
     container_name: 'fast-commerce-redis'
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"
     volumes:
         - redis-data:/data
     networks:
@@ -68,8 +68,8 @@ services:
   redis-test:
     container_name: 'fast-commerce-redis-test'
     image: redis:7-alpine
-    ports:
-      - "6380:6379"
+    expose:
+      - "6379"
     networks:
       - main
 
@@ -78,7 +78,6 @@ services:
     container_name: 'fast-commerce-smtp4dev'
     ports:
       - "5000:80"
-      - "2525:25"
     restart: always
     networks:
       - main
