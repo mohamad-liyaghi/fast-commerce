@@ -1,6 +1,8 @@
 from fastapi import HTTPException, status
 import json
+from typing import Optional, List
 from src.core.utils import format_key
+from src.app.schemas.out import CartListOut
 from src.app.controllers.base import BaseController
 from src.app.controllers import ProductController
 from src.app.models import User
@@ -14,7 +16,7 @@ class CartController(BaseController):
 
     async def add_item(
         self, product_controller: ProductController, request_user: User, **kwargs
-    ):
+    ) -> None:
         """
         Add a new product to cart
         """
@@ -47,3 +49,20 @@ class CartController(BaseController):
             await self.create_cache(
                 key=cache_key, data={str(product.uuid): json.dumps(cart_product)}
             )
+
+    async def get_items(self, request_user: User) -> Optional[List[CartListOut]]:
+        cache_key = await format_key(
+            key=settings.CACHE_CART_KEY, user_uuid=request_user.uuid
+        )
+        result = await self.get_cache(key=cache_key)
+
+        if result:
+            items = [
+                CartListOut(
+                    product_uuid=product_uuid, metadata=json.loads(product_metadata)
+                )
+                for product_uuid, product_metadata in result.items()
+            ]
+            return items
+
+        return

@@ -1,9 +1,11 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
+from typing import List, Optional
 from src.core.factory import Factory
 from src.core.dependencies import AuthenticationRequired
 from src.app.controllers import CartController, ProductController
 from src.app.schemas.in_ import CartAddIn
+from src.app.schemas.out import CartListOut
 
 
 router = APIRouter(
@@ -24,3 +26,11 @@ async def add_cart_item(
         **request.model_dump()
     )
     return {"ok": "added"}
+
+
+@router.get("/", status_code=status.HTTP_200_OK)
+async def get_cart_items(
+    current_user=Depends(AuthenticationRequired()),
+    cart_controller: CartController = Depends(Factory.get_cart_controller),
+) -> Optional[List[CartListOut]]:
+    return await cart_controller.get_items(request_user=current_user)
