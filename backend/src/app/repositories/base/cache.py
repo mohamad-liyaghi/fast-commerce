@@ -28,8 +28,11 @@ class BaseCacheRepository:
             result = await self.client.hgetall(key)
         return result
 
-    async def delete_cache(self, key: str):
+    async def delete_cache(self, key: str, field: str | None = None):
         """
         Delete user from cache.
         """
-        await self.client.hdel(key)
+        if field:
+            await self.client.hdel(key, field)
+        else:
+            await self.client.delete(key)

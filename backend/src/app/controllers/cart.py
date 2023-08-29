@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 import json
+from uuid import UUID
 from typing import Optional, List
 from src.core.utils import format_key
 from src.app.schemas.out import CartListOut
@@ -66,3 +67,20 @@ class CartController(BaseController):
             return items
 
         return
+
+    async def delete_item(self, request_user: User, product_uuid: UUID) -> None:
+        """
+        Delete a product from cart
+        """
+        cache_key = await format_key(
+            key=settings.CACHE_CART_KEY, user_uuid=request_user.uuid
+        )
+
+        cart_product = await self.get_cache(key=cache_key, field=str(product_uuid))
+        if not cart_product:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Product not found in cart",
+            )
+
+        await self.delete_cache(key=cache_key, field=str(product_uuid))
