@@ -15,7 +15,8 @@ class BaseCacheRepository:
         Create a new record in cache.
         """
         await self.client.hset(key, mapping=data)
-        await self.client.expire(key, ttl)
+        if ttl:
+            await self.client.expire(key, ttl)
 
     async def get_cache(self, key: str, field: str | None = None):
         """
