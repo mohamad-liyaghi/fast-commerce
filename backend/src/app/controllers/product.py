@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from uuid import UUID
 from src.app.models import User
-from src.app.controllers.base import BaseController
+from src.app.controllers import BaseController
 
 
 class ProductController(BaseController):
