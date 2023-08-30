@@ -53,3 +53,9 @@ class TestAddCartItemRoute:
         self.data["product_uuid"] = str(uuid4())
         response = await admin_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @pytest.mark.asyncio
+    async def test_add_more_than_10_items(self, admin_client, cart):
+        self.data["quantity"] = 9
+        response = await admin_client.post(self.url, json=self.data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST

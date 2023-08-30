@@ -2,6 +2,7 @@ from fastapi import HTTPException, status
 import json
 from uuid import UUID
 from typing import Optional, List
+from datetime import datetime
 from src.core.utils import format_key
 from src.app.schemas.out import CartListOut
 from src.app.controllers.base import BaseController
@@ -10,8 +11,6 @@ from src.app.models import User
 from src.core.configs import settings
 
 
-# TODO: Add date time.now()
-# TODO: Fix the bug for incrementing()
 class CartController(BaseController):
     """
     This controller is responsible for saving and doing cart related operations in cache
@@ -42,15 +41,33 @@ class CartController(BaseController):
         if cart_product:
             # Increase the quantity of the product if already exist
             cart_product = json.loads(cart_product)
+
             cart_product["quantity"] += kwargs.get("quantity")
+
+            if cart_product["quantity"] >= 10:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="You can't add more than 10 products to cart",
+                )
+
             await self.create_cache(
-                key=cache_key, data={str(product.uuid): json.dumps(cart_product)}
+                key=cache_key,
+                data={
+                    str(product.uuid): json.dumps(cart_product),
+                    "created_at": str(datetime.now()),
+                },
             )
         else:
             # Create a new cart product if not exist
-            cart_product = {"quantity": kwargs.get("quantity")}
+            cart_product = {
+                "quantity": kwargs.get("quantity"),
+                "created_at": str(datetime.now()),
+            }
             await self.create_cache(
-                key=cache_key, data={str(product.uuid): json.dumps(cart_product)}
+                key=cache_key,
+                data={
+                    str(product.uuid): json.dumps(cart_product),
+                },
             )
 
     async def get_items(self, request_user: User) -> Optional[List[CartListOut]]:

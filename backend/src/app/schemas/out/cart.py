@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from uuid import UUID
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 
 class CartListOut(BaseModel):
