@@ -5,7 +5,7 @@ from uuid import UUID
 from src.core.factory import Factory
 from src.core.dependencies import AuthenticationRequired
 from src.app.controllers import CartController, ProductController
-from src.app.schemas.in_ import CartAddIn
+from src.app.schemas.in_ import CartAddIn, CartUpdateIn
 from src.app.schemas.out import CartListOut
 
 
@@ -35,6 +35,19 @@ async def get_cart_items(
     cart_controller: CartController = Depends(Factory.get_cart_controller),
 ) -> Optional[List[CartListOut]]:
     return await cart_controller.get_items(request_user=current_user)
+
+
+@router.put("/{product_uuid}", status_code=status.HTTP_200_OK)
+async def update_cart_item(
+    product_uuid: UUID,
+    request: CartUpdateIn,
+    current_user=Depends(AuthenticationRequired()),
+    cart_controller: CartController = Depends(Factory.get_cart_controller),
+) -> dict:
+    await cart_controller.update_item(
+        request_user=current_user, product_uuid=product_uuid, **request.model_dump()
+    )
+    return {"ok": "updated"}
 
 
 @router.delete("/{product_uuid}", status_code=status.HTTP_204_NO_CONTENT)

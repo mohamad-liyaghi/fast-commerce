@@ -10,6 +10,8 @@ from src.app.models import User
 from src.core.configs import settings
 
 
+# TODO: Add date time.now()
+# TODO: Fix the bug for incrementing()
 class CartController(BaseController):
     """
     This controller is responsible for saving and doing cart related operations in cache
@@ -67,6 +69,29 @@ class CartController(BaseController):
             return items
 
         return
+
+    async def update_item(
+        self, request_user: User, product_uuid: UUID, **kwargs
+    ) -> None:
+        """
+        Update a product in cart
+        """
+        cache_key = await format_key(
+            key=settings.CACHE_CART_KEY, user_uuid=request_user.uuid
+        )
+        cart_product = await self.get_cache(key=cache_key, field=str(product_uuid))
+
+        if not cart_product:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Product not found in cart",
+            )
+
+        cart_product = json.loads(cart_product)
+        cart_product["quantity"] = kwargs.get("quantity")
+        await self.create_cache(
+            key=cache_key, data={str(product_uuid): json.dumps(cart_product)}
+        )
 
     async def delete_item(self, request_user: User, product_uuid: UUID) -> None:
         """

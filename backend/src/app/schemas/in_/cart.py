@@ -1,7 +1,10 @@
-from pydantic import BaseModel, Field
 from uuid import UUID
+from src.app.schemas.base import CartBase
 
 
-class CartAddIn(BaseModel):
+class CartAddIn(CartBase):
     product_uuid: UUID
-    quantity: int = Field(1, ge=1, le=10)
+
+
+class CartUpdateIn(CartBase):
+    pass
