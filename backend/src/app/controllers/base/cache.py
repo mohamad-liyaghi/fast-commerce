@@ -1,8 +1,12 @@
+from typing import Any, Optional
+
+
 class BaseCacheController:
     """
     This controller is used to interact with cache.
     Also it is parent class for BaseController.
     """
+
     async def create_cache(self, key: str, data: dict, ttl: int = None):
         """
         Create a new record in cache.
@@ -16,8 +20,8 @@ class BaseCacheController:
         result = await self.repository.get_cache(key=key, field=field)
         return result
 
-    async def delete_cache(self, key: str):
+    async def delete_cache(self, key: str, field: Optional[Any] = None):
         """
         Delete user from cache.
         """
-        await self.repository.delete_cache(key=key)
+        await self.repository.delete_cache(key=key, field=field)

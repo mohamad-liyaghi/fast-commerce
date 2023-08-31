@@ -1,6 +1,7 @@
 from .user import UserBaseEmail, UserBasePassword, UserBase, CurrentUser
 from .vendor import VendorBase, VendorBaseOut
 from .product import BaseProduct, BaseProductSpecs
+from .cart import CartBase
 
 vendors = [
     "VendorBase",
@@ -19,4 +20,8 @@ products = [
     "BaseProductSpecs",
 ]
 
-__all__ = vendors + users + products
+cart = [
+    "CartBase",
+]
+
+__all__ = vendors + users + products + cart

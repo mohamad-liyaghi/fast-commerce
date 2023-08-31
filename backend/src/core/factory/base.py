@@ -4,8 +4,9 @@ from src.app.controllers import (
     AuthController,
     VendorController,
     ProductController,
+    CartController,
 )
-from src.app.repositories import UserRepository, VendorRepository
+from src.app.repositories import UserRepository, VendorRepository, CartRepository
 from src.app.models import User, Vendor, Product
 from src.core.database import get_db
 from src.core.redis import get_redis
@@ -59,3 +60,10 @@ class Factory:
         return ProductController(
             repository=VendorRepository(model=Product, database=db, redis=redis)
         )
+
+    @staticmethod
+    def get_cart_controller(redis: Depends = Depends(get_redis)) -> CartController:
+        """
+        Returns a CartController instance
+        """
+        return CartController(repository=CartRepository(redis_client=redis))

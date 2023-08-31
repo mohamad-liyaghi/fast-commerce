@@ -3,7 +3,7 @@ import pytest
 from httpx import AsyncClient
 
 
-class TestCreateProductRoute:
+class TestListProductRoute:
     @pytest.fixture(autouse=True)
     def setup_method(self) -> None:
         self.url = f"v1/product/"

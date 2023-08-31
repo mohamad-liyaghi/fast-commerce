@@ -2,6 +2,7 @@ from .auth import UserRegisterIn, UserVerifyIn, UserLoginIn
 from .profile import ProfileUpdateIn
 from .vendor import VendorCreateIn, VendorUpdateStatusIn, VendorUpdateIn
 from .product import ProductCreateIn, ProductUpdateIn
+from .cart import CartAddIn, CartUpdateIn
 
 auth = [
     "UserRegisterIn",
@@ -25,4 +26,9 @@ product = [
     "ProductUpdateIn",
 ]
 
-__all__ = auth + profile + vendor + product
+cart = [
+    "CartAddIn",
+    "CartUpdateIn",
+]
+
+__all__ = auth + profile + vendor + product + cart

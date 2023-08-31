@@ -6,6 +6,7 @@ class BaseCacheRepository:
     """
     This repository is responsible for all the cache operations
     """
+
     def __init__(self, redis_client: Redis):
         self.client = redis_client
 
@@ -14,9 +15,10 @@ class BaseCacheRepository:
         Create a new record in cache.
         """
         await self.client.hset(key, mapping=data)
-        await self.client.expire(key, ttl)
+        if ttl:
+            await self.client.expire(key, ttl)
 
-    async def get_cache(self, key: str, field: str|None = None):
+    async def get_cache(self, key: str, field: str | None = None):
         """
         Get user from cache.
         """
@@ -26,8 +28,11 @@ class BaseCacheRepository:
             result = await self.client.hgetall(key)
         return result
 
-    async def delete_cache(self, key: str):
+    async def delete_cache(self, key: str, field: str | None = None):
         """
         Delete user from cache.
         """
-        await self.client.hdel(key)
+        if field:
+            await self.client.hdel(key, field)
+        else:
+            await self.client.delete(key)
