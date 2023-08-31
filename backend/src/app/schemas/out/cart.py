@@ -1,8 +1,13 @@
 from pydantic import BaseModel
 from uuid import UUID
-from typing import Dict, Any, List
+from datetime import datetime
+
+
+class ItemMetaData(BaseModel):
+    quantity: int
+    created_at: datetime
 
 
 class CartListOut(BaseModel):
     product_uuid: UUID
-    metadata: Dict[str, Any]
+    metadata: ItemMetaData
