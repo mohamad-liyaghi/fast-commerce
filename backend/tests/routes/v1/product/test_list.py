@@ -23,3 +23,15 @@ class TestListProductRoute:
         assert response.status_code == status.HTTP_200_OK
         assert len(response.json()) == 1
         assert product is not None
+
+    @pytest.mark.asyncio
+    async def test_filter_title(self, product, authorized_client) -> None:
+        response = await authorized_client.get(self.url + f"?title={product.title}")
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.json()) == 1
+
+    @pytest.mark.asyncio
+    async def test_filter_title_not_exist(self, product, authorized_client) -> None:
+        response = await authorized_client.get(self.url + f"?title=not_exists")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.json() is None

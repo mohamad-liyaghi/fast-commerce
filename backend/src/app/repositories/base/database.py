@@ -1,4 +1,5 @@
-from sqlalchemy import and_, desc, select, asc
+from sqlalchemy import or_, desc, select, asc, cast, String, and_
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from typing import List, Optional
@@ -63,6 +64,7 @@ class BaseRepository(BaseCacheRepository):
         order_by: Optional[list] = None,
         many: bool = False,
         descending: bool = False,
+        contains: bool = False,
         limit: int = 100,
         skip: int = 0,
         **kwargs,
@@ -72,6 +74,7 @@ class BaseRepository(BaseCacheRepository):
         """
         query = await self._make_query(
             join_fields=join_fields,
+            contains=contains,
             order_by=order_by,
             descending=descending,
             limit=limit,
@@ -88,9 +91,10 @@ class BaseRepository(BaseCacheRepository):
         descending: bool = False,
         limit: int = 100,
         skip: int = 0,
+        contains: bool = False,
         **kwargs,
     ):
-        query = await self._make_filter(self.model, kwargs)
+        query = await self._make_filter(self.model, kwargs, contains)
         query = await self._make_joins(self.model, query, join_fields)
         query = await self._create_order_by(
             self.model, query, order_by, descending=descending
@@ -110,13 +114,24 @@ class BaseRepository(BaseCacheRepository):
             return result.scalars().first()
 
     @staticmethod
-    async def _make_filter(model, filters: dict) -> select:
+    async def _make_filter(model, filters: dict, contains: bool) -> select:
         """
         First generate a list of filters based on given parameters.
         Then apply filters to query.
         """
-        filters = [getattr(model, field) == value for field, value in filters.items()]
-        return select(model).where(and_(*filters))
+        # If contains is True, then use LIKE operator
+        if contains:
+            filter_conditions = [
+                cast(getattr(model, field), String).like(f"%{value}%")
+                for field, value in filters.items()
+            ]
+            return select(model).where(or_(*filter_conditions))
+
+        # Otherwise use equality operator
+        filter_conditions = [
+            getattr(model, field) == value for field, value in filters.items()
+        ]
+        return select(model).where(and_(*filter_conditions))
 
     @staticmethod
     async def _make_joins(model, query, join_fields: Optional[List[str]] = None):

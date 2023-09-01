@@ -70,3 +70,15 @@ class TestBaseController:
         result = await self.controller.repository.update(user, password=password)
 
         assert not result.password == password
+
+    @pytest.mark.asyncio
+    async def test_retrieve_contains(self, user):
+        email = user.email[:5]
+        result = await self.controller.retrieve(email=email, contains=True)
+        assert result
+
+    @pytest.mark.asyncio
+    async def test_retrieve_without_contain(self, user):
+        email = user.email[:5]
+        result = await self.controller.retrieve(email=email)
+        assert result is None

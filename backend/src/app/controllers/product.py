@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from uuid import UUID
+from typing import List, Optional
 from src.app.models import User
 from src.app.controllers import BaseController
 
@@ -43,3 +44,16 @@ class ProductController(BaseController):
             )
 
         return await super().delete(product)
+
+    async def retrieve_or_search(
+        self, title: Optional[str] = None, many: bool = False, **kwargs
+    ):
+        """
+        Retrieve or search for a product.
+        If title is not None, set as kwargs to filter it.
+        """
+
+        if title:
+            kwargs["title"] = title
+
+        return await super().retrieve(many=many, contains=True, **kwargs)

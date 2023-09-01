@@ -95,6 +95,7 @@ class BaseController(BaseCacheController):
         descending: bool = False,
         limit: int = 100,
         skip: int = 0,
+        contains: bool = False,
         **kwargs
     ):
         """
@@ -115,6 +116,7 @@ class BaseController(BaseCacheController):
             many=many,
             descending=descending,
             order_by=order_by,
+            contains=contains,
             **kwargs
         )
         return result if result else None
