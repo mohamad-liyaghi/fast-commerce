@@ -35,10 +35,10 @@ class TestBaseRepository:
 
     @pytest.mark.asyncio
     async def test_list(self):
-        result = await self.repository.list()
+        result = await self.repository.retrieve(many=True)
         assert result is not None
 
     @pytest.mark.asyncio
     async def test_empty_list(self):
-        result = await self.repository.list()
+        result = await self.repository.retrieve(many=True)
         assert not result

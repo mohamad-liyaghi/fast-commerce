@@ -37,7 +37,9 @@ async def get_product_list(
     product_controller: ProductController = Depends(Factory.get_product_controller),
 ) -> Optional[List[ProductListOut]]:
     """Get a list of products."""
-    return await product_controller.list()  # TODO: add order
+    return await product_controller.retrieve(
+        many=True, order_by=["created_at"], descending=True, limit=40
+    )
 
 
 @router.get("/{product_uuid}", status_code=status.HTTP_200_OK)

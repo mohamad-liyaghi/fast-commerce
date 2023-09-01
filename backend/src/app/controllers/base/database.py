@@ -90,30 +90,31 @@ class BaseController(BaseCacheController):
     async def retrieve(
         self,
         join_fields: Optional[List[str]] = None,
+        order_by: Optional[list] = None,
         many: bool = False,
-        last: bool = False,
+        descending: bool = False,
+        limit: int = 100,
+        skip: int = 0,
         **kwargs
     ):
         """
         Retrieve an instance of model
-        :param kwargs: filter parameters
         :param join_fields: fields to join
+        :param order_by: order by fields
         :param many: retrieve many instances
-        :param last: retrieve last instance
+        :param descending: descending order
+        :param limit: limit of instances
+        :param skip: offset of instances
+        :param kwargs: filter parameters
         :return: instance
         """
         result = await self.repository.retrieve(
-            join_fields, many=many, last=last, **kwargs
+            join_fields=join_fields,
+            limit=limit,
+            skip=skip,
+            many=many,
+            descending=descending,
+            order_by=order_by,
+            **kwargs
         )
-        return result if result else None
-
-    async def list(self, limit: int = 100, skip: int = 0, **kwargs):
-        """
-        List all instances of model
-        :param kwargs: filter parameters
-        :param limit: limit of instances
-        :param skip: skip instances
-        :return: instances
-        """
-        result = await self.repository.list(limit=limit, skip=skip, **kwargs)
         return result if result else None

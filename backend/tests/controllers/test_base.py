@@ -45,12 +45,12 @@ class TestBaseController:
 
     @pytest.mark.asyncio
     async def test_list(self, user):
-        result = await self.controller.list()
+        result = await self.controller.retrieve(many=True)
         assert result is not None
 
     @pytest.mark.asyncio
     async def test_empty_list(self):
-        result = await self.controller.list()
+        result = await self.controller.retrieve(many=True)
         assert result is None
 
     @pytest.mark.asyncio

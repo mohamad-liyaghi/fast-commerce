@@ -20,7 +20,7 @@ class VendorController(BaseController):
         """
 
         # Check if the user has a pending, accepted, or recently rejected vendor request
-        existing_vendor = await self.retrieve(owner_id=request_user.id, last=True)
+        existing_vendor = await self.retrieve(owner_id=request_user.id, descending=True)
 
         if existing_vendor:
             if existing_vendor.status == VendorStatus.PENDING:
