@@ -25,7 +25,9 @@ class Factory:
         Returns a UserController instance
         """
         return UserController(
-            repository=UserRepository(model=User, database=db, redis=redis)
+            repository=UserRepository(
+                model=User, database_session=db, redis_session=redis
+            )
         )
 
     @staticmethod
@@ -36,7 +38,9 @@ class Factory:
         Returns a UserController instance
         """
         return AuthController(
-            repository=UserRepository(model=User, database=db, redis=redis)
+            repository=UserRepository(
+                model=User, database_session=db, redis_session=redis
+            )
         )
 
     @staticmethod
@@ -47,7 +51,9 @@ class Factory:
         Returns a VendorController instance
         """
         return VendorController(
-            repository=VendorRepository(model=Vendor, database=db, redis=redis)
+            repository=VendorRepository(
+                model=Vendor, database_session=db, redis_session=redis
+            )
         )
 
     @staticmethod
@@ -58,7 +64,9 @@ class Factory:
         Returns a ProductController instance
         """
         return ProductController(
-            repository=VendorRepository(model=Product, database=db, redis=redis)
+            repository=VendorRepository(
+                model=Product, database_session=db, redis_session=redis
+            )
         )
 
     @staticmethod

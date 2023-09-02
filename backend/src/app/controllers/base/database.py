@@ -5,7 +5,7 @@ from src.app.repositories.base import BaseRepository
 from .cache import BaseCacheController
 
 
-class BaseController(BaseCacheController):
+class BaseDatabaseController:
     """
     Base controller class
     Methods:

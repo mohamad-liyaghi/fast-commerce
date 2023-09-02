@@ -8,7 +8,7 @@ class TestBaseRepository:
     @pytest.fixture(autouse=True)
     def setup(self, get_test_db, get_test_redis):
         self.repository = BaseRepository(
-            model=User, database=get_test_db, redis=get_test_redis
+            model=User, database_session=get_test_db, redis_session=get_test_redis
         )
 
     @pytest.mark.asyncio

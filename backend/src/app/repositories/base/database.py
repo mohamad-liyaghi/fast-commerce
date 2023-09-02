@@ -8,7 +8,7 @@ from src.core.database import Base
 from .cache import BaseCacheRepository
 
 
-class BaseRepository(BaseCacheRepository):
+class BaseDatabaseRepository:
     """
     Base repository class
     Methods:
@@ -19,10 +19,9 @@ class BaseRepository(BaseCacheRepository):
         list: List all instances of model
     """
 
-    def __init__(self, model: Base, database: AsyncSession, redis: Redis):
-        super().__init__(redis_client=redis)
+    def __init__(self, model: Base, db_session: AsyncSession):
         self.model = model
-        self.database = database  # Database session
+        self.session = db_session  # Database session
 
     async def create(self, **data):
         """
@@ -31,9 +30,9 @@ class BaseRepository(BaseCacheRepository):
         :return: created instance
         """
         instance = self.model(**data)
-        self.database.add(instance)
-        await self.database.commit()
-        await self.database.refresh(instance)
+        self.session.add(instance)
+        await self.session.commit()
+        await self.session.refresh(instance)
         return instance
 
     async def update(self, instance: Base, **data):
@@ -45,8 +44,8 @@ class BaseRepository(BaseCacheRepository):
         """
         for key, value in data.items():
             setattr(instance, key, value)
-        await self.database.commit()
-        await self.database.refresh(instance)
+        await self.session.commit()
+        await self.session.refresh(instance)
         return instance
 
     async def delete(self, instance: Base):
@@ -55,8 +54,8 @@ class BaseRepository(BaseCacheRepository):
         :param instance: instance to delete
         :return: None
         """
-        await self.database.delete(instance)
-        await self.database.commit()
+        await self.session.delete(instance)
+        await self.session.commit()
 
     async def retrieve(
         self,
@@ -82,7 +81,7 @@ class BaseRepository(BaseCacheRepository):
             **kwargs,
         )
 
-        return await self._execute_query(session=self.database, query=query, many=many)
+        return await self._execute_query(session=self.session, query=query, many=many)
 
     async def _make_query(
         self,
