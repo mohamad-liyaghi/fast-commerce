@@ -6,7 +6,7 @@ from httpx import AsyncClient
 class TestListProductRoute:
     @pytest.fixture(autouse=True)
     def setup_method(self) -> None:
-        self.url = f"v1/product/"
+        self.url = "v1/product/"
 
     @pytest.mark.asyncio
     async def test_empty_list(
@@ -32,6 +32,6 @@ class TestListProductRoute:
 
     @pytest.mark.asyncio
     async def test_filter_title_not_exist(self, product, authorized_client) -> None:
-        response = await authorized_client.get(self.url + f"?title=not_exists")
+        response = await authorized_client.get(self.url + "?title=not_exists")
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is None

@@ -55,6 +55,7 @@ python-dotenv==1.0.0
 python-jose==3.3.0
 redis==4.6.0
 rsa==4.9
+ruff==0.0.287
 six==1.16.0
 sniffio==1.3.0
 SQLAlchemy==2.0.19

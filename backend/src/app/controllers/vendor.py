@@ -16,7 +16,8 @@ class VendorController(BaseController):
         Rules:
         - A user can only have one pending vendor registration request.
         - A user can only have one accepted vendor registration.
-        - A user can only have one rejected vendor registration request in the last 10 days.
+        - A user can only have one rejected vendor registration request
+         in the last 10 days.
         """
 
         # Check if the user has a pending, accepted, or recently rejected vendor request

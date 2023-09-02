@@ -2,7 +2,6 @@ from fastapi import HTTPException, status
 from typing import Optional, List
 from uuid import UUID
 from src.app.repositories.base import BaseRepository
-from .cache import BaseCacheController
 
 
 class BaseDatabaseController:

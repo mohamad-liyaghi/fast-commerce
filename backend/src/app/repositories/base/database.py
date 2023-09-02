@@ -1,11 +1,8 @@
 from sqlalchemy import or_, desc, select, asc, cast, String, and_
-from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from typing import List, Optional
-from redis import Redis
 from src.core.database import Base
-from .cache import BaseCacheRepository
 
 
 class BaseDatabaseRepository:

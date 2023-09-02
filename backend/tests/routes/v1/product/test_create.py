@@ -7,7 +7,7 @@ from src.app.models import VendorStatus
 class TestCreateProductRoute:
     @pytest.fixture(autouse=True)
     def setup_method(self) -> None:
-        self.url = f"v1/product/"
+        self.url = "v1/product/"
 
     @pytest.mark.asyncio
     async def test_create_unauthorized(self, client):

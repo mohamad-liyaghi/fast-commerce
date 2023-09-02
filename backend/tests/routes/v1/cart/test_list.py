@@ -6,7 +6,7 @@ from httpx import AsyncClient
 class TestListCartRoute:
     @pytest.fixture(autouse=True)
     def setup_method(self) -> None:
-        self.url = f"v1/cart/"
+        self.url = "v1/cart/"
 
     @pytest.mark.asyncio
     async def test_list_unauthorized(self, client: AsyncClient) -> None:

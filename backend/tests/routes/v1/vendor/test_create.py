@@ -12,7 +12,7 @@ class TestCreateVendorRoute:
     @pytest.fixture(autouse=True)
     def setup_method(self, client: AsyncClient) -> None:
         self.client = client
-        self.url = f"v1/vendor/"
+        self.url = "v1/vendor/"
         self.data = {
             "name": faker.company(),
             "description": faker.paragraph(),

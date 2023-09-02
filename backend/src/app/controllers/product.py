@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from uuid import UUID
-from typing import List, Optional
+from typing import Optional
 from src.app.models import User
 from src.app.controllers import BaseController
 

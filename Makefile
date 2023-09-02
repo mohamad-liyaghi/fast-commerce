@@ -8,6 +8,8 @@ help:
 	@echo "  stop    - Stop the docker container."
 	@echo "  test    - Run the tests."
 	@echo "  admin   - Create an admin user."
+	@echo " ruff    - Run ruff check for backend code."
+
 
 
 build:
@@ -28,3 +30,6 @@ test:
 
 admin:
 	docker exec -it fast-commerce-backend python scripts/create_admin.py
+
+ruff:
+	docker exec -it fast-commerce-backend ruff check .
