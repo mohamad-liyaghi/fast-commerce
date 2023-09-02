@@ -6,7 +6,12 @@ from src.app.controllers import (
     ProductController,
     CartController,
 )
-from src.app.repositories import UserRepository, VendorRepository, CartRepository
+from src.app.repositories import (
+    UserRepository,
+    VendorRepository,
+    CartRepository,
+    AuthRepository,
+)
 from src.app.models import User, Vendor, Product
 from src.core.database import get_db
 from src.core.redis import get_redis
@@ -38,7 +43,7 @@ class Factory:
         Returns a UserController instance
         """
         return AuthController(
-            repository=UserRepository(
+            repository=AuthRepository(
                 model=User, database_session=db, redis_session=redis
             )
         )

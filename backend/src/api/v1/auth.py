@@ -20,8 +20,8 @@ async def register(
     auth_controller: AuthController = Depends(Factory().get_auth_controller),
 ) -> dict:
     """Register a new user."""
-    await auth_controller.register(data=request.model_dump())
-    return {"success": "user created, please verify your account."}
+    user = await auth_controller.register(data=request.model_dump())
+    return user
 
 
 @router.post("/verify", status_code=status.HTTP_200_OK)

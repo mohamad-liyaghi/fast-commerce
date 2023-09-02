@@ -2,6 +2,7 @@ import pytest
 from tests.utils.mocking import create_fake_credential
 from src.app.repositories import UserRepository
 from src.app.models import User
+from src.core.exceptions import UserAlreadyExistError
 
 
 class TestBaseRepository:
@@ -28,3 +29,11 @@ class TestBaseRepository:
         result = await self.repository.update(user, password=password)
 
         assert not result.password == password
+
+    @pytest.mark.asyncio
+    async def test_create_duplicate_user(self, user):
+        """
+        When user creates a duplicate user, it raises an exception
+        """
+        with pytest.raises(UserAlreadyExistError):
+            await self.repository.create(email=user.email)

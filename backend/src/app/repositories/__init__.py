@@ -3,6 +3,7 @@ from .base import BaseRepository
 from .vendor import VendorRepository
 from .product import ProductRepository
 from .cart import CartRepository
+from .auth import AuthRepository
 
 __all__ = [
     "UserRepository",
@@ -10,4 +11,5 @@ __all__ = [
     "VendorRepository",
     "ProductRepository",
     "CartRepository",
+    "AuthRepository",
 ]
