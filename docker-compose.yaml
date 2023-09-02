@@ -30,7 +30,7 @@ services:
     container_name: 'fast-commerce-postgres'
     image: postgres:15.4-alpine
     env_file:
-      - ./backend/env/.env
+      - ./backend/env/pg.env
     expose:
       - "5432"
     volumes:
@@ -96,7 +96,7 @@ services:
     depends_on:
       - backend
     env_file:
-      - ./backend/env/.env
+      - ./backend/env/celery.env
 
 networks:
     main:
