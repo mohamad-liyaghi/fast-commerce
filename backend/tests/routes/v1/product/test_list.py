@@ -10,9 +10,9 @@ class TestListProductRoute:
 
     @pytest.mark.asyncio
     async def test_empty_list(
-        self, client: AsyncClient, product, product_controller
+        self, client: AsyncClient, product, product_controller, user
     ) -> None:
-        await product_controller.repository.delete(product)
+        await product_controller.repository.delete(product, request_user=user)
         response = await client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is None

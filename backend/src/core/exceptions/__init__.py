@@ -15,6 +15,7 @@ from .vendor import (
 )
 
 from .product import ProductOwnerRequired, AcceptedVendorRequired
+from .cart import CartItemOwnerException, CartItemQuantityException, CartItemNotFound
 
 user_exceptions = [
     "UserAlreadyExistError",
@@ -34,5 +35,11 @@ vendor_exceptions = [
 
 product_exceptions = ["ProductOwnerRequired", "AcceptedVendorRequired"]
 
+cart_exceptions = [
+    "CartItemOwnerException",
+    "CartItemQuantityException",
+    "CartItemNotFound",
+]
 
-__all__ = user_exceptions + vendor_exceptions + product_exceptions
+
+__all__ = user_exceptions + vendor_exceptions + product_exceptions + cart_exceptions
