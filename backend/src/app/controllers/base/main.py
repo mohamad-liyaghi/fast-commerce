@@ -5,7 +5,7 @@ from .database import BaseDatabaseController
 
 class BaseController(BaseDatabaseController, BaseCacheController):
     """
-    Base controller class which handels both database and cache operations
+    Base controller class which handles both database and cache operations
     """
 
     def __init__(self, repository: BaseRepository):

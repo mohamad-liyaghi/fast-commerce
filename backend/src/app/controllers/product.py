@@ -28,7 +28,6 @@ class ProductController(BaseController):
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You are not allowed to update this product.",
             )
-
         return await super().update(product, **data)
 
     async def delete(self, uuid: UUID, request_user: User):

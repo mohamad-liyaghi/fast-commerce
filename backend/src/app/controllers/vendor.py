@@ -2,7 +2,14 @@ from fastapi import HTTPException, status
 from uuid import UUID
 from src.app.controllers.base import BaseController
 from src.app.models import User, VendorStatus
-from datetime import datetime, timedelta
+from src.app.models import Vendor
+from src.core.exceptions import (
+    AcceptedVendorExistsException,
+    PendingVendorExistsException,
+    RejectedVendorExistsException,
+    UpdateVendorDenied,
+    UpdateVendorStatusDenied,
+)
 
 
 class VendorController(BaseController):
@@ -10,7 +17,7 @@ class VendorController(BaseController):
     Controller for managing vendor registration and requests.
     """
 
-    async def create(self, request_user: User, **vendor_data):
+    async def create(self, request_user: User, **vendor_data) -> Vendor:
         """
         Create a new vendor registration for request_user.
         Rules:
@@ -20,51 +27,42 @@ class VendorController(BaseController):
          in the last 10 days.
         """
 
-        # Check if the user has a pending, accepted, or recently rejected vendor request
-        existing_vendor = await self.retrieve(owner_id=request_user.id, descending=True)
+        try:
+            return await super().create(request_user=request_user, **vendor_data)
 
-        if existing_vendor:
-            if existing_vendor.status == VendorStatus.PENDING:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="You already have a pending vendor registration request.",
-                )
-            elif existing_vendor.status == VendorStatus.ACCEPTED:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="You already have a vendor registered.",
-                )
-            elif (
-                existing_vendor.status == VendorStatus.REJECTED
-                and existing_vendor.reviewed_at > datetime.utcnow() - timedelta(days=10)
-            ):
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="""
-                    Your previous vendor registration request was rejected.
-                    Please try again after 10 days.
-                    """,
-                )
+        except PendingVendorExistsException:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="You already have a pending vendor registration.",
+            )
+        except AcceptedVendorExistsException:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="You already have an accepted vendor registration.",
+            )
+        except RejectedVendorExistsException:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="You already have a rejected vendor registration in the last 10 days.",
+            )
 
-        # Create a new vendor and return it
-        return await super().create(owner_id=request_user.id, **vendor_data)
-
-    async def update(self, vendor_uuid: UUID, request_user: User, **data):
+    async def update(self, vendor_uuid: UUID, request_user: User, **data) -> Vendor:
         vendor = await self.get_by_uuid(vendor_uuid)
-
-        if data.get("status") and not request_user.is_admin:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Only Admins can update vendor status.",
+        try:
+            return await super().update(
+                instance=vendor, request_user=request_user, **data
             )
 
-        if not data.get("status") and not request_user.id == vendor.owner_id:
+        except UpdateVendorStatusDenied:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="You cannot update others vendor record.",
+                detail="You are not allowed to update vendor status.",
             )
-
-        return await super().update(vendor, **data)
+        except UpdateVendorDenied:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not allowed to update this vendor.",
+            )
 
     async def retrieve_accepted_vendor(self, user: User):
         """

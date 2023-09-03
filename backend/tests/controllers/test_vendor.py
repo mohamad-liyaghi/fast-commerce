@@ -43,7 +43,9 @@ class TestVendorController:
         assert rejected_vendor.status == VendorStatus.REJECTED
         reviewed_at = datetime.utcnow() - timedelta(days=11)
         await self.controller.repository.update(
-            instance=rejected_vendor, reviewed_at=reviewed_at
+            instance=rejected_vendor,
+            reviewed_at=reviewed_at,
+            request_user=rejected_vendor.owner,
         )
         assert await self.controller.retrieve(many=True) is not None
 

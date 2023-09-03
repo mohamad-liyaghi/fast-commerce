@@ -54,7 +54,7 @@ class TestCreateVendorRoute:
     ):
         reviewed_at = datetime.utcnow() - timedelta(days=11)
         await vendor_controller.repository.update(
-            rejected_vendor, reviewed_at=reviewed_at
+            rejected_vendor, reviewed_at=reviewed_at, request_user=rejected_vendor.owner
         )
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_201_CREATED

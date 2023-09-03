@@ -11,6 +11,7 @@ from src.app.repositories import (
     VendorRepository,
     CartRepository,
     AuthRepository,
+    ProductRepository,
 )
 from src.app.models import User, Vendor, Product
 from src.core.database import get_db
@@ -69,7 +70,7 @@ class Factory:
         Returns a ProductController instance
         """
         return ProductController(
-            repository=VendorRepository(
+            repository=ProductRepository(
                 model=Product, database_session=db, redis_session=redis
             )
         )

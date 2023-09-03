@@ -6,6 +6,14 @@ from .user import (
     InvalidCredentialsError,
 )
 
+from .vendor import (
+    PendingVendorExistsException,
+    RejectedVendorExistsException,
+    AcceptedVendorExistsException,
+    UpdateVendorDenied,
+    UpdateVendorStatusDenied,
+)
+
 user_exceptions = [
     "UserAlreadyExistError",
     "UserPendingVerificationError",
@@ -14,4 +22,13 @@ user_exceptions = [
     "InvalidCredentialsError",
 ]
 
-__all__ = user_exceptions
+vendor_exceptions = [
+    "PendingVendorExistsException",
+    "RejectedVendorExistsException",
+    "AcceptedVendorExistsException",
+    "UpdateVendorDenied",
+    "UpdateVendorStatusDenied",
+]
+
+
+__all__ = user_exceptions + vendor_exceptions
