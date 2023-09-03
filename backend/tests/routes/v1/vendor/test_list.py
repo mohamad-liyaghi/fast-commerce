@@ -6,7 +6,7 @@ from fastapi import status
 class TestListVendorRoute:
     @pytest.fixture(autouse=True)
     def setup_method(self) -> None:
-        self.url = f"v1/vendor/"
+        self.url = "v1/vendor/"
 
     @pytest.mark.asyncio
     async def test_list_unauthorized(self, client):

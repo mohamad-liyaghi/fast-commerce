@@ -12,7 +12,7 @@ async def user_controller(get_test_db, get_test_redis):
     """
     return UserController(
         repository=UserRepository(
-            model=User, database=get_test_db, redis=get_test_redis
+            model=User, database_session=get_test_db, redis_session=get_test_redis
         )
     )
 

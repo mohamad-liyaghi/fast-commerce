@@ -9,7 +9,7 @@ from uuid import uuid4
 class TestAddCartItemRoute:
     @pytest.fixture(autouse=True)
     def setup_method(self, product) -> None:
-        self.url = f"v1/cart/"
+        self.url = "v1/cart/"
         self.product = product
         self.data = {
             "product_uuid": str(self.product.uuid),

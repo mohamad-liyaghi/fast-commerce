@@ -6,7 +6,13 @@ from src.app.controllers import (
     ProductController,
     CartController,
 )
-from src.app.repositories import UserRepository, VendorRepository, CartRepository
+from src.app.repositories import (
+    UserRepository,
+    VendorRepository,
+    CartRepository,
+    AuthRepository,
+    ProductRepository,
+)
 from src.app.models import User, Vendor, Product
 from src.core.database import get_db
 from src.core.redis import get_redis
@@ -25,7 +31,9 @@ class Factory:
         Returns a UserController instance
         """
         return UserController(
-            repository=UserRepository(model=User, database=db, redis=redis)
+            repository=UserRepository(
+                model=User, database_session=db, redis_session=redis
+            )
         )
 
     @staticmethod
@@ -36,7 +44,9 @@ class Factory:
         Returns a UserController instance
         """
         return AuthController(
-            repository=UserRepository(model=User, database=db, redis=redis)
+            repository=AuthRepository(
+                model=User, database_session=db, redis_session=redis
+            )
         )
 
     @staticmethod
@@ -47,7 +57,9 @@ class Factory:
         Returns a VendorController instance
         """
         return VendorController(
-            repository=VendorRepository(model=Vendor, database=db, redis=redis)
+            repository=VendorRepository(
+                model=Vendor, database_session=db, redis_session=redis
+            )
         )
 
     @staticmethod
@@ -58,7 +70,9 @@ class Factory:
         Returns a ProductController instance
         """
         return ProductController(
-            repository=VendorRepository(model=Product, database=db, redis=redis)
+            repository=ProductRepository(
+                model=Product, database_session=db, redis_session=redis
+            )
         )
 
     @staticmethod

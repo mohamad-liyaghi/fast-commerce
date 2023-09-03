@@ -11,8 +11,8 @@ class JWTHandler:
         """
         to_encode = data.copy()
 
-        expire_at = datetime.utcnow() + timedelta(minutes=20)
-        to_encode.update({"exp": expire_at, "user_uuid": data.get('user_uuid')})
+        expire_at = datetime.utcnow() + timedelta(settings.JWT_EXPIRATION_MINUETS)
+        to_encode.update({"exp": expire_at, "user_uuid": data.get("user_uuid")})
         encoded_jwt = jwt.encode(
             to_encode,
             settings.SECRET_KEY,

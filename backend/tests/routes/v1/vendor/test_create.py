@@ -12,7 +12,7 @@ class TestCreateVendorRoute:
     @pytest.fixture(autouse=True)
     def setup_method(self, client: AsyncClient) -> None:
         self.client = client
-        self.url = f"v1/vendor/"
+        self.url = "v1/vendor/"
         self.data = {
             "name": faker.company(),
             "description": faker.paragraph(),
@@ -54,7 +54,7 @@ class TestCreateVendorRoute:
     ):
         reviewed_at = datetime.utcnow() - timedelta(days=11)
         await vendor_controller.repository.update(
-            rejected_vendor, reviewed_at=reviewed_at
+            rejected_vendor, reviewed_at=reviewed_at, request_user=rejected_vendor.owner
         )
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_201_CREATED

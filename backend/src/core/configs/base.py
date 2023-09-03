@@ -1,36 +1,80 @@
-from pydantic import BaseConfig
-from decouple import Config, RepositoryEnv
-
-env = Config(RepositoryEnv("env/.env"))
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseConfig):
-    DEBUG: int = 0
-    env: env = env
-    POSTGRES_URL: str = (
-        "postgresql+asyncpg://"
-        f'{env.get("POSTGRES_USER")}:{env.get("POSTGRES_PASSWORD")}'
-        f'@{env.get("POSTGRES_HOST")}/'
-        f'{env.get("POSTGRES_DB")}'
+class BaseConfig(BaseSettings):
+    """
+    Base configuration class which loads environment variables from .env files.
+    """
+
+    model_config = SettingsConfigDict(
+        env_file=(
+            "env/cache.env",
+            "env/celery.env",
+            "env/jwt.env",
+            "env/mail.env",
+            "env/pg.env",
+            "env/redis.env",
+        ),
     )
-    TEST_POSTGRES_URL: str = (
-        "postgresql+asyncpg://"
-        f"{env.get('TEST_DB_USER')}:{env.get('TEST_DB_PASSWORD')}@"
-        f"{env.get('TEST_DB_HOST')}/"
-        f"{env.get('TEST_DB_NAME')}"
-    )
-    REDIS_URL: str = env.get("REDIS_URL")
-    TEST_REDIS_URL: str = env.get("TEST_REDIS_URL")
-    SECRET_KEY: str = env.get("SECRET_KEY")
-    JWT_ALGORITHM: str = env.get("JWT_ALGORITHM")
 
-    # Celery:
-    CELERY_BROKER_URL: str = env.get("CELERY_BROKER_URL")
-    CELERY_RESULT_BACKEND: str = env.get("CELERY_RESULT_BACKEND")
 
-    # Cache Keys:
-    CACHE_USER_KEY: str = env.get("CACHE_USER_KEY")
-    CACHE_CART_KEY: str = env.get("CACHE_CART_KEY")
+class PostgresConfig(BaseConfig):
+    POSTGRES_URL: str
+    POSTGRES_DB: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_HOST: str
+
+
+class TestPostgresConfig(BaseConfig):
+    TEST_POSTGRES_URL: str
+    TEST_DB_NAME: str
+    TEST_DB_USER: str
+    TEST_DB_PASSWORD: str
+    TEST_DB_HOST: str
+
+
+class RedisConfig(BaseConfig):
+    REDIS_URL: str
+    TEST_REDIS_URL: str
+
+
+class CeleryConfig(BaseConfig):
+    CELERY_BROKER_URL: str
+    CELERY_RESULT_BACKEND: str
+
+
+class CacheConfig(BaseConfig):
+    CACHE_USER_KEY: str
+    CACHE_USER_TTL: int
+    CACHE_CART_KEY: str
+
+
+class JwtConfig(BaseConfig):
+    SECRET_KEY: str
+    JWT_ALGORITHM: str
+    JWT_EXPIRATION_MINUETS: int
+
+
+class MailConfig(BaseConfig):
+    MAIL_USERNAME: str
+    MAIL_PASSWORD: str
+    MAIL_FROM: str
+    MAIL_PORT: str
+    MAIL_SERVER: str
+    MAIL_FROM_NAME: str
+
+
+class Settings(
+    PostgresConfig,
+    TestPostgresConfig,
+    RedisConfig,
+    CeleryConfig,
+    CacheConfig,
+    JwtConfig,
+    MailConfig,
+):
+    pass
 
 
 settings: Settings = Settings()

@@ -1,5 +1,4 @@
 from redis import Redis
-from src.core.database import Base
 
 
 class BaseCacheRepository:

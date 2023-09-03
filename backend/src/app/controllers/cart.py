@@ -2,13 +2,17 @@ from fastapi import HTTPException, status
 import json
 from uuid import UUID
 from typing import Optional, List
-from datetime import datetime
 from src.core.utils import format_key
 from src.app.schemas.out import CartListOut
 from src.app.controllers.base import BaseController
 from src.app.controllers import ProductController
 from src.app.models import User
 from src.core.configs import settings
+from src.core.exceptions import (
+    CartItemOwnerException,
+    CartItemQuantityException,
+    CartItemNotFound,
+)
 
 
 class CartController(BaseController):
@@ -22,52 +26,22 @@ class CartController(BaseController):
         """
         Add a new product to cart
         """
-        # Get the product, if not exist raise 404
         product = await product_controller.get_by_uuid(uuid=kwargs.get("product_uuid"))
 
-        # Product user cannot add its own product to cart
-        if product.user_id == request_user.id:
+        try:
+            await self.repository.add_item(
+                product=product, request_user=request_user, **kwargs
+            )
+
+        except CartItemOwnerException:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="You can't add your own product to cart",
             )
-
-        cache_key = await format_key(
-            key=settings.CACHE_CART_KEY, user_uuid=request_user.uuid
-        )
-
-        cart_product = await self.get_cache(key=cache_key, field=str(product.uuid))
-
-        if cart_product:
-            # Increase the quantity of the product if already exist
-            cart_product = json.loads(cart_product)
-
-            cart_product["quantity"] += kwargs.get("quantity")
-
-            if cart_product["quantity"] >= 10:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="You can't add more than 10 products to cart",
-                )
-
-            await self.create_cache(
-                key=cache_key,
-                data={
-                    str(product.uuid): json.dumps(cart_product),
-                    "created_at": str(datetime.now()),
-                },
-            )
-        else:
-            # Create a new cart product if not exist
-            cart_product = {
-                "quantity": kwargs.get("quantity"),
-                "created_at": str(datetime.now()),
-            }
-            await self.create_cache(
-                key=cache_key,
-                data={
-                    str(product.uuid): json.dumps(cart_product),
-                },
+        except CartItemQuantityException:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="You can't add more than 10 products to cart",
             )
 
     async def get_items(self, request_user: User) -> Optional[List[CartListOut]]:
@@ -93,36 +67,28 @@ class CartController(BaseController):
         """
         Update a product in cart
         """
-        cache_key = await format_key(
-            key=settings.CACHE_CART_KEY, user_uuid=request_user.uuid
-        )
-        cart_product = await self.get_cache(key=cache_key, field=str(product_uuid))
+        try:
+            await self.repository.update_item(
+                product_uuid=product_uuid, request_user=request_user, **kwargs
+            )
 
-        if not cart_product:
+        except CartItemNotFound:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Product not found in cart",
             )
-
-        cart_product = json.loads(cart_product)
-        cart_product["quantity"] = kwargs.get("quantity")
-        await self.create_cache(
-            key=cache_key, data={str(product_uuid): json.dumps(cart_product)}
-        )
 
     async def delete_item(self, request_user: User, product_uuid: UUID) -> None:
         """
         Delete a product from cart
         """
-        cache_key = await format_key(
-            key=settings.CACHE_CART_KEY, user_uuid=request_user.uuid
-        )
+        try:
+            await self.repository.delete_item(
+                product_uuid=product_uuid, request_user=request_user
+            )
 
-        cart_product = await self.get_cache(key=cache_key, field=str(product_uuid))
-        if not cart_product:
+        except CartItemNotFound:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Product not found in cart",
             )
-
-        await self.delete_cache(key=cache_key, field=str(product_uuid))

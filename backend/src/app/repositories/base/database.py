@@ -1,13 +1,11 @@
-from sqlalchemy import and_, desc, select
+from sqlalchemy import or_, desc, select, asc, cast, String, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 from typing import List, Optional
-from redis import Redis
 from src.core.database import Base
-from .cache import BaseCacheRepository
 
 
-class BaseRepository(BaseCacheRepository):
+class BaseDatabaseRepository:
     """
     Base repository class
     Methods:
@@ -18,10 +16,9 @@ class BaseRepository(BaseCacheRepository):
         list: List all instances of model
     """
 
-    def __init__(self, model: Base, database: AsyncSession, redis: Redis):
-        super().__init__(redis_client=redis)
+    def __init__(self, model: Base, db_session: AsyncSession):
         self.model = model
-        self.database = database  # Database session
+        self.session = db_session  # Database session
 
     async def create(self, **data):
         """
@@ -30,9 +27,9 @@ class BaseRepository(BaseCacheRepository):
         :return: created instance
         """
         instance = self.model(**data)
-        self.database.add(instance)
-        await self.database.commit()
-        await self.database.refresh(instance)
+        self.session.add(instance)
+        await self.session.commit()
+        await self.session.refresh(instance)
         return instance
 
     async def update(self, instance: Base, **data):
@@ -44,8 +41,8 @@ class BaseRepository(BaseCacheRepository):
         """
         for key, value in data.items():
             setattr(instance, key, value)
-        await self.database.commit()
-        await self.database.refresh(instance)
+        await self.session.commit()
+        await self.session.refresh(instance)
         return instance
 
     async def delete(self, instance: Base):
@@ -54,73 +51,105 @@ class BaseRepository(BaseCacheRepository):
         :param instance: instance to delete
         :return: None
         """
-        await self.database.delete(instance)
-        await self.database.commit()
+        await self.session.delete(instance)
+        await self.session.commit()
 
     async def retrieve(
         self,
         join_fields: Optional[List[str]] = None,
+        order_by: Optional[list] = None,
         many: bool = False,
-        last: bool = False,
-        **kwargs
+        descending: bool = False,
+        contains: bool = False,
+        limit: int = 100,
+        skip: int = 0,
+        **kwargs,
     ):
         """
         Retrieve instance(s) of model based on given filters.
-        :param join_fields: List of fields to join
-        :param many: Retrieve many instances if True, else single instance
-        :param last: Retrieve the last instance if True (requires many=False)
-        :param kwargs: Filter parameters
-        :return: Instance(s)
         """
-        # Make filters
-        filters = await self._make_filter(self.model, kwargs)
-        # Apply filters
-        filtered_query = select(self.model).where(and_(*filters))
-        # make joins
-        query = await self._make_joins(self.model, filtered_query, join_fields)
-        if last:
-            # Order by id desc if last=True
-            query = query.order_by(desc(self.model.id))
+        query = await self._make_query(
+            join_fields=join_fields,
+            contains=contains,
+            order_by=order_by,
+            descending=descending,
+            limit=limit,
+            skip=skip,
+            **kwargs,
+        )
 
-        result = await self.database.execute(query)
-        if result:
-            return result.scalars().all() if many else result.scalars().first()
+        return await self._execute_query(session=self.session, query=query, many=many)
 
-    async def list(self, limit: int = 100, skip: int = 0, **kwargs):
-        """
-        List all instances of model
-        :param limit: limit of instances
-        :param skip: skip instances
-        :param kwargs: filter parameters
-        :return: list of instances
-        """
-        query = select(self.model).where(**kwargs).offset(skip).limit(limit)
-
-        result = await self.database.execute(query)
-        instances = result.scalars().all()
-        return instances
+    async def _make_query(
+        self,
+        join_fields: Optional[List[str]] = None,
+        order_by: Optional[list] = None,
+        descending: bool = False,
+        limit: int = 100,
+        skip: int = 0,
+        contains: bool = False,
+        **kwargs,
+    ):
+        query = await self._make_filter(self.model, kwargs, contains)
+        query = await self._make_joins(self.model, query, join_fields)
+        query = await self._create_order_by(
+            self.model, query, order_by, descending=descending
+        )
+        return query.offset(skip).limit(limit)
 
     @staticmethod
-    async def _make_filter(model, filters: dict) -> list:
+    async def _execute_query(session, query, many: bool = False):
         """
-        Generate filters for query based on given dictionary.
-        eg: {'id': 1, 'name': 'test'} -> [model.id == 1, model.name == 'test']
-        :param model: SQLAlchemy model
-        :param filters: Dictionary containing filter fields and values
-        :return: List of filter conditions
+        Execute query and return result.
         """
-        return [getattr(model, field) == value for field, value in filters.items()]
+        result = await session.execute(query)
+
+        if result:
+            if many:
+                return result.scalars().all()
+            return result.scalars().first()
+
+    @staticmethod
+    async def _make_filter(model, filters: dict, contains: bool) -> select:
+        """
+        First generate a list of filters based on given parameters.
+        Then apply filters to query.
+        """
+        # If contains is True, then use LIKE operator
+        if contains:
+            filter_conditions = [
+                cast(getattr(model, field), String).like(f"%{value}%")
+                for field, value in filters.items()
+            ]
+            return select(model).where(or_(*filter_conditions))
+
+        # Otherwise use equality operator
+        filter_conditions = [
+            getattr(model, field) == value for field, value in filters.items()
+        ]
+        return select(model).where(and_(*filter_conditions))
 
     @staticmethod
     async def _make_joins(model, query, join_fields: Optional[List[str]] = None):
         """
         Make joins for query based on given list of fields.
-        :param model: SQLAlchemy model
-        :param query: Query to apply joins
-        :param join_fields: List of fields to join
-        :return: Query with joins
         """
         if join_fields is not None:
             for field in join_fields:
                 query = query.options(selectinload(getattr(model, field)))
+        return query
+
+    @staticmethod
+    async def _create_order_by(
+        model, query, order_by: Optional[list] = None, descending: bool = False
+    ):
+        """
+        Create order by for query based on given list of fields.
+        """
+        if order_by is not None:
+            for field in order_by:
+                if descending:
+                    query = query.order_by(desc(getattr(model, field)))
+                else:
+                    query = query.order_by(asc(getattr(model, field)))
         return query

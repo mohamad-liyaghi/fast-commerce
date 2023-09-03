@@ -12,7 +12,7 @@ async def product_controller(get_test_db, get_test_redis):
     """
     return ProductController(
         repository=ProductRepository(
-            model=Product, database=get_test_db, redis=get_test_redis
+            model=Product, database_session=get_test_db, redis_session=get_test_redis
         )
     )
 

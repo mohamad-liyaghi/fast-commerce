@@ -1,7 +1,9 @@
 from fastapi import HTTPException, status
 from uuid import UUID
-from src.app.models import User
+from typing import Optional
+from src.app.models import User, Vendor, Product
 from src.app.controllers import BaseController
+from src.core.exceptions import ProductOwnerRequired, AcceptedVendorRequired
 
 
 class ProductController(BaseController):
@@ -9,37 +11,61 @@ class ProductController(BaseController):
     Controller for managing product related requests.
     """
 
-    async def create(self, request_user, request_vendor, data):
+    async def create(
+        self, request_user: User, request_vendor: Vendor, data: dict
+    ) -> Product:
         """
         Create a product.
         """
-        data.setdefault("vendor_id", request_vendor.id)
-        data.setdefault("user_id", request_user.id)
-        return await super().create(**data)
+        try:
+            return await super().create(
+                request_user=request_user, request_vendor=request_vendor, **data
+            )
+        except AcceptedVendorRequired:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not an accepted vendor.",
+            )
 
-    async def update(self, uuid: UUID, request_user: User, data):
+    async def update(self, uuid: UUID, request_user: User, data: dict) -> Product:
         """
         Update a product.
         """
         product = await self.get_by_uuid(uuid=uuid)
-        if product.user_id != request_user.id:
+        try:
+            return await super().update(
+                instance=product, request_user=request_user, data=data
+            )
+        except ProductOwnerRequired:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You are not allowed to update this product.",
             )
 
-        return await super().update(product, **data)
-
-    async def delete(self, uuid: UUID, request_user: User):
+    async def delete(self, uuid: UUID, request_user: User) -> None:
         """
         Delete a product.
         """
         product = await self.get_by_uuid(uuid=uuid)
 
-        if product.user_id != request_user.id:
+        try:
+            return await super().delete(instance=product, request_user=request_user)
+
+        except ProductOwnerRequired:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You are not allowed to delete this product.",
             )
 
-        return await super().delete(product)
+    async def retrieve_or_search(
+        self, title: Optional[str] = None, many: bool = False, **kwargs
+    ):
+        """
+        Retrieve or search for a product.
+        If title is not None, set as kwargs to filter it.
+        """
+
+        if title:
+            kwargs["title"] = title
+
+        return await super().retrieve(many=many, contains=True, **kwargs)

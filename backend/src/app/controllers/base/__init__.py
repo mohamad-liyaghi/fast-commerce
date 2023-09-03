@@ -1,3 +1,3 @@
-from .database import BaseController
+from .main import BaseController
 
 __all__ = ["BaseController"]

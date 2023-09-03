@@ -12,7 +12,7 @@ async def vendor_controller(get_test_db, get_test_redis):
     """
     return VendorController(
         repository=VendorRepository(
-            model=Vendor, database=get_test_db, redis=get_test_redis
+            model=Vendor, database_session=get_test_db, redis_session=get_test_redis
         )
     )
 

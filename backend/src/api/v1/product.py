@@ -34,10 +34,14 @@ async def create_product(
 
 @router.get("/", status_code=status.HTTP_200_OK)
 async def get_product_list(
+    title: Optional[str] = None,
     product_controller: ProductController = Depends(Factory.get_product_controller),
 ) -> Optional[List[ProductListOut]]:
     """Get a list of products."""
-    return await product_controller.list()  # TODO: add order
+
+    return await product_controller.retrieve_or_search(
+        many=True, order_by=["created_at"], descending=True, limit=40, title=title
+    )
 
 
 @router.get("/{product_uuid}", status_code=status.HTTP_200_OK)

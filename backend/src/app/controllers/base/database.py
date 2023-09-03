@@ -2,10 +2,9 @@ from fastapi import HTTPException, status
 from typing import Optional, List
 from uuid import UUID
 from src.app.repositories.base import BaseRepository
-from .cache import BaseCacheController
 
 
-class BaseController(BaseCacheController):
+class BaseDatabaseController:
     """
     Base controller class
     Methods:
@@ -78,42 +77,45 @@ class BaseController(BaseCacheController):
         result = await self.repository.update(instance, **data)
         return result
 
-    async def delete(self, instance):
+    async def delete(self, instance, **kwargs):
         """
         Delete an instance of model
         :param instance: instance to delete
         :return: None
         """
-        await self.repository.delete(instance)
+        await self.repository.delete(instance, **kwargs)
         return
 
     async def retrieve(
         self,
         join_fields: Optional[List[str]] = None,
+        order_by: Optional[list] = None,
         many: bool = False,
-        last: bool = False,
+        descending: bool = False,
+        limit: int = 100,
+        skip: int = 0,
+        contains: bool = False,
         **kwargs
     ):
         """
         Retrieve an instance of model
-        :param kwargs: filter parameters
         :param join_fields: fields to join
+        :param order_by: order by fields
         :param many: retrieve many instances
-        :param last: retrieve last instance
+        :param descending: descending order
+        :param limit: limit of instances
+        :param skip: offset of instances
+        :param kwargs: filter parameters
         :return: instance
         """
         result = await self.repository.retrieve(
-            join_fields, many=many, last=last, **kwargs
+            join_fields=join_fields,
+            limit=limit,
+            skip=skip,
+            many=many,
+            descending=descending,
+            order_by=order_by,
+            contains=contains,
+            **kwargs
         )
-        return result if result else None
-
-    async def list(self, limit: int = 100, skip: int = 0, **kwargs):
-        """
-        List all instances of model
-        :param kwargs: filter parameters
-        :param limit: limit of instances
-        :param skip: skip instances
-        :return: instances
-        """
-        result = await self.repository.list(limit=limit, skip=skip, **kwargs)
         return result if result else None

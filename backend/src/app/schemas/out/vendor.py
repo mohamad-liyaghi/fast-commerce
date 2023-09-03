@@ -1,6 +1,5 @@
 from datetime import datetime
-from typing import Optional, List
-from pydantic import BaseModel
+from typing import Optional
 from src.app.schemas.base import VendorBaseOut, UserBase
 
 

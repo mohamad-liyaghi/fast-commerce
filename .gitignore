@@ -1,4 +1,5 @@
 .idea/
+.ruff_cache
 pgdata/
 postgresql/
 __pycache__/

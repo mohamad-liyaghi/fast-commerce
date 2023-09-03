@@ -1,4 +1,5 @@
 from typing import Any, Optional
+from src.app.repositories.base import BaseRepository
 
 
 class BaseCacheController:
@@ -6,6 +7,9 @@ class BaseCacheController:
     This controller is used to interact with cache.
     Also it is parent class for BaseController.
     """
+
+    def __init__(self, repository: BaseRepository):
+        self.repository = repository
 
     async def create_cache(self, key: str, data: dict, ttl: int = None):
         """
