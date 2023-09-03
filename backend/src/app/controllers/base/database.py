@@ -77,13 +77,13 @@ class BaseDatabaseController:
         result = await self.repository.update(instance, **data)
         return result
 
-    async def delete(self, instance):
+    async def delete(self, instance, **kwargs):
         """
         Delete an instance of model
         :param instance: instance to delete
         :return: None
         """
-        await self.repository.delete(instance)
+        await self.repository.delete(instance, **kwargs)
         return
 
     async def retrieve(

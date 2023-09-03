@@ -14,6 +14,8 @@ from .vendor import (
     UpdateVendorStatusDenied,
 )
 
+from .product import ProductOwnerRequired, AcceptedVendorRequired
+
 user_exceptions = [
     "UserAlreadyExistError",
     "UserPendingVerificationError",
@@ -30,5 +32,7 @@ vendor_exceptions = [
     "UpdateVendorStatusDenied",
 ]
 
+product_exceptions = ["ProductOwnerRequired", "AcceptedVendorRequired"]
 
-__all__ = user_exceptions + vendor_exceptions
+
+__all__ = user_exceptions + vendor_exceptions + product_exceptions
