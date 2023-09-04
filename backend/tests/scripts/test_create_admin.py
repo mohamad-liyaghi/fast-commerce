@@ -1,6 +1,6 @@
 import pytest
-from tests.utils.mocking import create_fake_credential
-from tests.shared.db import get_test_db
+from tests.utils.faker import create_fake_credential
+from tests.fixtures.db import override_get_db
 from scripts.create_admin import create_admin
 
 
@@ -16,6 +16,6 @@ async def test_create_admin():
         first_name=credential["first_name"],
         last_name=credential["last_name"],
         password=credential["password"],
-        db=get_test_db,
+        db=override_get_db,
     )
     assert user.is_admin

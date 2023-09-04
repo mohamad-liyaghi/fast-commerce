@@ -4,7 +4,7 @@ import pytest
 import asyncio
 from httpx import AsyncClient
 from src.app.enums import VendorStatusEnum
-from tests.utils.mocking import create_vendor_credential
+from tests.utils.faker import create_vendor_credential
 
 
 class TestCreateVendorRoute:

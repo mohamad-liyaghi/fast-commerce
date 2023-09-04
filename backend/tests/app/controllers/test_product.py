@@ -2,7 +2,7 @@ import pytest
 import asyncio
 import uuid
 from fastapi import HTTPException
-from tests.utils.mocking import create_product_credential
+from tests.utils.faker import create_product_credential
 
 
 class TestProductController:

@@ -7,7 +7,7 @@ from src.main import app
 engine = create_async_engine(settings.TEST_POSTGRES_URL)
 
 
-async def get_test_db():
+async def override_get_db():
     """
     Return a TestingSessionLocal instance
     :return: TestingSessionLocal
@@ -18,4 +18,4 @@ async def get_test_db():
 
 
 # Override the get_db function
-app.dependency_overrides[get_db] = get_test_db
+app.dependency_overrides[get_db] = override_get_db

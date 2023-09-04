@@ -2,7 +2,7 @@ import pytest_asyncio
 from src.app.models import Product
 from src.app.controllers import ProductController
 from src.app.repositories import ProductRepository
-from tests.utils.mocking import create_product_credential
+from tests.utils.faker import create_product_credential
 
 
 @pytest_asyncio.fixture

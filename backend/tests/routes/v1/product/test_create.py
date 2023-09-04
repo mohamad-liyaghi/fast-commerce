@@ -1,6 +1,6 @@
 from fastapi import status
 import pytest
-from tests.utils.mocking import create_product_credential
+from tests.utils.faker import create_product_credential
 from src.app.enums import VendorStatusEnum
 
 

@@ -1,5 +1,5 @@
 import pytest
-from tests.utils.mocking import create_vendor_credential
+from tests.utils.faker import create_vendor_credential
 from src.app.repositories import VendorRepository
 from src.app.models import Vendor
 from src.app.enums import VendorStatusEnum

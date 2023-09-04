@@ -1,8 +1,8 @@
 import pytest
 from src.app.repositories import ProductRepository
-from src.app.models import User, Product
+from src.app.models import Product
 from src.core.exceptions import ProductOwnerRequired, AcceptedVendorRequired
-from tests.utils.mocking import create_product_credential
+from tests.utils.faker import create_product_credential
 
 
 class TestAuthRepository:

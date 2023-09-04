@@ -2,7 +2,7 @@ import pytest
 import pytest_asyncio
 from fastapi import status
 from httpx import AsyncClient
-from tests.utils.mocking import create_fake_credential
+from tests.utils.faker import create_fake_credential
 
 
 @pytest.mark.asyncio
