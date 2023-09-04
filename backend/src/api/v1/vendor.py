@@ -3,7 +3,7 @@ from fastapi.routing import APIRouter
 from uuid import UUID
 from typing import List, Optional
 from src.core.factory import Factory
-from src.app.models import VendorStatus
+from src.app.enums import VendorStatusEnum
 from src.core.dependencies import (
     AuthenticationRequired,
     AdminRequired,
@@ -52,7 +52,7 @@ async def get_vendor_requests(
     __=Depends(AdminRequired()),
     _=Depends(AuthenticationRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
-    status: VendorStatus = VendorStatus.PENDING,
+    status: VendorStatusEnum = VendorStatusEnum.PENDING,
 ) -> Optional[List[VendorListOut]]:
     """List of all [pending] vendor requests. (can be filtered by status in args)"""
     return await vendor_controller.retrieve(

@@ -2,7 +2,7 @@ import pytest_asyncio
 from src.app.models import User
 from src.app.controllers import UserController
 from src.app.repositories import UserRepository
-from tests.utils.mocking import create_fake_credential
+from tests.utils.faker import create_fake_credential
 
 
 @pytest_asyncio.fixture

@@ -1,5 +1,5 @@
 import pytest_asyncio
-from tests.shared.redis import override_get_redis
+from tests.mocks import override_get_redis
 
 
 @pytest_asyncio.fixture

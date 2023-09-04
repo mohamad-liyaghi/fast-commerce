@@ -4,7 +4,7 @@ from uuid import uuid4
 from typing import Optional
 from datetime import datetime
 from src.core.database import Base
-from .vendor import Vendor, VendorStatus  # noqa: F401
+from .vendor import Vendor  # noqa: F401
 
 
 class User(Base):

@@ -1,7 +1,8 @@
 import pytest
-from tests.utils.mocking import create_vendor_credential
+from tests.utils.faker import create_vendor_credential
 from src.app.repositories import VendorRepository
-from src.app.models import Vendor, VendorStatus
+from src.app.models import Vendor
+from src.app.enums import VendorStatusEnum
 from datetime import datetime, timedelta
 from src.core.exceptions import (
     PendingVendorExistsException,
@@ -69,9 +70,11 @@ class TestVendorRepository:
     @pytest.mark.asyncio
     async def test_update_vendor_status_by_admin(self, accepted_vendor, admin):
         vendor = await self.repository.update(
-            request_user=admin, instance=accepted_vendor, status=VendorStatus.REJECTED
+            request_user=admin,
+            instance=accepted_vendor,
+            status=VendorStatusEnum.REJECTED,
         )
-        assert vendor.status == VendorStatus.REJECTED
+        assert vendor.status == VendorStatusEnum.REJECTED
 
     @pytest.mark.asyncio
     async def test_update_vendor_status_denied(self, accepted_vendor, user):
@@ -79,7 +82,7 @@ class TestVendorRepository:
             await self.repository.update(
                 request_user=user,
                 instance=accepted_vendor,
-                status=VendorStatus.REJECTED,
+                status=VendorStatusEnum.REJECTED,
             )
 
     @pytest.mark.asyncio

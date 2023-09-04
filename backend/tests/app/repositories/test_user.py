@@ -1,5 +1,5 @@
 import pytest
-from tests.utils.mocking import create_fake_credential
+from tests.utils.faker import create_fake_credential
 from src.app.repositories import UserRepository
 from src.app.models import User
 from src.core.exceptions import UserAlreadyExistError

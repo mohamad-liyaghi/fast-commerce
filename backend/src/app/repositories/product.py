@@ -1,5 +1,6 @@
 from src.app.repositories.base import BaseRepository
-from src.app.models import User, Vendor, VendorStatus, Product
+from src.app.models import User, Vendor, Product
+from src.app.enums import VendorStatusEnum
 from src.core.exceptions import ProductOwnerRequired, AcceptedVendorRequired
 
 
@@ -14,7 +15,7 @@ class ProductRepository(BaseRepository):
         data.setdefault("vendor_id", request_vendor.id)
         data.setdefault("user_id", request_user.id)
 
-        if not request_vendor.status == VendorStatus.ACCEPTED:
+        if not request_vendor.status == VendorStatusEnum.ACCEPTED:
             raise AcceptedVendorRequired
 
         return await super().create(**data)

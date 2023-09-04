@@ -1,6 +1,6 @@
 import pytest
 from fastapi import HTTPException
-from tests.utils.mocking import create_fake_credential
+from tests.utils.faker import create_fake_credential
 from src.core.utils import format_key
 from src.core.configs import settings
 

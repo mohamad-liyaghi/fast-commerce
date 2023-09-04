@@ -1,16 +1,10 @@
-import enum
 from sqlalchemy import Column, Integer, String, DateTime, UUID, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from uuid import uuid4
 from datetime import datetime
 from src.core.database import Base
 from .product import Product  # noqa: F401
-
-
-class VendorStatus(enum.Enum):
-    PENDING = "pending"
-    ACCEPTED = "accepted"
-    REJECTED = "rejected"
+from src.app.enums import VendorStatusEnum
 
 
 class Vendor(Base):
@@ -27,7 +21,7 @@ class Vendor(Base):
     domain = Column(String(50), nullable=True)
     address = Column(String(150), nullable=False)
 
-    status = Column(Enum(VendorStatus), default=VendorStatus.PENDING)
+    status = Column(Enum(VendorStatusEnum), default=VendorStatusEnum.PENDING)
 
     owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
     owner = relationship(

@@ -1,6 +1,6 @@
 import pytest
 from fastapi import status
-from src.app.models import VendorStatus
+from src.app.enums import VendorStatusEnum
 
 
 @pytest.mark.asyncio
@@ -36,7 +36,7 @@ class TestListVendorRequestRoute:
     @pytest.mark.asyncio
     async def test_list_by_admin_with_params(self, admin_client, accepted_vendor):
         response = await admin_client.get(
-            self.url + f"?status={VendorStatus.ACCEPTED.value}"
+            self.url + f"?status={VendorStatusEnum.ACCEPTED.value}"
         )
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is not None

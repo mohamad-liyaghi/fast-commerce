@@ -1,7 +1,7 @@
 from fastapi import status
 import pytest
-from tests.utils.mocking import create_product_credential
-from src.app.models import VendorStatus
+from tests.utils.faker import create_product_credential
+from src.app.enums import VendorStatusEnum
 
 
 class TestCreateProductRoute:
@@ -29,7 +29,7 @@ class TestCreateProductRoute:
         credential = await create_product_credential()
         response = await authorized_client.post(self.url, json=credential)
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        assert rejected_vendor.status == VendorStatus.REJECTED
+        assert rejected_vendor.status == VendorStatusEnum.REJECTED
 
     @pytest.mark.asyncio
     async def test_create_pending_vendor(self, authorized_client, pending_vendor):
@@ -39,7 +39,7 @@ class TestCreateProductRoute:
         credential = await create_product_credential()
         response = await authorized_client.post(self.url, json=credential)
         assert response.status_code == status.HTTP_403_FORBIDDEN
-        assert pending_vendor.status == VendorStatus.PENDING
+        assert pending_vendor.status == VendorStatusEnum.PENDING
 
     @pytest.mark.asyncio
     async def test_create_with_accepted_vendor(
@@ -51,7 +51,7 @@ class TestCreateProductRoute:
         credential = await create_product_credential()
         response = await authorized_client.post(self.url, json=credential)
         assert response.status_code == status.HTTP_201_CREATED
-        assert accepted_vendor.status == VendorStatus.ACCEPTED
+        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED
 
     @pytest.mark.asyncio
     async def test_create_invalid_data(self, authorized_client, accepted_vendor):
@@ -64,4 +64,4 @@ class TestCreateProductRoute:
         invalid_data = {}
         response = await authorized_client.post(self.url, json=invalid_data)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
-        assert accepted_vendor.status == VendorStatus.ACCEPTED
+        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED

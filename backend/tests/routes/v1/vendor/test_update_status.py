@@ -2,7 +2,7 @@ import pytest
 from uuid import uuid4
 from fastapi import status
 from httpx import AsyncClient
-from src.app.models import VendorStatus
+from src.app.enums import VendorStatusEnum
 
 
 @pytest.mark.asyncio
@@ -12,7 +12,7 @@ class TestUpdateVendorStatusRoute:
         self.client = client
         self.url = f"v1/vendor/status/{accepted_vendor.uuid}"
         self.data = {
-            "status": VendorStatus.REJECTED.value,
+            "status": VendorStatusEnum.REJECTED.value,
         }
 
     @pytest.mark.asyncio
