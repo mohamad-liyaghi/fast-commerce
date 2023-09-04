@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from src.app.repositories.base import BaseRepository
-from src.app.models import User, VendorStatus, Vendor
+from src.app.models import User, Vendor
+from src.app.enums import VendorStatusEnum
 from src.core.exceptions import (
     AcceptedVendorExistsException,
     PendingVendorExistsException,
@@ -19,12 +20,12 @@ class VendorRepository(BaseRepository):
         existing_vendor = await self.retrieve(owner_id=request_user.id, descending=True)
 
         if existing_vendor:
-            if existing_vendor.status == VendorStatus.PENDING:
+            if existing_vendor.status == VendorStatusEnum.PENDING:
                 raise PendingVendorExistsException()
-            elif existing_vendor.status == VendorStatus.ACCEPTED:
+            elif existing_vendor.status == VendorStatusEnum.ACCEPTED:
                 raise AcceptedVendorExistsException()
             elif (
-                existing_vendor.status == VendorStatus.REJECTED
+                existing_vendor.status == VendorStatusEnum.REJECTED
                 and existing_vendor.reviewed_at > datetime.utcnow() - timedelta(days=10)
             ):
                 raise RejectedVendorExistsException()

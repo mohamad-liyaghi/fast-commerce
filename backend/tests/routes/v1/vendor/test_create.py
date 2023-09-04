@@ -1,11 +1,10 @@
 from fastapi import status
-from faker import Faker
 from datetime import datetime, timedelta
 import pytest
+import asyncio
 from httpx import AsyncClient
-from src.app.models import VendorStatus
-
-faker = Faker()  # TODO: Create a single instance of faker
+from src.app.enums import VendorStatusEnum
+from tests.utils.mocking import create_vendor_credential
 
 
 class TestCreateVendorRoute:
@@ -13,12 +12,7 @@ class TestCreateVendorRoute:
     def setup_method(self, client: AsyncClient) -> None:
         self.client = client
         self.url = "v1/vendor/"
-        self.data = {
-            "name": faker.company(),
-            "description": faker.paragraph(),
-            "address": faker.address(),
-            "domain": faker.domain_name(),
-        }
+        self.data = asyncio.run(create_vendor_credential())
 
     @pytest.mark.asyncio
     async def test_create_unauthorized(self, client):
@@ -34,19 +28,19 @@ class TestCreateVendorRoute:
     async def test_create_pending_exists(self, authorized_client, pending_vendor):
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert pending_vendor.status == VendorStatus.PENDING
+        assert pending_vendor.status == VendorStatusEnum.PENDING
 
     @pytest.mark.asyncio
     async def test_create_accepted_exists(self, authorized_client, accepted_vendor):
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert accepted_vendor.status == VendorStatus.ACCEPTED
+        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED
 
     @pytest.mark.asyncio
     async def test_create_rejected_exists(self, authorized_client, rejected_vendor):
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert rejected_vendor.status == VendorStatus.REJECTED
+        assert rejected_vendor.status == VendorStatusEnum.REJECTED
 
     @pytest.mark.asyncio
     async def test_create_old_rejected_exist(
@@ -58,4 +52,4 @@ class TestCreateVendorRoute:
         )
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert rejected_vendor.status == VendorStatus.REJECTED
+        assert rejected_vendor.status == VendorStatusEnum.REJECTED

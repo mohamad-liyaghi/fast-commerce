@@ -1,8 +1,8 @@
 from fastapi import HTTPException, status
 from uuid import UUID
 from src.app.controllers.base import BaseController
-from src.app.models import User, VendorStatus
-from src.app.models import Vendor
+from src.app.models import User, Vendor
+from src.app.enums import VendorStatusEnum
 from src.core.exceptions import (
     AcceptedVendorExistsException,
     PendingVendorExistsException,
@@ -68,4 +68,4 @@ class VendorController(BaseController):
         """
         Retrieve a vendor and join the owner.
         """
-        return await self.retrieve(owner_id=user.id, status=VendorStatus.ACCEPTED)
+        return await self.retrieve(owner_id=user.id, status=VendorStatusEnum.ACCEPTED)

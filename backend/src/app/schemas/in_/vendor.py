@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from src.app.schemas.base import VendorBase
-from src.app.models import VendorStatus
+from src.app.enums import VendorStatusEnum
 
 
 class VendorCreateIn(VendorBase):
@@ -12,4 +12,4 @@ class VendorUpdateIn(VendorBase):
 
 
 class VendorUpdateStatusIn(BaseModel):
-    status: VendorStatus
+    status: VendorStatusEnum
