@@ -5,6 +5,7 @@ from .vendor import VendorController
 from .product import ProductController
 from .cart import CartController
 from .order import OrderController
+from .order_item import OrderItemController
 
 __all__ = [
     "UserController",
@@ -14,4 +15,5 @@ __all__ = [
     "ProductController",
     "CartController",
     "OrderController",
+    "OrderItemController",
 ]
