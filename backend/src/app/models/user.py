@@ -33,5 +33,11 @@ class User(Base):
         foreign_keys="Product.user_id",
     )
 
+    orders = relationship(
+        "Order",
+        back_populates="user",
+        foreign_keys="Order.user_id",
+    )
+
     def __repr__(self):
         return f"<User {self.email}>"

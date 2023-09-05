@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from uuid import uuid4
 from datetime import datetime
 from src.core.database import Base
+from .order_item import OrderItem  # noqa: F401
 
 
 class Product(Base):
@@ -22,6 +23,8 @@ class Product(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     user = relationship("User", back_populates="products")
+
+    order_items = relationship("OrderItem", back_populates="product")
 
     def __repr__(self):
         return f"<Product {self.title}>"

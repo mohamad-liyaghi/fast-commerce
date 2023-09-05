@@ -36,6 +36,7 @@ class Vendor(Base):
         foreign_keys=[reviewer_id],
     )
     products = relationship("Product", back_populates="vendor")
+    order_items = relationship("OrderItem", back_populates="vendor")
 
     def __repr__(self):
         return f"<Vendor {self.name}>"
