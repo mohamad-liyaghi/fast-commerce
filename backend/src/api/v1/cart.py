@@ -39,7 +39,7 @@ async def get_cart_items(
 
 @router.put("/{product_uuid}", status_code=status.HTTP_200_OK)
 async def update_cart_item(
-    product_uuid: UUID,
+    product_uuid: UUID | str,
     request: CartUpdateIn,
     current_user=Depends(AuthenticationRequired()),
     cart_controller: CartController = Depends(Factory.get_cart_controller),
@@ -52,7 +52,7 @@ async def update_cart_item(
 
 @router.delete("/{product_uuid}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_cart_item(
-    product_uuid: UUID,
+    product_uuid: UUID | str,
     current_user=Depends(AuthenticationRequired()),
     cart_controller: CartController = Depends(Factory.get_cart_controller),
 ) -> None:

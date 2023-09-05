@@ -9,5 +9,5 @@ class ItemMetaData(BaseModel):
 
 
 class CartListOut(BaseModel):
-    product_uuid: UUID
+    product_uuid: UUID | str
     metadata: ItemMetaData

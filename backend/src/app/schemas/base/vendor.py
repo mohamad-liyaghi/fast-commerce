@@ -12,6 +12,6 @@ class VendorBase(BaseModel):
 
 
 class VendorBaseOut(VendorBase):
-    uuid: UUID
+    uuid: UUID | str
     status: VendorStatusEnum
     created_at: datetime

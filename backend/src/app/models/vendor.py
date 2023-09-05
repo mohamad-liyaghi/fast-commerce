@@ -5,13 +5,14 @@ from datetime import datetime
 from src.core.database import Base
 from .product import Product  # noqa: F401
 from src.app.enums import VendorStatusEnum
+from src.core.utils import generate_uuid
 
 
 class Vendor(Base):
     __tablename__ = "vendors"
 
     id = Column(Integer, primary_key=True, index=True)
-    uuid = Column(UUID(as_uuid=True), default=uuid4, unique=True)
+    uuid: str = Column(String(36), default=generate_uuid, unique=True)
 
     name = Column(String(50), nullable=False)
     description = Column(String(300), nullable=False)

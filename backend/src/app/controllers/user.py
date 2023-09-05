@@ -9,7 +9,7 @@ class UserController(BaseController):
     User controller is responsible for handling user CRUD operations.
     """
 
-    async def update(self, uuid: UUID, requesting_user: User, **kwargs) -> User:
+    async def update(self, uuid: UUID | str, requesting_user: User, **kwargs) -> User:
         """
         Update the user's profile if they have permission.
         """

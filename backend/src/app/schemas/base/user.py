@@ -16,7 +16,7 @@ class UserBase(UserBaseEmail):
 
 
 class CurrentUser(BaseModel):
-    uuid: UUID = Field(None, description="User UUID")
+    uuid: UUID | str = Field(None, description="User UUID")
 
     class Config:
         validate_assignment: bool = True

@@ -46,7 +46,7 @@ class VendorController(BaseController):
                 detail="You already have a rejected vendor registration in the last 10 days.",
             )
 
-    async def update(self, vendor_uuid: UUID, request_user: User, **data) -> Vendor:
+    async def update(self, vendor_uuid: UUID | str, request_user: User, **data) -> Vendor:
         vendor = await self.get_by_uuid(vendor_uuid)
         try:
             return await super().update(

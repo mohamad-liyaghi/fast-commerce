@@ -17,8 +17,6 @@ services:
     depends_on:
         postgres:
           condition: service_healthy
-        postgres-test:
-          condition: service_started
         redis:
           condition: service_started
         redis-test:
@@ -42,16 +40,6 @@ services:
       timeout: 5s
       retries: 5
 
-    networks:
-      - main
-
-  postgres-test:
-    container_name: 'fast-commerce-postgres-test'
-    image: postgres:15.4-alpine
-    expose:
-      - "5432"
-    environment:
-      - 'POSTGRES_HOST_AUTH_METHOD=trust'
     networks:
       - main
 

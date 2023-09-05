@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.get("/{user_uuid}", status_code=status.HTTP_200_OK)
 async def retrieve_profile(
-    user_uuid: UUID,
+    user_uuid: UUID | str,
     _: AuthenticationRequired = Depends(AuthenticationRequired()),
     user_controller: UserController = Depends(Factory().get_user_controller),
 ) -> ProfileOut:
@@ -25,7 +25,7 @@ async def retrieve_profile(
 @router.put("/{user_uuid}", status_code=status.HTTP_200_OK)
 async def update_profile(
     request: ProfileUpdateIn,
-    user_uuid: UUID,
+    user_uuid: UUID | str,
     user_controller: UserController = Depends(Factory().get_user_controller),
     current_user: AuthenticationRequired = Depends(AuthenticationRequired()),
 ) -> ProfileOut:

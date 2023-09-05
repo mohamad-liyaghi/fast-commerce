@@ -27,7 +27,7 @@ class ProductController(BaseController):
                 detail="You are not an accepted vendor.",
             )
 
-    async def update(self, uuid: UUID, request_user: User, data: dict) -> Product:
+    async def update(self, uuid: UUID | str, request_user: User, data: dict) -> Product:
         """
         Update a product.
         """
@@ -42,7 +42,7 @@ class ProductController(BaseController):
                 detail="You are not allowed to update this product.",
             )
 
-    async def delete(self, uuid: UUID, request_user: User) -> None:
+    async def delete(self, uuid: UUID | str, request_user: User) -> None:
         """
         Delete a product.
         """

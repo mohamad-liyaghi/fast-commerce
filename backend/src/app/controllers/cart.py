@@ -62,7 +62,7 @@ class CartController(BaseController):
         return
 
     async def update_item(
-        self, request_user: User, product_uuid: UUID, **kwargs
+        self, request_user: User, product_uuid: UUID | str, **kwargs
     ) -> None:
         """
         Update a product in cart
@@ -78,7 +78,7 @@ class CartController(BaseController):
                 detail="Product not found in cart",
             )
 
-    async def delete_item(self, request_user: User, product_uuid: UUID) -> None:
+    async def delete_item(self, request_user: User, product_uuid: UUID | str) -> None:
         """
         Delete a product from cart
         """

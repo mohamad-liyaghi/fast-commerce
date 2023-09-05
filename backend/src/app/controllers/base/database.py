@@ -40,13 +40,13 @@ class BaseDatabaseController:
 
     async def get_by_uuid(
         self,
-        uuid: UUID,
+        uuid: UUID | str,
         join_fields: Optional[List[str]] = None,
         not_found_message: str = "item not found",
     ):
         """
         Get an instance by uuid
-        :param uuid: uuid of instance
+        :param uuid: UUID | str of instance
         :param join_fields: fields to join
         :param not_found_message: message to raise if instance not found
         :return: instance

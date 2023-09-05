@@ -67,7 +67,7 @@ class CartRepository(BaseCacheRepository):
         )
 
     async def update_item(
-        self, request_user: User, product_uuid: UUID, **kwargs
+        self, request_user: User, product_uuid: UUID | str, **kwargs
     ) -> None:
         """Update the quantity of a specific item in the cart."""
         product_in_cart = await self._get_cart_item(
@@ -82,7 +82,7 @@ class CartRepository(BaseCacheRepository):
             key=key, data={str(product_uuid): json.dumps(product_in_cart)}
         )
 
-    async def delete_item(self, request_user: User, product_uuid: UUID) -> None:
+    async def delete_item(self, request_user: User, product_uuid: UUID | str) -> None:
         """Remove a specific item from the cart."""
         key = await self._create_key(user=request_user)
         await self._get_cart_item(

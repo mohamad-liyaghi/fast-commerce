@@ -4,13 +4,14 @@ from uuid import uuid4
 from datetime import datetime
 from src.core.database import Base
 from src.app.enums import OrderItemStatusEnum
+from src.core.utils import generate_uuid
 
 
 class OrderItem(Base):
     __tablename__ = "order_items"
 
     id: int = Column(Integer, primary_key=True, index=True)
-    uuid: UUID = Column(UUID(as_uuid=True), default=uuid4, unique=True)
+    uuid: str = Column(String(36), default=generate_uuid, unique=True)
 
     quantity = Column(Integer, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)

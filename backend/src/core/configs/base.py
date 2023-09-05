@@ -26,14 +26,6 @@ class PostgresConfig(BaseConfig):
     POSTGRES_HOST: str
 
 
-class TestPostgresConfig(BaseConfig):
-    TEST_POSTGRES_URL: str
-    TEST_DB_NAME: str
-    TEST_DB_USER: str
-    TEST_DB_PASSWORD: str
-    TEST_DB_HOST: str
-
-
 class RedisConfig(BaseConfig):
     REDIS_URL: str
     TEST_REDIS_URL: str
@@ -67,7 +59,6 @@ class MailConfig(BaseConfig):
 
 class Settings(
     PostgresConfig,
-    TestPostgresConfig,
     RedisConfig,
     CeleryConfig,
     CacheConfig,
