@@ -1,7 +1,7 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
-from uuid import UUID
 from typing import List, Optional
+from uuid import UUID
 from src.core.factory import Factory
 from src.app.enums import VendorStatusEnum
 from src.core.dependencies import (
@@ -62,7 +62,7 @@ async def get_vendor_requests(
 
 @router.get("/{vendor_uuid}", status_code=status.HTTP_200_OK)
 async def get_vendor(
-    vendor_uuid: UUID | str,
+    vendor_uuid: UUID,
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorRetrieveOut:
     """Retrieve a vendor if exists."""
@@ -73,7 +73,7 @@ async def get_vendor(
 
 @router.put("/{vendor_uuid}", status_code=status.HTTP_200_OK)
 async def update_vendor(
-    vendor_uuid: UUID | str,
+    vendor_uuid: UUID,
     request: VendorUpdateIn,
     current_user=Depends(AuthenticationRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
@@ -86,7 +86,7 @@ async def update_vendor(
 
 @router.put("/status/{vendor_uuid}", status_code=status.HTTP_200_OK)
 async def update_vendor_status(
-    vendor_uuid: UUID | str,
+    vendor_uuid: UUID,
     request: VendorUpdateStatusIn,
     current_user=Depends(AuthenticationRequired()),
     __=Depends(AdminRequired()),

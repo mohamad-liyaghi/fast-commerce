@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
-from uuid import UUID
 from datetime import datetime
 from src.app.enums import VendorStatusEnum
+from uuid import UUID
 
 
 class VendorBase(BaseModel):
@@ -12,6 +12,6 @@ class VendorBase(BaseModel):
 
 
 class VendorBaseOut(VendorBase):
-    uuid: UUID | str
+    uuid: UUID
     status: VendorStatusEnum
     created_at: datetime

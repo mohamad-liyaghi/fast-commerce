@@ -1,17 +1,17 @@
-from sqlalchemy import Column, Integer, String, DateTime, UUID, JSON, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, JSON, ForeignKey
 from sqlalchemy.orm import relationship
+from src.core.sql import UUIDType
 from uuid import uuid4
 from datetime import datetime
 from src.core.database import Base
 from .order_item import OrderItem  # noqa: F401
-from src.core.utils import generate_uuid
 
 
 class Product(Base):
     __tablename__ = "products"
 
     id: int = Column(Integer, primary_key=True, index=True)
-    uuid: str = Column(String(36), default=generate_uuid, unique=True)
+    uuid: UUIDType = Column(UUIDType, default=uuid4, unique=True)
 
     title = Column(String(120), nullable=False)
     description = Column(String(300), nullable=False)

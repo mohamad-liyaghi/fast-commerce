@@ -46,7 +46,7 @@ async def get_product_list(
 
 @router.get("/{product_uuid}", status_code=status.HTTP_200_OK)
 async def retrieve_product(
-    product_uuid: UUID | str,
+    product_uuid: UUID,
     product_controller: ProductController = Depends(Factory.get_product_controller),
 ) -> ProductRetrieveOut:
     """Retrieve a product."""
@@ -57,7 +57,7 @@ async def retrieve_product(
 
 @router.put("/{product_uuid}", status_code=status.HTTP_200_OK)
 async def update_product(
-    product_uuid: UUID | str,
+    product_uuid: UUID,
     request: ProductUpdateIn,
     current_user: AuthenticationRequired = Depends(AuthenticationRequired()),
     product_controller: ProductController = Depends(Factory.get_product_controller),
@@ -72,7 +72,7 @@ async def update_product(
 
 @router.delete("/{product_uuid}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_product(
-    product_uuid: UUID | str,
+    product_uuid: UUID,
     current_user: AuthenticationRequired = Depends(AuthenticationRequired()),
     product_controller: ProductController = Depends(Factory.get_product_controller),
 ) -> None:

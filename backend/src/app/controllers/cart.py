@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
 import json
-from uuid import UUID
 from typing import Optional, List
 from src.core.utils import format_key
 from src.app.schemas.out import CartListOut
@@ -13,6 +12,7 @@ from src.core.exceptions import (
     CartItemQuantityException,
     CartItemNotFound,
 )
+from src.core.sql.types import UUIDType
 
 
 class CartController(BaseController):
@@ -62,7 +62,7 @@ class CartController(BaseController):
         return
 
     async def update_item(
-        self, request_user: User, product_uuid: UUID | str, **kwargs
+        self, request_user: User, product_uuid: UUIDType, **kwargs
     ) -> None:
         """
         Update a product in cart
@@ -78,7 +78,7 @@ class CartController(BaseController):
                 detail="Product not found in cart",
             )
 
-    async def delete_item(self, request_user: User, product_uuid: UUID | str) -> None:
+    async def delete_item(self, request_user: User, product_uuid: UUIDType) -> None:
         """
         Delete a product from cart
         """

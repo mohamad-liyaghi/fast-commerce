@@ -1,6 +1,6 @@
 from pydantic import BaseModel
-from uuid import UUID
 from datetime import datetime
+from uuid import UUID
 
 
 class ItemMetaData(BaseModel):
@@ -9,5 +9,5 @@ class ItemMetaData(BaseModel):
 
 
 class CartListOut(BaseModel):
-    product_uuid: UUID | str
+    product_uuid: UUID
     metadata: ItemMetaData
