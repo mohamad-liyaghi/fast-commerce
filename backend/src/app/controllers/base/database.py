@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from typing import Optional, List
-from src.core.sql.types import UUIDType
+from uuid import UUID
 from src.app.repositories.base import BaseRepository
 
 
@@ -40,9 +40,10 @@ class BaseDatabaseController:
 
     async def get_by_uuid(
         self,
-        uuid: UUIDType,
+        uuid: UUID,
         join_fields: Optional[List[str]] = None,
         not_found_message: str = "item not found",
+        **kwargs
     ):
         """
         Get an instance by uuid
@@ -51,7 +52,7 @@ class BaseDatabaseController:
         :param not_found_message: message to raise if instance not found
         :return: instance
         """
-        result = await self.retrieve(uuid=uuid, join_fields=join_fields)
+        result = await self.retrieve(uuid=uuid, join_fields=join_fields, **kwargs)
         if not result:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail=not_found_message

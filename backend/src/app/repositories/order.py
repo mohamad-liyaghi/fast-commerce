@@ -1,4 +1,3 @@
-from src.app.models import User
 from src.core.utils import format_key
 from src.core.configs import settings
 from .base import BaseRepository

@@ -1,6 +1,7 @@
 from fastapi.routing import APIRouter
 from fastapi import Depends, status
 from typing import List, Optional
+from uuid import UUID
 from src.core.dependencies import AuthenticationRequired, CartRequired
 from src.app.controllers import (
     OrderController,
@@ -10,7 +11,7 @@ from src.app.controllers import (
 )
 from src.core.factory import Factory
 from src.app.schemas.in_ import OrderCreateIn
-from src.app.schemas.out import OrderListOut
+from src.app.schemas.out import OrderListOut, OrderRetrieveOut
 
 
 router = APIRouter(
@@ -46,7 +47,7 @@ async def get_orders(
     request_user: AuthenticationRequired = Depends(AuthenticationRequired()),
     order_controller: OrderController = Depends(Factory.get_order_controller),
 ) -> Optional[List[OrderListOut]]:
-    orders = await order_controller.retrieve(
+    return await order_controller.retrieve(
         user_id=request_user.id,
         many=True,
         order_by=["created_at"],
@@ -54,4 +55,16 @@ async def get_orders(
         limit=40,
         join_fields=["order_items"],
     )
-    return orders
+
+
+@router.get("/{order_uuid}", status_code=status.HTTP_200_OK)
+async def get_order(
+    order_uuid: UUID,
+    request_user: AuthenticationRequired = Depends(AuthenticationRequired()),
+    order_controller: OrderController = Depends(Factory.get_order_controller),
+) -> Optional[OrderRetrieveOut]:
+    return await order_controller.get_by_uuid(
+        uuid=order_uuid,
+        user_id=request_user.id,
+        join_fields=["order_items"],
+    )

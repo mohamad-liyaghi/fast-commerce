@@ -1,6 +1,4 @@
 from src.app.controllers.base import BaseController
-from src.app.models import OrderItem
-import json
 
 
 class OrderItemController(BaseController):

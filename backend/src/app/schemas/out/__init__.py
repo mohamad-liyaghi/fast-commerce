@@ -13,7 +13,8 @@ from .product import (
     ProductUpdateOut,
 )
 from .cart import CartListOut
-from .order import OrderListOut
+from .order import OrderListOut, OrderRetrieveOut
+
 
 profile = [
     "ProfileOut",
@@ -40,6 +41,7 @@ cart = [
 
 order = [
     "OrderListOut",
+    "OrderRetrieveOut",
 ]
 
 

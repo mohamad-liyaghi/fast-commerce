@@ -3,7 +3,6 @@ from src.app.controllers import CartController
 from src.app.repositories import CartRepository
 from src.core.utils import format_key
 from src.core.configs import settings
-import json
 
 
 @pytest_asyncio.fixture
