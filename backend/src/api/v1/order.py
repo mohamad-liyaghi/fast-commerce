@@ -1,5 +1,6 @@
 from fastapi.routing import APIRouter
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, status
+from typing import List, Optional
 from src.core.dependencies import AuthenticationRequired, CartRequired
 from src.app.controllers import (
     OrderController,
@@ -9,6 +10,7 @@ from src.app.controllers import (
 )
 from src.core.factory import Factory
 from src.app.schemas.in_ import OrderCreateIn
+from src.app.schemas.out import OrderListOut
 
 
 router = APIRouter(
@@ -37,3 +39,19 @@ async def create_order(
         **request.model_dump(),
     )
     return {"ok": "created"}
+
+
+@router.get("/", status_code=status.HTTP_200_OK)
+async def get_orders(
+    request_user: AuthenticationRequired = Depends(AuthenticationRequired()),
+    order_controller: OrderController = Depends(Factory.get_order_controller),
+) -> Optional[List[OrderListOut]]:
+    orders = await order_controller.retrieve(
+        user_id=request_user.id,
+        many=True,
+        order_by=["created_at"],
+        descending=True,
+        limit=40,
+        join_fields=["order_items"],
+    )
+    return orders

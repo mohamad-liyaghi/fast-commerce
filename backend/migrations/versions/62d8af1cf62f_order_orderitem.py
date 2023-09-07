@@ -48,8 +48,8 @@ def upgrade() -> None:
     sa.Column('total_price', sa.Integer(), nullable=False),
     sa.Column(
             "status",
-            sa.Enum("PENDING_PAYMENT", "PREPARING", "DELIVERING", "DELIVERED", name="orderitemstatus"),
-            nullable=True,
+            sa.Enum("PENDING_PAYMENT", "PREPARING", "DELIVERING", "DELIVERED", name="orderitemstatusenum"),
+            nullable=False,
     ),
     sa.Column('order_id', sa.Integer(), nullable=False),
     sa.Column('product_id', sa.Integer(), nullable=False),

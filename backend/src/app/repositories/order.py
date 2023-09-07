@@ -26,7 +26,9 @@ class OrderRepository(BaseRepository):
 
         # Create order items and update the total price
         order_items = await order_item_controller.create_order_items(
-            order=order, cart=cart, product_controller=product_controller
+            order=order,
+            cart=cart,
+            product_controller=product_controller,
         )
         await self._delete_cart(cart_controller, data.get("user"))
         # Update total price
