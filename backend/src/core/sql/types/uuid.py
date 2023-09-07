@@ -10,6 +10,7 @@ class UUIDType(types.TypeDecorator):
     """
 
     impl = types.String(36)
+    cache_ok = True
 
     def load_dialect_impl(self, dialect):
         if dialect.name == "postgresql":

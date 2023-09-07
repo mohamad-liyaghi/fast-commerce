@@ -1,6 +1,9 @@
 import pytest_asyncio
 from src.app.controllers import CartController
 from src.app.repositories import CartRepository
+from src.core.utils import format_key
+from src.core.configs import settings
+import json
 
 
 @pytest_asyncio.fixture
@@ -23,4 +26,6 @@ async def cart(product, admin, cart_controller, product_controller):
     await cart_controller.add_item(
         product_controller=product_controller, request_user=admin, **cart_data
     )
-    return cart_data
+    key = await format_key(key=settings.CACHE_CART_KEY, user_uuid=admin.uuid)
+    cart = await cart_controller.get_cache(key=key)
+    return cart

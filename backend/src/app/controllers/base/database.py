@@ -67,6 +67,15 @@ class BaseDatabaseController:
         result = await self.repository.create(**data)
         return result
 
+    async def bulk_create(self, instances: List):
+        """
+        Create a new instance of model
+        :param instances: data to create new instance
+        :return: created instance
+        """
+        result = await self.repository.bulk_create(instances)
+        return result
+
     async def update(self, instance, **data):
         """
         Update an instance of model
@@ -95,6 +104,7 @@ class BaseDatabaseController:
         limit: int = 100,
         skip: int = 0,
         contains: bool = False,
+        _in: bool = False,
         **kwargs
     ):
         """
@@ -106,6 +116,7 @@ class BaseDatabaseController:
         :param limit: limit of instances
         :param skip: offset of instances
         :param contains: contains filter
+        :param _in: in filter
         :param kwargs: filter parameters
         :return: instance
         """
@@ -117,6 +128,7 @@ class BaseDatabaseController:
             descending=descending,
             order_by=order_by,
             contains=contains,
+            _in=_in,
             **kwargs
         )
         return result if result else None

@@ -45,7 +45,6 @@ class TestAddCartItemRoute:
         cart_product = json.loads(cart_product)
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert cart["quantity"] == 1
         assert cart_product["quantity"] == 2
 
     @pytest.mark.asyncio

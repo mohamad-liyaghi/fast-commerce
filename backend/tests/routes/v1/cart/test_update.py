@@ -6,7 +6,7 @@ import pytest
 class TestUpdateProductRoute:
     @pytest.fixture(autouse=True)
     def setup_method(self, cart) -> None:
-        self.url = f"v1/cart/{cart.get('product_uuid')}"
+        self.url = f"v1/cart/{str(list(cart.keys())[0])}"
         self.data = {"quantity": 4}
 
     @pytest.mark.asyncio

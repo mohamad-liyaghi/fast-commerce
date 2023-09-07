@@ -14,3 +14,9 @@ class CartItemNotFound(Exception):
     def __init__(self):
         self.message = "Product not found in cart"
         super().__init__(self.message)
+
+
+class CartEmptyException(Exception):
+    def __init__(self):
+        self.message = "Empty cart detected"
+        super().__init__(self.message)

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum
 from sqlalchemy.orm import relationship
 from src.core.sql import UUIDType
 from uuid import uuid4
@@ -17,7 +17,9 @@ class OrderItem(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     total_price = Column(Integer, nullable=False)
-    status = Column(String(30), default=OrderItemStatusEnum.PENDING_PAYMENT)
+    status = Column(
+        Enum(OrderItemStatusEnum), default=OrderItemStatusEnum.PENDING_PAYMENT
+    )
 
     order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
     order = relationship("Order", back_populates="order_items")
@@ -29,4 +31,4 @@ class OrderItem(Base):
     vendor = relationship("Vendor", back_populates="order_items")
 
     def __repr__(self):
-        return f"<OrderItem {self.title}>"
+        return f"<OrderItem {self.order_id} {self.product_id}>"

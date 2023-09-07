@@ -16,7 +16,7 @@ class CartRequired:
         self,
         user: User = Depends(AuthenticationRequired()),
         cart_controller: CartController = Depends(Factory.get_cart_controller),
-    ) -> None:
+    ) -> dict:
         key = await format_key(key=settings.CACHE_CART_KEY, user_uuid=user.uuid)
         cart = await cart_controller.get_cache(key=key)
 
@@ -25,3 +25,5 @@ class CartRequired:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Cart is empty",
             )
+
+        return cart

@@ -7,7 +7,7 @@ from fastapi import status
 class TestCartItemDeleteRoute:
     @pytest.fixture(autouse=True)
     def setup_method(self, cart) -> None:
-        self.url = f"v1/cart/{cart.get('product_uuid')}"
+        self.url = f"v1/cart/{str(list(cart.keys())[0])}"
 
     @pytest.mark.asyncio
     async def test_delete_unauthenticated(self, client) -> None:
