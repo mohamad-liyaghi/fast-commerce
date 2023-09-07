@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, UUID
+from sqlalchemy import Column, Integer, String, Boolean, DateTime
 from sqlalchemy.orm import relationship
+from src.core.sql import UUIDType
 from uuid import uuid4
 from typing import Optional
 from datetime import datetime
@@ -11,7 +12,7 @@ class User(Base):
     __tablename__ = "users"
 
     id: int = Column(Integer, primary_key=True, index=True)
-    uuid: UUID = Column(UUID(as_uuid=True), default=uuid4, unique=True)
+    uuid: UUIDType = Column(UUIDType, default=uuid4, unique=True)
     email: str = Column(String, unique=True, index=True)
     first_name: str = Column(String(25), nullable=False)
     last_name: Optional[str] = Column(String(25), nullable=True)
@@ -31,6 +32,12 @@ class User(Base):
         "Product",
         back_populates="user",
         foreign_keys="Product.user_id",
+    )
+
+    orders = relationship(
+        "Order",
+        back_populates="user",
+        foreign_keys="Order.user_id",
     )
 
     def __repr__(self):

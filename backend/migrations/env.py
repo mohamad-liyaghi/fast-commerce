@@ -5,7 +5,6 @@ from sqlalchemy.ext.asyncio import create_async_engine
 from alembic import context
 from src.core.configs import settings
 from src.core.database import Base
-from src.app.models import User
 
 
 config = context.config

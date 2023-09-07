@@ -32,6 +32,16 @@ class BaseDatabaseRepository:
         await self.session.refresh(instance)
         return instance
 
+    async def bulk_create(self, instances: List[Base]):
+        """
+        Create a new instance of model
+        :param instances: data to create new instance
+        :return: created instance
+        """
+        self.session.add_all(instances)
+        await self.session.commit()
+        return instances
+
     async def update(self, instance: Base, **data):
         """
         Update an instance of model
@@ -63,6 +73,7 @@ class BaseDatabaseRepository:
         contains: bool = False,
         limit: int = 100,
         skip: int = 0,
+        _in: bool = False,
         **kwargs,
     ):
         """
@@ -75,10 +86,12 @@ class BaseDatabaseRepository:
             descending=descending,
             limit=limit,
             skip=skip,
+            _in=_in,
             **kwargs,
         )
-
-        return await self._execute_query(session=self.session, query=query, many=many)
+        return await self._execute_query(
+            session=self.session, query=query, many=many, _in=_in
+        )
 
     async def _make_query(
         self,
@@ -88,9 +101,10 @@ class BaseDatabaseRepository:
         limit: int = 100,
         skip: int = 0,
         contains: bool = False,
+        _in: bool = False,
         **kwargs,
     ):
-        query = await self._make_filter(self.model, kwargs, contains)
+        query = await self._make_filter(self.model, kwargs, contains, _in)
         query = await self._make_joins(self.model, query, join_fields)
         query = await self._create_order_by(
             self.model, query, order_by, descending=descending
@@ -98,19 +112,19 @@ class BaseDatabaseRepository:
         return query.offset(skip).limit(limit)
 
     @staticmethod
-    async def _execute_query(session, query, many: bool = False):
+    async def _execute_query(session, query, many: bool = False, _in: bool = False):
         """
         Execute query and return result.
         """
         result = await session.execute(query)
 
         if result:
-            if many:
+            if many or _in:
                 return result.scalars().all()
             return result.scalars().first()
 
     @staticmethod
-    async def _make_filter(model, filters: dict, contains: bool) -> select:
+    async def _make_filter(model, filters: dict, contains: bool, _in: bool) -> select:
         """
         First generate a list of filters based on given parameters.
         Then apply filters to query.
@@ -120,6 +134,12 @@ class BaseDatabaseRepository:
             filter_conditions = [
                 cast(getattr(model, field), String).like(f"%{value}%")
                 for field, value in filters.items()
+            ]
+            return select(model).where(or_(*filter_conditions))
+
+        elif _in:
+            filter_conditions = [
+                getattr(model, field).in_(value) for field, value in filters.items()
             ]
             return select(model).where(or_(*filter_conditions))
 

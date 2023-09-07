@@ -14,8 +14,13 @@ from .vendor import (
     UpdateVendorStatusDenied,
 )
 
-from .product import ProductOwnerRequired, AcceptedVendorRequired
-from .cart import CartItemOwnerException, CartItemQuantityException, CartItemNotFound
+from .product import ProductOwnerRequired, AcceptedVendorRequired, ProductNotFound
+from .cart import (
+    CartItemOwnerException,
+    CartItemQuantityException,
+    CartItemNotFound,
+    CartEmptyException,
+)
 
 user_exceptions = [
     "UserAlreadyExistError",
@@ -33,12 +38,17 @@ vendor_exceptions = [
     "UpdateVendorStatusDenied",
 ]
 
-product_exceptions = ["ProductOwnerRequired", "AcceptedVendorRequired"]
+product_exceptions = [
+    "ProductOwnerRequired",
+    "AcceptedVendorRequired",
+    "ProductNotFound",
+]
 
 cart_exceptions = [
     "CartItemOwnerException",
     "CartItemQuantityException",
     "CartItemNotFound",
+    "CartEmptyException",
 ]
 
 

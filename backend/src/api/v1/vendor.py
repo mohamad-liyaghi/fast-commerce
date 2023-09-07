@@ -1,7 +1,7 @@
 from fastapi import Depends, status
 from fastapi.routing import APIRouter
-from uuid import UUID
 from typing import List, Optional
+from uuid import UUID
 from src.core.factory import Factory
 from src.app.enums import VendorStatusEnum
 from src.core.dependencies import (

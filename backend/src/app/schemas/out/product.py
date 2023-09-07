@@ -1,5 +1,5 @@
-from uuid import UUID
 from datetime import datetime
+from uuid import UUID
 from src.app.schemas.out import ProfileOut
 from src.app.schemas.base import BaseProductSpecs, BaseProduct, VendorBaseOut
 

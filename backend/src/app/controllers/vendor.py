@@ -1,8 +1,8 @@
 from fastapi import HTTPException, status
-from uuid import UUID
 from src.app.controllers.base import BaseController
 from src.app.models import User, Vendor
 from src.app.enums import VendorStatusEnum
+from src.core.sql.types import UUIDType
 from src.core.exceptions import (
     AcceptedVendorExistsException,
     PendingVendorExistsException,
@@ -46,7 +46,7 @@ class VendorController(BaseController):
                 detail="You already have a rejected vendor registration in the last 10 days.",
             )
 
-    async def update(self, vendor_uuid: UUID, request_user: User, **data) -> Vendor:
+    async def update(self, vendor_uuid: UUIDType, request_user: User, **data) -> Vendor:
         vendor = await self.get_by_uuid(vendor_uuid)
         try:
             return await super().update(

@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, UUID, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum
 from sqlalchemy.orm import relationship
+from src.core.sql import UUIDType
 from uuid import uuid4
 from datetime import datetime
 from src.core.database import Base
@@ -11,7 +12,7 @@ class Vendor(Base):
     __tablename__ = "vendors"
 
     id = Column(Integer, primary_key=True, index=True)
-    uuid = Column(UUID(as_uuid=True), default=uuid4, unique=True)
+    uuid: UUIDType = Column(UUIDType, default=uuid4, unique=True)
 
     name = Column(String(50), nullable=False)
     description = Column(String(300), nullable=False)
@@ -36,6 +37,7 @@ class Vendor(Base):
         foreign_keys=[reviewer_id],
     )
     products = relationship("Product", back_populates="vendor")
+    order_items = relationship("OrderItem", back_populates="vendor")
 
     def __repr__(self):
         return f"<Vendor {self.name}>"

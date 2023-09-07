@@ -5,6 +5,8 @@ from src.app.controllers import (
     VendorController,
     ProductController,
     CartController,
+    OrderController,
+    OrderItemController,
 )
 from src.app.repositories import (
     UserRepository,
@@ -12,8 +14,10 @@ from src.app.repositories import (
     CartRepository,
     AuthRepository,
     ProductRepository,
+    OrderRepository,
+    OrderItemRepository,
 )
-from src.app.models import User, Vendor, Product
+from src.app.models import User, Vendor, Product, Order, OrderItem
 from src.core.database import get_db
 from src.core.redis import get_redis
 
@@ -81,3 +85,29 @@ class Factory:
         Returns a CartController instance
         """
         return CartController(repository=CartRepository(redis_client=redis))
+
+    @staticmethod
+    def get_order_controller(
+        db: Depends = Depends(get_db), redis: Depends = Depends(get_redis)
+    ) -> OrderController:
+        """
+        Returns a OrderController instance
+        """
+        return OrderController(
+            repository=OrderRepository(
+                model=Order, database_session=db, redis_session=redis
+            )
+        )
+
+    @staticmethod
+    def get_order_item_controller(
+        db: Depends = Depends(get_db), redis: Depends = Depends(get_redis)
+    ) -> OrderItemController:
+        """
+        Returns a OrderItemController instance
+        """
+        return OrderItemController(
+            repository=OrderItemRepository(
+                model=OrderItem, database_session=db, redis_session=redis
+            )
+        )

@@ -43,15 +43,16 @@ class BaseDatabaseController:
         uuid: UUID,
         join_fields: Optional[List[str]] = None,
         not_found_message: str = "item not found",
+        **kwargs
     ):
         """
         Get an instance by uuid
-        :param uuid: uuid of instance
+        :param uuid: UUID of instance
         :param join_fields: fields to join
         :param not_found_message: message to raise if instance not found
         :return: instance
         """
-        result = await self.retrieve(uuid=uuid, join_fields=join_fields)
+        result = await self.retrieve(uuid=uuid, join_fields=join_fields, **kwargs)
         if not result:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail=not_found_message
@@ -65,6 +66,15 @@ class BaseDatabaseController:
         :return: created instance
         """
         result = await self.repository.create(**data)
+        return result
+
+    async def bulk_create(self, instances: List):
+        """
+        Create a new instance of model
+        :param instances: data to create new instance
+        :return: created instance
+        """
+        result = await self.repository.bulk_create(instances)
         return result
 
     async def update(self, instance, **data):
@@ -95,6 +105,7 @@ class BaseDatabaseController:
         limit: int = 100,
         skip: int = 0,
         contains: bool = False,
+        _in: bool = False,
         **kwargs
     ):
         """
@@ -105,6 +116,8 @@ class BaseDatabaseController:
         :param descending: descending order
         :param limit: limit of instances
         :param skip: offset of instances
+        :param contains: contains filter
+        :param _in: in filter
         :param kwargs: filter parameters
         :return: instance
         """
@@ -116,6 +129,7 @@ class BaseDatabaseController:
             descending=descending,
             order_by=order_by,
             contains=contains,
+            _in=_in,
             **kwargs
         )
         return result if result else None

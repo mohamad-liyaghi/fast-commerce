@@ -1,9 +1,9 @@
 from fastapi import HTTPException, status
-from uuid import UUID
 from typing import Optional
 from src.app.models import User, Vendor, Product
 from src.app.controllers import BaseController
 from src.core.exceptions import ProductOwnerRequired, AcceptedVendorRequired
+from src.core.sql.types import UUIDType
 
 
 class ProductController(BaseController):
@@ -27,7 +27,7 @@ class ProductController(BaseController):
                 detail="You are not an accepted vendor.",
             )
 
-    async def update(self, uuid: UUID, request_user: User, data: dict) -> Product:
+    async def update(self, uuid: UUIDType, request_user: User, data: dict) -> Product:
         """
         Update a product.
         """
@@ -42,7 +42,7 @@ class ProductController(BaseController):
                 detail="You are not allowed to update this product.",
             )
 
-    async def delete(self, uuid: UUID, request_user: User) -> None:
+    async def delete(self, uuid: UUIDType, request_user: User) -> None:
         """
         Delete a product.
         """

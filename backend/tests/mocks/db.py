@@ -1,10 +1,9 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from src.core.configs import settings
 from src.core.database import get_db
 from src.main import app
 
-engine = create_async_engine(settings.TEST_POSTGRES_URL)
+engine = create_async_engine("sqlite+aiosqlite:///:memory:")
 
 
 async def override_get_db():
