@@ -1,0 +1,2 @@
+class OrderAlreadyPaid(Exception):
+    pass

@@ -21,6 +21,7 @@ from .cart import (
     CartItemNotFound,
     CartEmptyException,
 )
+from .order import OrderAlreadyPaid
 
 user_exceptions = [
     "UserAlreadyExistError",
@@ -51,5 +52,12 @@ cart_exceptions = [
     "CartEmptyException",
 ]
 
+order_exceptions = ["OrderAlreadyPaid"]
 
-__all__ = user_exceptions + vendor_exceptions + product_exceptions + cart_exceptions
+__all__ = (
+    user_exceptions
+    + vendor_exceptions
+    + product_exceptions
+    + cart_exceptions
+    + order_exceptions
+)

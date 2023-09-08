@@ -5,6 +5,7 @@ from .product import product_controller, product
 from .cart import cart_controller, cart
 from .order import order_controller, order
 from .order_item import order_item_controller
+from .payment import payment, payment_controller
 
 __all__ = [
     "user_controller",
@@ -23,4 +24,6 @@ __all__ = [
     "order_item_controller",
     "cart",
     "order",
+    "payment",
+    "payment_controller",
 ]

@@ -1,5 +1,7 @@
 import pytest
 from src.core.exceptions import CartEmptyException
+from src.app.enums import OrderStatusEnum
+from src.core.exceptions import OrderAlreadyPaid
 
 
 class TestOrderController:
@@ -57,3 +59,14 @@ class TestOrderController:
         )
 
         assert order.total_price == product.price
+
+    @pytest.mark.asyncio
+    async def test_set_paid(self, order):
+        order = await self.repository.set_paid(order=order)
+        assert order.status == OrderStatusEnum.PREPARING
+
+    @pytest.mark.asyncio
+    async def test_set_paid_twice(self, order):
+        order = await self.repository.set_paid(order=order)
+        with pytest.raises(OrderAlreadyPaid):
+            await self.repository.set_paid(order=order)

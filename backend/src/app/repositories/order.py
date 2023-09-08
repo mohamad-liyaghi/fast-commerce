@@ -1,7 +1,9 @@
 from src.core.utils import format_key
 from src.core.configs import settings
 from .base import BaseRepository
-from src.core.exceptions import CartEmptyException
+from src.core.exceptions import CartEmptyException, OrderAlreadyPaid
+from src.app.enums import OrderStatusEnum
+from src.app.models import Order
 
 
 class OrderRepository(BaseRepository):
@@ -33,6 +35,11 @@ class OrderRepository(BaseRepository):
         # Update total price
         total_price = sum(item.total_price for item in order_items)
         return await self.update(order, total_price=total_price)
+
+    async def set_paid(self, order: Order):
+        if order.status != OrderStatusEnum.PENDING_PAYMENT:
+            raise OrderAlreadyPaid
+        return await self.update(order, status=OrderStatusEnum.PREPARING)
 
     @staticmethod
     async def _delete_cart(cart_controller, user):
