@@ -14,7 +14,7 @@ from .product import (
 )
 from .cart import CartListOut
 from .order import OrderListOut, OrderRetrieveOut
-from .payment import PaymentListOut
+from .payment import PaymentListOut, PaymentRetrieveOut
 
 
 profile = ["ProfileOut"]
@@ -38,5 +38,5 @@ cart = ["CartListOut"]
 
 order = ["OrderListOut", "OrderRetrieveOut"]
 
-payment = ["PaymentListOut"]
+payment = ["PaymentListOut", "PaymentRetrieveOut"]
 __all__ = profile + vendor + product + cart + order + payment
