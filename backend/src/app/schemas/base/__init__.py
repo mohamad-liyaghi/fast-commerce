@@ -3,30 +3,19 @@ from .vendor import VendorBase, VendorBaseOut
 from .product import BaseProduct, BaseProductSpecs
 from .cart import CartBase
 from .order import OrderBase
+from .payment import BasePayment
 
-vendors = [
-    "VendorBase",
-    "VendorBaseOut",
-]
+vendors = ["VendorBase", "VendorBaseOut"]
 
-users = [
-    "UserBaseEmail",
-    "UserBasePassword",
-    "UserBase",
-    "CurrentUser",
-]
+users = ["UserBaseEmail", "UserBasePassword", "UserBase", "CurrentUser"]
 
-products = [
-    "BaseProduct",
-    "BaseProductSpecs",
-]
+products = ["BaseProduct", "BaseProductSpecs"]
 
-cart = [
-    "CartBase",
-]
+cart = ["CartBase"]
 
-orders = [
-    "OrderBase",
-]
+orders = ["OrderBase"]
+
+payments = ["BasePayment"]
+
 
 __all__ = vendors + users + products + cart + orders
