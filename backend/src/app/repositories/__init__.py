@@ -6,6 +6,7 @@ from .cart import CartRepository
 from .auth import AuthRepository
 from .order import OrderRepository
 from .order_item import OrderItemRepository
+from .payment import PaymentRepository
 
 __all__ = [
     "UserRepository",
@@ -16,4 +17,5 @@ __all__ = [
     "AuthRepository",
     "OrderRepository",
     "OrderItemRepository",
+    "PaymentRepository",
 ]

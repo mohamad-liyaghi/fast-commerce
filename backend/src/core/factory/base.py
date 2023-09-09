@@ -7,6 +7,7 @@ from src.app.controllers import (
     CartController,
     OrderController,
     OrderItemController,
+    PaymentController,
 )
 from src.app.repositories import (
     UserRepository,
@@ -16,8 +17,9 @@ from src.app.repositories import (
     ProductRepository,
     OrderRepository,
     OrderItemRepository,
+    PaymentRepository,
 )
-from src.app.models import User, Vendor, Product, Order, OrderItem
+from src.app.models import User, Vendor, Product, Order, OrderItem, Payment
 from src.core.database import get_db
 from src.core.redis import get_redis
 
@@ -109,5 +111,18 @@ class Factory:
         return OrderItemController(
             repository=OrderItemRepository(
                 model=OrderItem, database_session=db, redis_session=redis
+            )
+        )
+
+    @staticmethod
+    def get_payment_controller(
+        db: Depends = Depends(get_db), redis: Depends = Depends(get_redis)
+    ) -> PaymentController:
+        """
+        Returns a PaymentController instance
+        """
+        return PaymentController(
+            repository=PaymentRepository(
+                model=Payment, database_session=db, redis_session=redis
             )
         )

@@ -6,6 +6,7 @@ from datetime import datetime
 from src.core.database import Base
 from src.app.enums import OrderStatusEnum
 from .order_item import OrderItem  # noqa: F401
+from .payment import Payment  # noqa: F401
 
 
 class Order(Base):
@@ -23,6 +24,7 @@ class Order(Base):
     user = relationship("User", back_populates="orders")
 
     order_items = relationship("OrderItem", back_populates="order")
+    payments = relationship("Payment", back_populates="order")
 
     def __repr__(self):
         return f"<Order {self.delivery_address}>"

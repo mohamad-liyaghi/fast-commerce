@@ -6,6 +6,7 @@ from typing import Optional
 from datetime import datetime
 from src.core.database import Base
 from .vendor import Vendor  # noqa: F401
+from .payment import Payment  # noqa: F401
 
 
 class User(Base):
@@ -38,6 +39,11 @@ class User(Base):
         "Order",
         back_populates="user",
         foreign_keys="Order.user_id",
+    )
+    payments = relationship(
+        "Payment",
+        back_populates="user",
+        foreign_keys="Payment.user_id",
     )
 
     def __repr__(self):

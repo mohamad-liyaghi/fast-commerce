@@ -1,5 +1,6 @@
 import pytest
 from fastapi import HTTPException
+from src.app.enums import OrderStatusEnum
 
 
 class TestOrderController:
@@ -55,3 +56,14 @@ class TestOrderController:
         )
 
         assert order.total_price == product.price
+
+    @pytest.mark.asyncio
+    async def test_set_paid(self, order):
+        order = await self.controller.set_paid(order=order)
+        assert order.status == OrderStatusEnum.PREPARING
+
+    @pytest.mark.asyncio
+    async def test_set_paid_twice(self, order):
+        order = await self.controller.set_paid(order=order)
+        with pytest.raises(HTTPException):
+            await self.controller.set_paid(order=order)
