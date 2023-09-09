@@ -1,68 +1,13 @@
 from sqlalchemy import or_, desc, select, asc, cast, String, and_
-from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-from typing import List, Optional
+from typing import List, Optional, Union
 from src.core.database import Base
 
 
-class BaseDatabaseRepository:
+class BaseRetrieveRepository:
     """
-    Base repository class
-    Methods:
-        create: Create a new instance of model
-        update: Update an instance of model
-        delete: Delete an instance of model
-        retrieve: Retrieve an instance of model
-        list: List all instances of model
+    This class is responsible for retrieving data from the database
     """
-
-    def __init__(self, model: Base, db_session: AsyncSession):
-        self.model = model
-        self.session = db_session  # Database session
-
-    async def create(self, **data):
-        """
-        Create a new instance of model
-        :param data: data to create new instance
-        :return: created instance
-        """
-        instance = self.model(**data)
-        self.session.add(instance)
-        await self.session.commit()
-        await self.session.refresh(instance)
-        return instance
-
-    async def bulk_create(self, instances: List[Base]):
-        """
-        Create a new instance of model
-        :param instances: data to create new instance
-        :return: created instance
-        """
-        self.session.add_all(instances)
-        await self.session.commit()
-        return instances
-
-    async def update(self, instance: Base, **data):
-        """
-        Update an instance of model
-        :param instance: instance to update
-        :param data: data to update
-        :return: updated instance
-        """
-        for key, value in data.items():
-            setattr(instance, key, value)
-        await self.session.commit()
-        await self.session.refresh(instance)
-        return instance
-
-    async def delete(self, instance: Base):
-        """
-        Delete an instance of model
-        :param instance: instance to delete
-        :return: None
-        """
-        await self.session.delete(instance)
-        await self.session.commit()
 
     async def retrieve(
         self,
@@ -75,7 +20,7 @@ class BaseDatabaseRepository:
         skip: int = 0,
         _in: bool = False,
         **kwargs,
-    ):
+    ) -> Optional[Base]:
         """
         Retrieve instance(s) of model based on given filters.
         """
@@ -112,7 +57,9 @@ class BaseDatabaseRepository:
         return query.offset(skip).limit(limit)
 
     @staticmethod
-    async def _execute_query(session, query, many: bool = False, _in: bool = False):
+    async def _execute_query(
+        session, query, many: bool = False, _in: bool = False
+    ) -> Union[Base, List[Base]]:
         """
         Execute query and return result.
         """

@@ -7,7 +7,8 @@ from .database import BaseDatabaseRepository
 
 class BaseRepository(BaseDatabaseRepository, BaseCacheRepository):
     """
-    Base repository class which handels both database and cache operations
+    Base repository class which inherits from BaseDatabaseRepository and BaseCacheRepository
+    and is responsible for all the database and cache operations
     """
 
     def __init__(
@@ -15,4 +16,3 @@ class BaseRepository(BaseDatabaseRepository, BaseCacheRepository):
     ):
         BaseDatabaseRepository.__init__(self, model=model, db_session=database_session)
         BaseCacheRepository.__init__(self, redis_client=redis_session)
-
