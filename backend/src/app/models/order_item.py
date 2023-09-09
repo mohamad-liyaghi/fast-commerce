@@ -17,9 +17,7 @@ class OrderItem(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     total_price = Column(Integer, nullable=False)
-    status = Column(
-        Enum(OrderItemStatusEnum), default=OrderItemStatusEnum.PENDING_PAYMENT
-    )
+    status = Column(Enum(OrderItemStatusEnum), default=OrderItemStatusEnum.PREPARING)
 
     order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
     order = relationship("Order", back_populates="order_items")
