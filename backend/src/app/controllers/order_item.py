@@ -29,7 +29,7 @@ class OrderItemController(BaseController):
             # Return order items of the vendor
             # Which the order is paid and the order item is preparing
             return await self.retrieve(
-                join_fields=["order", "product"],
+                join_fields=["product"],
                 _in=True,
                 order_id=[order.id for order in preparing_orders],
                 vendor_id=[vendor.id],

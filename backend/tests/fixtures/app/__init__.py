@@ -4,7 +4,11 @@ from .vendor import vendor_controller, accepted_vendor, rejected_vendor, pending
 from .product import product_controller, product
 from .cart import cart_controller, cart
 from .order import order_controller, order, paid_order
-from .order_item import order_item_controller, preparing_order_item
+from .order_item import (
+    order_item_controller,
+    preparing_order_item,
+    delivering_order_item,
+)
 from .payment import payment, payment_controller
 
 __all__ = [
@@ -28,4 +32,5 @@ __all__ = [
     "payment_controller",
     "paid_order",
     "preparing_order_item",
+    "delivering_order_item",
 ]
