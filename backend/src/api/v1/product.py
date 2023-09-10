@@ -12,6 +12,7 @@ from src.app.schemas.out import (
     ProductRetrieveOut,
     ProductUpdateOut,
 )
+from src.app.models import User, Vendor
 
 
 router = APIRouter(
@@ -22,8 +23,8 @@ router = APIRouter(
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_product(
     request: ProductCreateIn,
-    auth: AuthenticationRequired = Depends(AuthenticationRequired()),
-    vendor: VendorRequired = Depends(VendorRequired()),
+    auth: User = Depends(AuthenticationRequired()),
+    vendor: Vendor = Depends(VendorRequired()),
     product_controller: ProductController = Depends(Factory.get_product_controller),
 ) -> ProductCreateOut:
     """Create a new product."""
@@ -59,7 +60,7 @@ async def retrieve_product(
 async def update_product(
     product_uuid: UUID,
     request: ProductUpdateIn,
-    current_user: AuthenticationRequired = Depends(AuthenticationRequired()),
+    current_user: User = Depends(AuthenticationRequired()),
     product_controller: ProductController = Depends(Factory.get_product_controller),
 ) -> ProductUpdateOut:
     """Update a product."""
@@ -73,7 +74,7 @@ async def update_product(
 @router.delete("/{product_uuid}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_product(
     product_uuid: UUID,
-    current_user: AuthenticationRequired = Depends(AuthenticationRequired()),
+    current_user: User = Depends(AuthenticationRequired()),
     product_controller: ProductController = Depends(Factory.get_product_controller),
 ) -> None:
     """Delete a product."""

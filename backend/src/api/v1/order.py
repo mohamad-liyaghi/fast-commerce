@@ -12,6 +12,7 @@ from src.app.controllers import (
 from src.core.factory import Factory
 from src.app.schemas.in_ import OrderCreateIn
 from src.app.schemas.out import OrderListOut, OrderRetrieveOut
+from src.app.models import User
 
 
 router = APIRouter(
@@ -22,8 +23,8 @@ router = APIRouter(
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_order(
     request: OrderCreateIn,
-    request_user: AuthenticationRequired = Depends(AuthenticationRequired()),
-    cart: CartRequired = Depends(CartRequired()),
+    request_user: User = Depends(AuthenticationRequired()),
+    cart: dict = Depends(CartRequired()),
     order_controller: OrderController = Depends(Factory.get_order_controller),
     order_item_controller: OrderItemController = Depends(
         Factory.get_order_item_controller
@@ -44,7 +45,7 @@ async def create_order(
 
 @router.get("/", status_code=status.HTTP_200_OK)
 async def get_orders(
-    request_user: AuthenticationRequired = Depends(AuthenticationRequired()),
+    request_user: User = Depends(AuthenticationRequired()),
     order_controller: OrderController = Depends(Factory.get_order_controller),
 ) -> Optional[List[OrderListOut]]:
     return await order_controller.retrieve(
@@ -60,7 +61,7 @@ async def get_orders(
 @router.get("/{order_uuid}", status_code=status.HTTP_200_OK)
 async def get_order(
     order_uuid: UUID,
-    request_user: AuthenticationRequired = Depends(AuthenticationRequired()),
+    request_user: User = Depends(AuthenticationRequired()),
     order_controller: OrderController = Depends(Factory.get_order_controller),
 ) -> Optional[OrderRetrieveOut]:
     return await order_controller.get_by_uuid(

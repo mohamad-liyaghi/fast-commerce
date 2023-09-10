@@ -6,6 +6,7 @@ from src.app.controllers import OrderItemController, OrderController
 from src.core.factory import Factory
 from src.app.schemas.out import OrderItemList
 from src.app.enums import OrderItemStatusEnum
+from src.app.models import Vendor
 
 router = APIRouter(
     tags=["Order Items"],
@@ -15,7 +16,7 @@ router = APIRouter(
 @router.get("/preparing", status_code=status.HTTP_200_OK)
 async def get_preparing_order_items(
     _: AuthenticationRequired = Depends(),
-    vendor: VendorRequired = Depends(VendorRequired()),
+    vendor: Vendor = Depends(VendorRequired()),
     order_item_controller: OrderItemController = Depends(
         Factory.get_order_item_controller
     ),
