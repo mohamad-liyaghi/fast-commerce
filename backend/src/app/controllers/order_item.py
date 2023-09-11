@@ -1,8 +1,15 @@
+from fastapi import HTTPException, status as fastapi_status
 from typing import List, Optional
+from uuid import UUID
 from src.app.controllers.base import BaseController
 from src.app.enums import OrderStatusEnum, OrderItemStatusEnum
-from src.app.models import Vendor, OrderItem
+from src.app.models import Vendor, OrderItem, User
 from src.app.controllers import OrderController
+from src.core.exceptions import (
+    AdminRequiredException,
+    VendorRequiredException,
+    InappropriateOrderStatus,
+)
 
 
 class OrderItemController(BaseController):
@@ -36,3 +43,49 @@ class OrderItemController(BaseController):
                 status=[OrderItemStatusEnum.PREPARING],
                 many=True,
             )
+
+    async def update_status(
+        self, order_item_uuid: UUID, status: OrderItemStatusEnum, request_user: User
+    ):
+        order_item = await self.get_by_uuid(
+            uuid=order_item_uuid, join_fields=["vendor"]
+        )
+
+        match status:
+            case OrderItemStatusEnum.DELIVERING:
+                try:
+                    await self.repository.set_delivering(
+                        order_item=order_item, request_user=request_user
+                    )
+                except VendorRequiredException:
+                    raise HTTPException(
+                        status_code=fastapi_status.HTTP_403_FORBIDDEN,
+                        detail="Only product vendor can set order item status to DELIVERING",
+                    )
+                except InappropriateOrderStatus:
+                    raise HTTPException(
+                        status_code=fastapi_status.HTTP_400_BAD_REQUEST,
+                        detail="Order status should be PREPARING",
+                    )
+
+            case OrderItemStatusEnum.DELIVERED:
+                try:
+                    await self.repository.set_delivered(
+                        order_item=order_item, request_user=request_user
+                    )
+                except AdminRequiredException:
+                    raise HTTPException(
+                        status_code=fastapi_status.HTTP_403_FORBIDDEN,
+                        detail="Only admin can set order item status to DELIVERED",
+                    )
+                except InappropriateOrderStatus:
+                    raise HTTPException(
+                        status_code=fastapi_status.HTTP_400_BAD_REQUEST,
+                        detail="Order status should be DELIVERING",
+                    )
+
+            case _:
+                raise HTTPException(
+                    status_code=fastapi_status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid status",
+                )

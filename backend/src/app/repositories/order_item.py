@@ -1,6 +1,13 @@
 import json
 from .base import BaseRepository
 from src.core.exceptions import ProductNotFound
+from src.app.enums import OrderItemStatusEnum
+from src.core.exceptions import (
+    AdminRequiredException,
+    VendorRequiredException,
+    InappropriateOrderStatus,
+)
+from src.app.models import User, OrderItem
 
 
 class OrderItemRepository(BaseRepository):
@@ -45,3 +52,35 @@ class OrderItemRepository(BaseRepository):
             ]
         )
         return order_items
+
+    async def set_delivering(
+        self, order_item: OrderItem, request_user: User
+    ) -> OrderItem:
+        """
+        Set order item status to DELIVERING only by its vendor
+        """
+        if request_user.id != order_item.vendor.owner_id:
+            raise VendorRequiredException
+
+        if order_item.status != OrderItemStatusEnum.PREPARING:
+            raise InappropriateOrderStatus
+
+        return await self.update(
+            instance=order_item, status=OrderItemStatusEnum.DELIVERING
+        )
+
+    async def set_delivered(
+        self, order_item: OrderItem, request_user: User
+    ) -> OrderItem:
+        """
+        Set order item status to DELIVERED only by admin
+        """
+        if not request_user.is_admin:
+            raise AdminRequiredException
+
+        if order_item.status != OrderItemStatusEnum.DELIVERING:
+            raise InappropriateOrderStatus
+
+        return await self.update(
+            instance=order_item, status=OrderItemStatusEnum.DELIVERED
+        )

@@ -4,6 +4,7 @@ from .vendor import VendorCreateIn, VendorUpdateStatusIn, VendorUpdateIn
 from .product import ProductCreateIn, ProductUpdateIn
 from .cart import CartAddIn, CartUpdateIn
 from .order import OrderCreateIn
+from .order_item import OrderItemStatusIn
 
 auth = [
     "UserRegisterIn",
@@ -36,5 +37,8 @@ order = [
     "OrderCreateIn",
 ]
 
+order_item = [
+    "OrderItemStatusIn",
+]
 
-__all__ = auth + profile + vendor + product + cart + order
+__all__ = auth + profile + vendor + product + cart + order + order_item

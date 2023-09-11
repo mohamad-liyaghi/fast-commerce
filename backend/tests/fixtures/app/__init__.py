@@ -8,6 +8,7 @@ from .order_item import (
     order_item_controller,
     preparing_order_item,
     delivering_order_item,
+    delivered_order_item,
 )
 from .payment import payment, payment_controller
 
@@ -33,4 +34,5 @@ __all__ = [
     "paid_order",
     "preparing_order_item",
     "delivering_order_item",
+    "delivered_order_item",
 ]

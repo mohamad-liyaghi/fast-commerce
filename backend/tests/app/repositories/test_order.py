@@ -4,7 +4,7 @@ from src.app.enums import OrderStatusEnum
 from src.core.exceptions import OrderAlreadyPaid
 
 
-class TestOrderController:
+class TestOrderRepository:
     @pytest.fixture(autouse=True)
     def setup(
         self,

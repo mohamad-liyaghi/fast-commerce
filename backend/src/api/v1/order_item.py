@@ -1,12 +1,14 @@
 from fastapi.routing import APIRouter
 from fastapi import Depends, status
 from typing import List, Optional
+from uuid import UUID
 from src.core.dependencies import AuthenticationRequired, VendorRequired, AdminRequired
 from src.app.controllers import OrderItemController, OrderController
 from src.core.factory import Factory
+from src.app.schemas.in_ import OrderItemStatusIn
 from src.app.schemas.out import OrderItemList
 from src.app.enums import OrderItemStatusEnum
-from src.app.models import Vendor
+from src.app.models import Vendor, User
 
 router = APIRouter(
     tags=["Order Items"],
@@ -44,3 +46,23 @@ async def get_delivering_order_items(
     return await order_item_controller.retrieve(
         status=OrderItemStatusEnum.DELIVERING, many=True, join_fields=["product"]
     )
+
+
+@router.put("/status/{order_item_uuid}", status_code=status.HTTP_200_OK)
+async def update_order_item_status(
+    order_item_uuid: UUID,
+    request: OrderItemStatusIn,
+    request_user: User = Depends(AuthenticationRequired()),
+    order_item_controller: OrderItemController = Depends(
+        Factory.get_order_item_controller
+    ),
+) -> dict:
+    """
+    Update order item status
+    """
+    await order_item_controller.update_status(
+        order_item_uuid=order_item_uuid,
+        request_user=request_user,
+        status=request.status,
+    )
+    return {"ok": "updated"}

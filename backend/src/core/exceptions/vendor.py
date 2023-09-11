@@ -24,3 +24,8 @@ class UpdateVendorStatusDenied(Exception):
 class UpdateVendorDenied(Exception):
     def __init__(self, message="You cannot update others vendor record."):
         super().__init__(message)
+
+
+class VendorRequiredException(Exception):
+    def __init__(self, message="User is not the objects vendor."):
+        super().__init__(message)
