@@ -6,7 +6,7 @@ from src.core.dependencies import AuthenticationRequired, VendorRequired, AdminR
 from src.app.controllers import OrderItemController, OrderController
 from src.core.factory import Factory
 from src.app.schemas.in_ import OrderItemStatusIn
-from src.app.schemas.out import OrderItemList
+from src.app.schemas.out import OrderItem
 from src.app.enums import OrderItemStatusEnum
 from src.app.models import Vendor, User
 
@@ -23,7 +23,7 @@ async def get_preparing_order_items(
         Factory.get_order_item_controller
     ),
     order_controller: OrderController = Depends(Factory.get_order_controller),
-) -> Optional[List[OrderItemList]]:
+) -> Optional[List[OrderItem]]:
     """
     Return list of preparing order items for a vendor
     """
@@ -39,7 +39,7 @@ async def get_delivering_order_items(
     order_item_controller: OrderItemController = Depends(
         Factory.get_order_item_controller
     ),
-) -> Optional[List[OrderItemList]]:
+) -> Optional[List[OrderItem]]:
     """
     Return list of prepared objects that are delivering to the system's center
     """
@@ -66,3 +66,19 @@ async def update_order_item_status(
         status=request.status,
     )
     return {"ok": "updated"}
+
+
+@router.get("/{order_item_uuid}", status_code=status.HTTP_200_OK)
+async def get_order_item(
+    order_item_uuid: UUID,
+    user: User = Depends(AuthenticationRequired()),
+    order_item_controller: OrderItemController = Depends(
+        Factory.get_order_item_controller
+    ),
+) -> Optional[OrderItem]:
+    """
+    Return order item by uuid
+    """
+    return await order_item_controller.get_order_item(
+        request_user=user, uuid=order_item_uuid
+    )

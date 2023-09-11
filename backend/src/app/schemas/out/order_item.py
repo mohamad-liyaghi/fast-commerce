@@ -6,7 +6,7 @@ class OrderItemProduct(BaseModel):
     uuid: UUID
 
 
-class OrderItemList(BaseModel):
+class OrderItem(BaseModel):
     uuid: UUID
     product: OrderItemProduct
     quantity: int

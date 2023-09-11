@@ -89,3 +89,23 @@ class OrderItemController(BaseController):
                     status_code=fastapi_status.HTTP_400_BAD_REQUEST,
                     detail="Invalid status",
                 )
+
+    async def get_order_item(self, request_user: User, uuid: UUID) -> OrderItem:
+        """
+        Only admins/vendor of item/order's user can retrieve the order item
+        """
+        item = await self.get_by_uuid(
+            uuid=uuid, join_fields=["vendor", "order", "product"]
+        )
+
+        if (
+            request_user.is_admin
+            or request_user.id == item.vendor.owner_id
+            or request_user.id == item.order.user_id
+        ):
+            return item
+
+        raise HTTPException(
+            status_code=fastapi_status.HTTP_403_FORBIDDEN,
+            detail="You are not allowed to view this order item",
+        )
