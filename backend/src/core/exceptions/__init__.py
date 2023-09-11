@@ -12,6 +12,7 @@ from .vendor import (
     AcceptedVendorExistsException,
     UpdateVendorDenied,
     UpdateVendorStatusDenied,
+    VendorRequiredException,
 )
 
 from .product import ProductOwnerRequired, AcceptedVendorRequired, ProductNotFound
@@ -22,6 +23,8 @@ from .cart import (
     CartEmptyException,
 )
 from .order import OrderAlreadyPaid
+from .admin import AdminRequiredException
+from .order_item import InappropriateOrderStatus
 
 user_exceptions = [
     "UserAlreadyExistError",
@@ -37,6 +40,7 @@ vendor_exceptions = [
     "AcceptedVendorExistsException",
     "UpdateVendorDenied",
     "UpdateVendorStatusDenied",
+    "VendorRequiredException",
 ]
 
 product_exceptions = [
@@ -53,6 +57,8 @@ cart_exceptions = [
 ]
 
 order_exceptions = ["OrderAlreadyPaid"]
+admin_exceptions = ["AdminRequiredException"]
+order_item_exceptions = ["InappropriateOrderStatus"]
 
 __all__ = (
     user_exceptions
@@ -60,4 +66,6 @@ __all__ = (
     + product_exceptions
     + cart_exceptions
     + order_exceptions
+    + admin_exceptions
+    + order_item_exceptions
 )

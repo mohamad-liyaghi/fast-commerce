@@ -6,6 +6,7 @@ from src.core.factory import Factory
 from src.core.dependencies import AuthenticationRequired
 from src.app.controllers import OrderController, PaymentController
 from src.app.schemas.out import PaymentListOut, PaymentRetrieveOut
+from src.app.models import User
 
 
 router = APIRouter(
@@ -16,7 +17,7 @@ router = APIRouter(
 @router.post("/{order_uuid}", status_code=status.HTTP_200_OK)
 async def pay_order(
     order_uuid: UUID,
-    current_user: dict = Depends(AuthenticationRequired()),
+    current_user: User = Depends(AuthenticationRequired()),
     payment_controller: PaymentController = Depends(Factory.get_payment_controller),
     order_controller: OrderController = Depends(Factory.get_order_controller),
 ):
@@ -29,7 +30,7 @@ async def pay_order(
 
 @router.get("/", status_code=status.HTTP_200_OK)
 async def payment_list(
-    current_user: dict = Depends(AuthenticationRequired()),
+    current_user: User = Depends(AuthenticationRequired()),
     payment_controller: PaymentController = Depends(Factory.get_payment_controller),
 ) -> Optional[List[PaymentListOut]]:
     return await payment_controller.retrieve(
@@ -42,7 +43,7 @@ async def payment_list(
 @router.get("/{payment_uuid}", status_code=status.HTTP_200_OK)
 async def payment_detail(
     payment_uuid: UUID,
-    current_user: dict = Depends(AuthenticationRequired()),
+    current_user: User = Depends(AuthenticationRequired()),
     payment_controller: PaymentController = Depends(Factory.get_payment_controller),
 ) -> PaymentRetrieveOut:
     return await payment_controller.get_by_uuid(
