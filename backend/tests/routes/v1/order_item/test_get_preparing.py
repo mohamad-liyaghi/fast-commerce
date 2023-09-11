@@ -1,7 +1,6 @@
 import pytest
-import pytest_asyncio
 from fastapi import status
-from src.app.enums import OrderItemStatusEnum
+from src.app.enums import OrderItemStatusEnum, VendorStatusEnum, OrderStatusEnum
 
 
 @pytest.mark.asyncio
@@ -25,15 +24,20 @@ class TestRetrievePendingOrderItemRoute:
         response = await authorized_client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is None
+        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED
 
     @pytest.mark.asyncio
     async def test_get_unpaid_order(self, authorized_client, accepted_vendor, order):
         response = await authorized_client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is None
+        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED
+        assert order.status == OrderStatusEnum.PENDING_PAYMENT
 
     @pytest.mark.asyncio
     async def test_get_paid_order(self, authorized_client, accepted_vendor, paid_order):
         response = await authorized_client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is not None
+        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED
+        assert paid_order.status == OrderStatusEnum.PREPARING

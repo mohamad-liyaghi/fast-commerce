@@ -27,7 +27,7 @@ async def get_preparing_order_items(
     """
     Return list of preparing order items for a vendor
     """
-    return await order_item_controller.get_preparing(
+    return await order_item_controller.get_preparing_items(
         vendor=vendor, order_controller=order_controller
     )
 
@@ -78,6 +78,7 @@ async def get_order_item(
 ) -> Optional[OrderItem]:
     """
     Return order item by uuid
+    [Only for admins, vendor of product and user who ordered]
     """
     return await order_item_controller.get_order_item(
         request_user=user, uuid=order_item_uuid

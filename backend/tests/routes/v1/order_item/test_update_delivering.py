@@ -1,7 +1,7 @@
 from fastapi import status
 from uuid import uuid4
 import pytest
-from src.app.enums import OrderItemStatusEnum
+from src.app.enums import OrderItemStatusEnum, VendorStatusEnum
 
 
 class TestUpdateDeliveringItemRoute:
@@ -22,6 +22,7 @@ class TestUpdateDeliveringItemRoute:
     async def test_update_by_vendor(self, accepted_vendor, authorized_client) -> None:
         response = await authorized_client.put(self.url, json=self.data)
         assert response.status_code == status.HTTP_200_OK
+        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED
 
     @pytest.mark.asyncio
     async def test_update_non_vendor(self, admin_client) -> None:
@@ -48,3 +49,4 @@ class TestUpdateDeliveringItemRoute:
         url = f"v1/order_item/status/{uuid4()}"
         response = await authorized_client.put(url, json=self.data)
         assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED

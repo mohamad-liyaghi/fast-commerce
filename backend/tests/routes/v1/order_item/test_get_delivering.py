@@ -1,5 +1,6 @@
 import pytest
 from fastapi import status
+from src.app.enums import OrderItemStatusEnum
 
 
 @pytest.mark.asyncio
@@ -29,9 +30,11 @@ class TestRetrieveDeliveringOrderItemRoute:
         response = await admin_client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is None
+        assert preparing_order_item.status == OrderItemStatusEnum.PREPARING
 
     @pytest.mark.asyncio
     async def test_get(self, admin_client, delivering_order_item):
         response = await admin_client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is not None
+        assert delivering_order_item.status == OrderItemStatusEnum.DELIVERING
