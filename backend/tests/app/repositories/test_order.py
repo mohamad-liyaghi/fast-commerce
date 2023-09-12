@@ -1,7 +1,7 @@
 import pytest
 from src.core.exceptions import CartEmptyException
 from src.app.enums import OrderStatusEnum
-from src.core.exceptions import OrderAlreadyPaid
+from src.core.exceptions import OrderAlreadyPaid, OrderInvalidStatus
 
 
 class TestOrderRepository:
@@ -70,3 +70,23 @@ class TestOrderRepository:
         order = await self.repository.set_paid(order=order)
         with pytest.raises(OrderAlreadyPaid):
             await self.repository.set_paid(order=order)
+
+    @pytest.mark.asyncio
+    async def test_set_delivering(self, paid_order):
+        updated_order = await self.repository.set_delivering(order=paid_order)
+        assert updated_order.status == OrderStatusEnum.DELIVERING
+
+    @pytest.mark.asyncio
+    async def test_set_delivering_invalid_status(self, order):
+        with pytest.raises(OrderInvalidStatus):
+            await self.repository.set_delivering(order=order)
+
+    @pytest.mark.asyncio
+    async def test_set_delivered(self, delivering_order):
+        updated_order = await self.repository.set_delivered(order=delivering_order)
+        assert updated_order.status == OrderStatusEnum.DELIVERED
+
+    @pytest.mark.asyncio
+    async def test_set_delivered_invalid_status(self, order):
+        with pytest.raises(OrderInvalidStatus):
+            await self.repository.set_delivered(order=order)

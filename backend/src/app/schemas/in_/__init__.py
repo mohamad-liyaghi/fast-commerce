@@ -3,7 +3,7 @@ from .profile import ProfileUpdateIn
 from .vendor import VendorCreateIn, VendorUpdateStatusIn, VendorUpdateIn
 from .product import ProductCreateIn, ProductUpdateIn
 from .cart import CartAddIn, CartUpdateIn
-from .order import OrderCreateIn
+from .order import OrderCreateIn, OrderStatusIn
 from .order_item import OrderItemStatusIn
 
 auth = [
@@ -35,6 +35,7 @@ cart = [
 
 order = [
     "OrderCreateIn",
+    "OrderStatusIn",
 ]
 
 order_item = [

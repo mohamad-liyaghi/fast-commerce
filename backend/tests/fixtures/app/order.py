@@ -56,3 +56,45 @@ async def paid_order(
         status=OrderStatusEnum.PREPARING,
     )
     return order
+
+
+@pytest_asyncio.fixture
+async def delivering_order(
+    admin,
+    cart,
+    order_controller,
+    order_item_controller,
+    cart_controller,
+    product_controller,
+):
+    order = await order_controller.create_order(
+        request_user=admin,
+        order_item_controller=order_item_controller,
+        cart_controller=cart_controller,
+        cart=cart,
+        product_controller=product_controller,
+        delivery_address="test address",
+        status=OrderStatusEnum.DELIVERING,
+    )
+    return order
+
+
+@pytest_asyncio.fixture
+async def delivered_order(
+    admin,
+    cart,
+    order_controller,
+    order_item_controller,
+    cart_controller,
+    product_controller,
+):
+    order = await order_controller.create_order(
+        request_user=admin,
+        order_item_controller=order_item_controller,
+        cart_controller=cart_controller,
+        cart=cart,
+        product_controller=product_controller,
+        delivery_address="test address",
+        status=OrderStatusEnum.DELIVERED,
+    )
+    return order

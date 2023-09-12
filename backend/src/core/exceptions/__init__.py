@@ -22,7 +22,7 @@ from .cart import (
     CartItemNotFound,
     CartEmptyException,
 )
-from .order import OrderAlreadyPaid
+from .order import OrderAlreadyPaid, OrderInvalidStatus
 from .admin import AdminRequiredException
 from .order_item import InappropriateOrderStatus
 
@@ -56,7 +56,7 @@ cart_exceptions = [
     "CartEmptyException",
 ]
 
-order_exceptions = ["OrderAlreadyPaid"]
+order_exceptions = ["OrderAlreadyPaid", "OrderInvalidStatus"]
 admin_exceptions = ["AdminRequiredException"]
 order_item_exceptions = ["InappropriateOrderStatus"]
 

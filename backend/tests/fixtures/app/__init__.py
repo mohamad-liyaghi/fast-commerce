@@ -3,7 +3,13 @@ from .auth import auth_controller
 from .vendor import vendor_controller, accepted_vendor, rejected_vendor, pending_vendor
 from .product import product_controller, product
 from .cart import cart_controller, cart
-from .order import order_controller, order, paid_order
+from .order import (
+    order_controller,
+    order,
+    paid_order,
+    delivering_order,
+    delivered_order,
+)
 from .order_item import (
     order_item_controller,
     preparing_order_item,
@@ -35,4 +41,6 @@ __all__ = [
     "preparing_order_item",
     "delivering_order_item",
     "delivered_order_item",
+    "delivering_order",
+    "delivered_order",
 ]

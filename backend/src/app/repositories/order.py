@@ -1,7 +1,7 @@
 from src.core.utils import format_key
 from src.core.configs import settings
 from .base import BaseRepository
-from src.core.exceptions import CartEmptyException, OrderAlreadyPaid
+from src.core.exceptions import CartEmptyException, OrderAlreadyPaid, OrderInvalidStatus
 from src.app.enums import OrderStatusEnum
 from src.app.models import Order
 
@@ -40,6 +40,17 @@ class OrderRepository(BaseRepository):
         if order.status != OrderStatusEnum.PENDING_PAYMENT:
             raise OrderAlreadyPaid
         return await self.update(order, status=OrderStatusEnum.PREPARING)
+
+    async def set_delivering(self, order: Order):
+        if order.status != OrderStatusEnum.PREPARING:
+            raise OrderInvalidStatus("Order must be in PREPARING status")
+
+        return await self.update(order, status=OrderStatusEnum.DELIVERING)
+
+    async def set_delivered(self, order: Order):
+        if order.status != OrderStatusEnum.DELIVERING:
+            raise OrderInvalidStatus("Order must be in DELIVERING status")
+        return await self.update(order, status=OrderStatusEnum.DELIVERED)
 
     @staticmethod
     async def _delete_cart(cart_controller, user):

@@ -10,7 +10,7 @@ from src.app.controllers import (
     ProductController,
 )
 from src.core.factory import Factory
-from src.app.schemas.in_ import OrderCreateIn
+from src.app.schemas.in_ import OrderCreateIn, OrderStatusIn
 from src.app.schemas.out import OrderListOut, OrderRetrieveOut
 from src.app.models import User
 
@@ -69,3 +69,16 @@ async def get_order(
         user_id=request_user.id,
         join_fields=["order_items"],
     )
+
+
+@router.put("/{order_uuid}", status_code=status.HTTP_200_OK)
+async def update_order_status(
+    request: OrderStatusIn,
+    order_uuid: UUID,
+    request_user: User = Depends(AuthenticationRequired()),
+    order_controller: OrderController = Depends(Factory.get_order_controller),
+) -> dict:
+    await order_controller.update_status(
+        order_uuid=order_uuid, request_user=request_user, **request.model_dump()
+    )
+    return {"ok": "updated"}
