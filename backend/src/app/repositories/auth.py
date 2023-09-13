@@ -1,3 +1,6 @@
+from redis.asyncio.client import Redis
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from src.core.exceptions import (
     UserAlreadyExistError,
     UserPendingVerificationError,
@@ -10,6 +13,7 @@ from src.core.tasks import send_email
 from src.core.configs import settings
 from src.core.utils import format_key
 from .user import UserRepository
+from src.app.models import User
 
 
 class AuthRepository(UserRepository):
@@ -18,67 +22,95 @@ class AuthRepository(UserRepository):
     User creation in cache and verification.
     """
 
-    async def register(self, data: dict) -> dict:
+    def __init__(
+        self, model: User, database_session: AsyncSession, redis_session: Redis
+    ):
+        super().__init__(model, database_session, redis_session)
+
+    async def register_user(self, data: dict) -> dict:
         email = data.get("email")
 
-        # Raise error if user already exists in database.
-        if await self.retrieve(email=email):
+        user = await self._get_user_by_email(email=email)
+        if user:
             raise UserAlreadyExistError
 
-        cache_key = await format_key(key=settings.CACHE_USER_KEY, email=email)
-
-        if await self.get_cache(key=cache_key):
+        cached_user = await self._get_cache_user_by_email(email=email)
+        if cached_user:
             raise UserPendingVerificationError
 
-        copied_data = data.copy()
-
-        otp = await OtpHandler.create()
-        data.setdefault("otp", str(otp))
-
-        # Create user in cache.
-        await self.create_cache(key=cache_key, data=data, ttl=settings.CACHE_USER_TTL)
-        # Send verification email.
+        # Create otp and add it to data.
+        data = await self._create_otp(data=data)
+        await self._create_cached_user(data=data)
         await self._send_verification_email(
-            to_email=email, data={"otp": otp, "first_name": data.get("first_name")}
+            to_email=email,
+            data={"otp": data.get("otp"), "first_name": data.get("first_name")},
         )
-        return copied_data
+        return data
 
-    async def verify(self, email: str, otp: int) -> None:
-        """
-        Verify a user using OTP.
-        """
-        # Raise error if user already exists in database.
-        if await self.retrieve(email=email):
+    async def verify_user(self, email: str, otp: int) -> None:
+        user = await self._get_user_by_email(email=email)
+        if user:
             raise UserAlreadyExistError
 
-        cache_key = await format_key(key=settings.CACHE_USER_KEY, email=email)
-        cached_user = await self.get_cache(key=cache_key)
-
-        # IF user is not found in cache, it means user was deleted due to
-        # expiration of the TTL.
+        cached_user = await self._get_cache_user_by_email(email=email)
         if not cached_user:
             raise UserNotFoundError
 
-        # If verification code is invalid, raise an error.
-        if not await OtpHandler.validate(otp=otp, user=cached_user):
+        verify_otp = await self._verify_otp(otp=otp, cached_user=cached_user)
+        if not verify_otp:
             raise InvalidVerificationCodeError
 
-        # Remove OTP from cached data and create user in database
+        # If otp is valid, remove it from cached user and create user in database.
         cached_user.pop("otp")
         await self.create(**cached_user)
 
-    async def login(self, email: str, password: str) -> dict:
-        user = await self.retrieve(email=email)
-
+    async def login_user(self, email: str, password: str) -> dict:
+        user = await self._get_user_by_email(email=email)
         if not user:
             raise UserNotFoundError
 
-        if not await PasswordHandler.verify_password(
+        verify_password = await self._verify_password(
             password=password, hashed_password=user.password
-        ):
+        )
+        if not verify_password:
             raise InvalidCredentialsError
 
-        return await JWTHandler.create_access_token(data={"user_uuid": str(user.uuid)})
+        return await self._create_access_token(data={"user_uuid": str(user.uuid)})
+
+    async def _get_user_by_email(self, email: str) -> User:
+        return await self.retrieve(email=email)
+
+    async def _get_cache_user_by_email(self, email: str) -> dict:
+        key = await self._create_cache_key(email=email)
+        return await self.get_cache(key=key)
+
+    async def _create_cached_user(self, data: dict) -> None:
+        key = await self._create_cache_key(email=data.get("email"))
+        await self.create_cache(key=key, data=data, ttl=settings.CACHE_USER_TTL)
+
+    @staticmethod
+    async def _create_cache_key(email: str) -> str:
+        return await format_key(key=settings.CACHE_USER_KEY, email=email)
+
+    @staticmethod
+    async def _create_otp(data: dict) -> dict:
+        otp = await OtpHandler.create()
+        data.setdefault("otp", str(otp))
+        return data
+
+    @staticmethod
+    async def _verify_otp(otp: int, cached_user: dict) -> bool:
+        return await OtpHandler.validate(otp=otp, user=cached_user)
+
+    @staticmethod
+    async def _verify_password(password: str, hashed_password: str) -> bool:
+        return await PasswordHandler.verify_password(
+            password=password, hashed_password=hashed_password
+        )
+
+    @staticmethod
+    async def _create_access_token(data: dict) -> dict:
+        return await JWTHandler.create_access_token(data=data)
 
     @staticmethod
     async def _send_verification_email(to_email: str, data: dict) -> None:
