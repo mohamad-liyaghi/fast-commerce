@@ -30,7 +30,7 @@ class AuthRepository(UserRepository):
     async def register_user(self, data: dict) -> dict:
         email = data.get("email")
 
-        user = await self._get_user_by_email(email=email)
+        user = await self.get_by_email(email=email)
         if user:
             raise UserAlreadyExistError
 
@@ -48,7 +48,7 @@ class AuthRepository(UserRepository):
         return data
 
     async def verify_user(self, email: str, otp: int) -> None:
-        user = await self._get_user_by_email(email=email)
+        user = await self.get_by_email(email=email)
         if user:
             raise UserAlreadyExistError
 
@@ -65,7 +65,7 @@ class AuthRepository(UserRepository):
         await self.create(**cached_user)
 
     async def login_user(self, email: str, password: str) -> dict:
-        user = await self._get_user_by_email(email=email)
+        user = await self.get_by_email(email=email)
         if not user:
             raise UserNotFoundError
 
@@ -76,9 +76,6 @@ class AuthRepository(UserRepository):
             raise InvalidCredentialsError
 
         return await self._create_access_token(data={"user_uuid": str(user.uuid)})
-
-    async def _get_user_by_email(self, email: str) -> User:
-        return await self.retrieve(email=email)
 
     async def _get_cache_user_by_email(self, email: str) -> dict:
         key = await self._create_cache_key(email=email)

@@ -5,11 +5,10 @@ from httpx import AsyncClient
 
 @pytest.mark.asyncio
 class TestUpdateProfileRoute:
-
     @pytest.fixture(autouse=True)
     def setup_method(self, client: AsyncClient, user) -> None:
         self.client = client
-        self.url = f"v1/profile/{user.uuid}"
+        self.url = f"v1/user/{user.uuid}"
         self.data = {
             "first_name": "updated first name",
             "last_name": "updated last name",
@@ -27,8 +26,5 @@ class TestUpdateProfileRoute:
 
     @pytest.mark.asyncio
     async def test_update_another_user(self, authorized_client, admin) -> None:
-        response = await authorized_client.put(
-            f"v1/profile/{admin.uuid}",
-            json=self.data
-        )
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        response = await authorized_client.put(f"v1/user/{admin.uuid}", json=self.data)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
