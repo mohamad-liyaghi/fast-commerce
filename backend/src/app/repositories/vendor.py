@@ -7,7 +7,7 @@ from src.core.exceptions import (
     PendingVendorExistsException,
     RejectedVendorExistsException,
     UpdateVendorStatusDenied,
-    UpdateVendorDenied,
+    VendorInformationUpdateDenied,
 )
 
 
@@ -22,8 +22,10 @@ class VendorRepository(BaseRepository):
         if existing_vendor:
             if existing_vendor.status == VendorStatusEnum.PENDING:
                 raise PendingVendorExistsException()
+
             elif existing_vendor.status == VendorStatusEnum.ACCEPTED:
                 raise AcceptedVendorExistsException()
+
             elif (
                 existing_vendor.status == VendorStatusEnum.REJECTED
                 and existing_vendor.reviewed_at > datetime.utcnow() - timedelta(days=10)
@@ -33,14 +35,17 @@ class VendorRepository(BaseRepository):
         vendor_data["owner_id"] = request_user.id
         return await super().create(**vendor_data)
 
-    async def update(self, instance: Vendor, request_user: User, **data) -> Vendor:
-        # If status is in data it means user is trying to update vendor status.
+    async def update_vendor(
+        self, instance: Vendor, request_user: User, **data
+    ) -> Vendor:
+        # If status is in data, that means we are updating the status of the vendor.
         status_in_data = data.get("status")
 
         if status_in_data and not request_user.is_admin:
             raise UpdateVendorStatusDenied
 
+        # If status is not in data, that means we are updating the information of the vendor.
         if not status_in_data and not request_user.id == instance.owner_id:
-            raise UpdateVendorDenied
+            raise VendorInformationUpdateDenied
 
         return await super().update(instance=instance, **data)
