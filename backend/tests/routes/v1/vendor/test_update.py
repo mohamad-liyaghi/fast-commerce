@@ -1,4 +1,5 @@
 import pytest
+import asyncio
 from uuid import uuid4
 from fastapi import status
 from httpx import AsyncClient
@@ -8,10 +9,10 @@ from tests.utils.faker import create_vendor_credential
 @pytest.mark.asyncio
 class TestUpdateVendorRoute:
     @pytest.fixture(autouse=True)
-    async def setup_method(self, client: AsyncClient, accepted_vendor) -> None:
+    def setup_method(self, client: AsyncClient, accepted_vendor) -> None:
         self.client = client
         self.url = f"v1/vendor/{accepted_vendor.uuid}"
-        self.data = await create_vendor_credential()
+        self.data = asyncio.run(create_vendor_credential())
 
     @pytest.mark.asyncio
     async def test_update_unauthorized(self) -> None:
