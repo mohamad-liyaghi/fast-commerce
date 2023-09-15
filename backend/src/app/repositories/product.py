@@ -20,18 +20,18 @@ class ProductRepository(BaseRepository):
 
         return await super().create(**data)
 
-    async def update(
+    async def update_product(
         self, instance: Product, request_user: User, data: dict
     ) -> Product:
-        await self._check_owner(instance, request_user)
+        await self._check_product_owner(instance, request_user)
         return await super().update(instance, **data)
 
-    async def delete(self, instance: Product, request_user: User):
-        await self._check_owner(instance, request_user)
+    async def delete_product(self, instance: Product, request_user: User):
+        await self._check_product_owner(instance, request_user)
         return await super().delete(instance)
 
     @staticmethod
-    async def _check_owner(product, request_user):
+    async def _check_product_owner(product, request_user) -> None:
         """Make sure the request user is the owner of the product."""
         if product.user_id != request_user.id:
             raise ProductOwnerRequired

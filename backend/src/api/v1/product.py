@@ -64,7 +64,7 @@ async def update_product(
     product_controller: ProductController = Depends(Factory.get_product_controller),
 ) -> ProductUpdateOut:
     """Update a product."""
-    return await product_controller.update(
+    return await product_controller.update_product(
         uuid=product_uuid,
         request_user=current_user,
         data=request.model_dump(),
@@ -78,4 +78,6 @@ async def delete_product(
     product_controller: ProductController = Depends(Factory.get_product_controller),
 ) -> None:
     """Delete a product."""
-    await product_controller.delete(uuid=product_uuid, request_user=current_user)
+    await product_controller.delete_product(
+        uuid=product_uuid, request_user=current_user
+    )

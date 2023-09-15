@@ -27,7 +27,7 @@ class TestProductController:
 
     @pytest.mark.asyncio
     async def test_update(self, user, product):
-        await self.controller.update(
+        await self.controller.update_product(
             uuid=product.uuid, request_user=user, data=self.data
         )
         assert await self.controller.retrieve(many=True) is not None
@@ -35,28 +35,28 @@ class TestProductController:
     @pytest.mark.asyncio
     async def test_update_not_owner(self, admin, product):
         with pytest.raises(HTTPException):
-            await self.controller.update(
+            await self.controller.update_product(
                 uuid=product.uuid, request_user=admin, data=self.data
             )
 
     @pytest.mark.asyncio
     async def test_update_not_found(self, admin):
         with pytest.raises(HTTPException):
-            await self.controller.update(
+            await self.controller.update_product(
                 uuid=uuid.uuid4(), request_user=admin, data=self.data
             )
 
     @pytest.mark.asyncio
     async def test_delete(self, user, product):
-        await self.controller.delete(uuid=product.uuid, request_user=user)
+        await self.controller.delete_product(uuid=product.uuid, request_user=user)
         assert await self.controller.retrieve(many=True) is None
 
     @pytest.mark.asyncio
     async def test_delete_not_owner(self, admin, product):
         with pytest.raises(HTTPException):
-            await self.controller.delete(uuid=product.uuid, request_user=admin)
+            await self.controller.delete_product(uuid=product.uuid, request_user=admin)
 
     @pytest.mark.asyncio
     async def test_delete_not_found(self, admin):
         with pytest.raises(HTTPException):
-            await self.controller.delete(uuid=uuid.uuid4(), request_user=admin)
+            await self.controller.delete_product(uuid=uuid.uuid4(), request_user=admin)
