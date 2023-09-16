@@ -36,7 +36,7 @@ class TestAuthRepository:
 
     @pytest.mark.asyncio
     async def test_update(self, user, product):
-        product = await self.repository.update(
+        product = await self.repository.update_product(
             product, request_user=user, data={"title": "new title"}
         )
         assert product.title == "new title"
@@ -44,14 +44,14 @@ class TestAuthRepository:
     @pytest.mark.asyncio
     async def test_update_by_non_owner(self, admin, product):
         with pytest.raises(ProductOwnerRequired):
-            await self.repository.update(product, request_user=admin, data={})
+            await self.repository.update_product(product, request_user=admin, data={})
 
     @pytest.mark.asyncio
     async def test_delete(self, user, product):
-        product = await self.repository.delete(product, request_user=user)
+        product = await self.repository.delete_product(product, request_user=user)
         assert product is None
 
     @pytest.mark.asyncio
     async def test_delete_by_non_owner(self, admin, product):
         with pytest.raises(ProductOwnerRequired):
-            await self.repository.delete(product, request_user=admin)
+            await self.repository.delete_product(product, request_user=admin)

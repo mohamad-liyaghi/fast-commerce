@@ -1,5 +1,6 @@
 import pytest
 from fastapi import status
+from src.app.enums import VendorStatusEnum
 
 
 @pytest.mark.asyncio
@@ -24,3 +25,4 @@ class TestListVendorRoute:
         response = await authorized_client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is not None
+        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED

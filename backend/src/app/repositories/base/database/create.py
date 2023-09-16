@@ -7,7 +7,7 @@ class BaseCreateRepository:
     This repository is responsible for all the create operations.
     """
 
-    async def create(self, **data: dict) -> Base:
+    async def create(self, **data) -> Base:
         """
         Create a new instance of model
         """

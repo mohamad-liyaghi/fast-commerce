@@ -1,5 +1,5 @@
 from .auth import UserRegisterIn, UserVerifyIn, UserLoginIn
-from .profile import ProfileUpdateIn
+from .user import UserIn
 from .vendor import VendorCreateIn, VendorUpdateStatusIn, VendorUpdateIn
 from .product import ProductCreateIn, ProductUpdateIn
 from .cart import CartAddIn, CartUpdateIn
@@ -12,8 +12,8 @@ auth = [
     "UserLoginIn",
 ]
 
-profile = [
-    "ProfileUpdateIn",
+user = [
+    "UserIn",
 ]
 
 vendor = [
@@ -42,4 +42,4 @@ order_item = [
     "OrderItemStatusIn",
 ]
 
-__all__ = auth + profile + vendor + product + cart + order + order_item
+__all__ = auth + user + vendor + product + cart + order + order_item

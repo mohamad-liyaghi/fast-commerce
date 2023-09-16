@@ -12,7 +12,7 @@ class TestListProductRoute:
     async def test_empty_list(
         self, client: AsyncClient, product, product_controller, user
     ) -> None:
-        await product_controller.repository.delete(product, request_user=user)
+        await product_controller.repository.delete_product(product, request_user=user)
         response = await client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is None
@@ -31,7 +31,7 @@ class TestListProductRoute:
         assert len(response.json()) == 1
 
     @pytest.mark.asyncio
-    async def test_filter_title_not_exist(self, product, authorized_client) -> None:
+    async def test_filter_title_not_exist(self, authorized_client) -> None:
         response = await authorized_client.get(self.url + "?title=not_exists")
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is None

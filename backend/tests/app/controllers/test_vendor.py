@@ -1,18 +1,15 @@
 from fastapi import HTTPException
 import pytest
+import asyncio
 from datetime import datetime, timedelta
 from src.app.enums import VendorStatusEnum
+from tests.utils.faker import create_vendor_credential
 
 
 class TestVendorController:
     @pytest.fixture(autouse=True)
     def setup(self, vendor_controller):
-        self.data = {
-            "name": "Test Vendor",
-            "description": "Test Description",
-            "domain": "test.com",
-            "address": "Test Address",
-        }
+        self.data = asyncio.run(create_vendor_credential())
         self.controller = vendor_controller
 
     @pytest.mark.asyncio
@@ -42,7 +39,7 @@ class TestVendorController:
     async def test_create_old_rejected_exist(self, rejected_vendor):
         assert rejected_vendor.status == VendorStatusEnum.REJECTED
         reviewed_at = datetime.utcnow() - timedelta(days=11)
-        await self.controller.repository.update(
+        await self.controller.repository.update_vendor(
             instance=rejected_vendor,
             reviewed_at=reviewed_at,
             request_user=rejected_vendor.owner,
@@ -51,8 +48,8 @@ class TestVendorController:
 
     @pytest.mark.asyncio
     async def test_update_by_owner(self, accepted_vendor):
-        domain = "https://www.updated.com"
-        updated_vendor = await self.controller.update(
+        domain = "https://www.update_vendord.com"
+        updated_vendor = await self.controller.update_vendor(
             request_user=accepted_vendor.owner,
             domain=domain,
             vendor_uuid=accepted_vendor.uuid,
@@ -65,7 +62,7 @@ class TestVendorController:
         Admins cannot update vendors credentials.
         """
         with pytest.raises(HTTPException):
-            await self.controller.update(
+            await self.controller.update_vendor(
                 request_user=admin,
                 vendor_uuid=accepted_vendor.uuid,
                 domain="https://www.updated.com",
@@ -76,7 +73,7 @@ class TestVendorController:
         """
         Admins can update vendors status.
         """
-        updated_vendor = await self.controller.update(
+        updated_vendor = await self.controller.update_vendor(
             request_user=admin,
             vendor_uuid=accepted_vendor.uuid,
             status=VendorStatusEnum.REJECTED,
@@ -87,7 +84,7 @@ class TestVendorController:
     async def test_update_status_by_owner(self, accepted_vendor):
         """Owners are not allowed to update vendor status."""
         with pytest.raises(HTTPException):
-            await self.controller.update(
+            await self.controller.update_vendor(
                 request_user=accepted_vendor.owner,
                 vendor_uuid=accepted_vendor.uuid,
                 status=VendorStatusEnum.REJECTED,

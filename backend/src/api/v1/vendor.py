@@ -32,7 +32,7 @@ async def create_vendor(
     current_user=Depends(AuthenticationRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorCreateOut:
-    """Create a new pending vendor."""
+    """Create a new pending vendor request."""
     return await vendor_controller.create(
         request_user=current_user, **request.model_dump()
     )
@@ -43,7 +43,7 @@ async def get_vendor_list(
     current_user=Depends(AuthenticationRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> Optional[List[VendorListOut]]:
-    """List of a users vendor requests."""
+    """List of a user's vendor requests."""
     return await vendor_controller.retrieve(owner_id=current_user.id, many=True)
 
 
@@ -65,7 +65,7 @@ async def get_vendor(
     vendor_uuid: UUID,
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorRetrieveOut:
-    """Retrieve a vendor if exists."""
+    """Get a vendor information by uuid."""
     return await vendor_controller.get_by_uuid(
         vendor_uuid, join_fields=["owner", "reviewer"]
     )
@@ -79,7 +79,7 @@ async def update_vendor(
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorUpdateOut:
     """Update a vendor information by owner."""
-    return await vendor_controller.update(
+    return await vendor_controller.update_vendor(
         vendor_uuid=vendor_uuid, request_user=current_user, **request.model_dump()
     )
 
@@ -92,7 +92,7 @@ async def update_vendor_status(
     __=Depends(AdminRequired()),
     vendor_controller=Depends(Factory.get_vendor_controller),
 ) -> VendorUpdateStatusOut:
-    """Update a vendors status by admin."""
-    return await vendor_controller.update(
+    """Update a vendor status by admin."""
+    return await vendor_controller.update_vendor(
         vendor_uuid=vendor_uuid, request_user=current_user, status=request.status
     )

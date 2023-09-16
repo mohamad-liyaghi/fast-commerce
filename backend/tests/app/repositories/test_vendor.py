@@ -9,7 +9,7 @@ from src.core.exceptions import (
     AcceptedVendorExistsException,
     RejectedVendorExistsException,
     UpdateVendorStatusDenied,
-    UpdateVendorDenied,
+    VendorInformationUpdateDenied,
 )
 
 
@@ -53,7 +53,7 @@ class TestVendorRepository:
     async def test_create_old_rejected_exists(self, rejected_vendor, user):
         credential = await create_vendor_credential()
         reviewed_at = datetime.utcnow() - timedelta(days=11)
-        await self.repository.update(
+        await self.repository.update_vendor(
             instance=rejected_vendor, reviewed_at=reviewed_at, request_user=user
         )
         vendor = await self.repository.create(request_user=user, **credential)
@@ -62,14 +62,14 @@ class TestVendorRepository:
     @pytest.mark.asyncio
     async def test_update_vendor(self, accepted_vendor, user):
         credential = await create_vendor_credential()
-        vendor = await self.repository.update(
+        vendor = await self.repository.update_vendor(
             request_user=user, instance=accepted_vendor, **credential
         )
         assert vendor.owner_id == user.id
 
     @pytest.mark.asyncio
     async def test_update_vendor_status_by_admin(self, accepted_vendor, admin):
-        vendor = await self.repository.update(
+        vendor = await self.repository.update_vendor(
             request_user=admin,
             instance=accepted_vendor,
             status=VendorStatusEnum.REJECTED,
@@ -79,7 +79,7 @@ class TestVendorRepository:
     @pytest.mark.asyncio
     async def test_update_vendor_status_denied(self, accepted_vendor, user):
         with pytest.raises(UpdateVendorStatusDenied):
-            await self.repository.update(
+            await self.repository.update_vendor(
                 request_user=user,
                 instance=accepted_vendor,
                 status=VendorStatusEnum.REJECTED,
@@ -88,7 +88,7 @@ class TestVendorRepository:
     @pytest.mark.asyncio
     async def test_update_vendor_denied_by_admin(self, accepted_vendor, admin):
         credential = await create_vendor_credential()
-        with pytest.raises(UpdateVendorDenied):
-            await self.repository.update(
+        with pytest.raises(VendorInformationUpdateDenied):
+            await self.repository.update_vendor(
                 request_user=admin, instance=accepted_vendor, **credential
             )

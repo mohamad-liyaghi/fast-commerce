@@ -23,7 +23,7 @@ class TestUserController:
         Only profile owner can update its profile
         """
         updated_first_name = "updated first name"
-        updated_user = await user_controller.update(
+        updated_user = await user_controller.update_user(
             uuid=user.uuid, requesting_user=user, first_name=updated_first_name
         )
         assert updated_user.first_name == updated_first_name
@@ -35,6 +35,6 @@ class TestUserController:
         No one can update others data
         """
         with pytest.raises(HTTPException):
-            await user_controller.update(
+            await user_controller.update_user(
                 uuid=user.uuid, requesting_user=admin, first_name="updated one"
             )

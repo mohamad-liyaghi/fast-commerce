@@ -1,4 +1,4 @@
-from .profile import ProfileOut
+from .user import UserOut
 from .vendor import (
     VendorCreateOut,
     VendorUpdateOut,
@@ -18,7 +18,7 @@ from .payment import PaymentListOut, PaymentRetrieveOut
 from .order_item import OrderItem
 
 
-profile = ["ProfileOut"]
+user = ["UserOut"]
 
 vendor = [
     "VendorCreateOut",
@@ -41,4 +41,4 @@ order = ["OrderListOut", "OrderRetrieveOut"]
 
 payment = ["PaymentListOut", "PaymentRetrieveOut"]
 order_item = ["OrderItem"]
-__all__ = profile + vendor + product + cart + order + payment + order_item
+__all__ = user + vendor + product + cart + order + payment + order_item

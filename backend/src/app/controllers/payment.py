@@ -24,5 +24,5 @@ class PaymentController(BaseController):
             order=order,
             amount=order.total_price,
         )
-        await order_controller.set_paid(order=order)
+        await order_controller._set_paid(order=order)
         return payment

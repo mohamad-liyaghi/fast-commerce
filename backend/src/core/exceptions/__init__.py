@@ -10,7 +10,7 @@ from .vendor import (
     PendingVendorExistsException,
     RejectedVendorExistsException,
     AcceptedVendorExistsException,
-    UpdateVendorDenied,
+    VendorInformationUpdateDenied,
     UpdateVendorStatusDenied,
     VendorRequiredException,
 )
@@ -38,7 +38,7 @@ vendor_exceptions = [
     "PendingVendorExistsException",
     "RejectedVendorExistsException",
     "AcceptedVendorExistsException",
-    "UpdateVendorDenied",
+    "VendorInformationUpdateDenied",
     "UpdateVendorStatusDenied",
     "VendorRequiredException",
 ]

@@ -1,6 +1,6 @@
 from datetime import datetime
 from uuid import UUID
-from src.app.schemas.out import ProfileOut
+from src.app.schemas.out import UserOut
 from src.app.schemas.base import BaseProductSpecs, BaseProduct, VendorBaseOut
 
 
@@ -17,7 +17,7 @@ class ProductRetrieveOut(BaseProductSpecs):
     uuid: UUID
     created_at: datetime
     vendor: VendorBaseOut
-    user: ProfileOut
+    user: UserOut
 
 
 class ProductListOut(BaseProduct):

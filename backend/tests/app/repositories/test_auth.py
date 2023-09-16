@@ -27,7 +27,7 @@ class TestAuthRepository:
         When user registers, it creates a new user in the database
         """
         credential = await create_fake_credential()
-        user = await self.repository.register(data=credential)
+        user = await self.repository.register_user(data=credential)
         assert user.get("email") == credential.get("email")
 
     @pytest.mark.asyncio
@@ -38,7 +38,7 @@ class TestAuthRepository:
         credential = await create_fake_credential()
         credential["email"] = user.email
         with pytest.raises(UserAlreadyExistError):
-            await self.repository.register(data=credential)
+            await self.repository.register_user(data=credential)
 
     @pytest.mark.asyncio
     async def test_register_pending_user(self, cached_user):
@@ -48,7 +48,7 @@ class TestAuthRepository:
         credential = await create_fake_credential()
         credential["email"] = cached_user.get("email")
         with pytest.raises(UserPendingVerificationError):
-            await self.repository.register(data=credential)
+            await self.repository.register_user(data=credential)
 
     @pytest.mark.asyncio
     async def test_verify(self, cached_user):
@@ -60,7 +60,7 @@ class TestAuthRepository:
             key=settings.CACHE_USER_KEY, email=cached_user.get("email")
         )
         cached_user = await self.redis.hgetall(cache_key)
-        await self.repository.verify(email=email, otp=cached_user.get("otp"))
+        await self.repository.verify_user(email=email, otp=cached_user.get("otp"))
         user = await self.repository.retrieve(email=email)
 
         assert user
@@ -73,7 +73,7 @@ class TestAuthRepository:
         email = user.email
         otp = "1234"
         with pytest.raises(UserAlreadyExistError):
-            await self.repository.verify(email=email, otp=otp)
+            await self.repository.verify_user(email=email, otp=otp)
 
     @pytest.mark.asyncio
     async def test_verify_invalid_otp(self, cached_user):
@@ -83,7 +83,7 @@ class TestAuthRepository:
         email = cached_user.get("email")
         otp = 12  # Credentials are  5 digits long
         with pytest.raises(InvalidVerificationCodeError):
-            await self.repository.verify(email=email, otp=otp)
+            await self.repository.verify_user(email=email, otp=otp)
 
     @pytest.mark.asyncio
     async def test_login(self, user):
@@ -94,7 +94,7 @@ class TestAuthRepository:
         password = "1234"
         await self.repository.update(user, password=password)
 
-        result = await self.repository.login(email=email, password=password)
+        result = await self.repository.login_user(email=email, password=password)
 
         assert result
 
@@ -106,7 +106,7 @@ class TestAuthRepository:
         email = user.email
         password = "1234"
         with pytest.raises(InvalidCredentialsError):
-            await self.repository.login(email=email, password=password)
+            await self.repository.login_user(email=email, password=password)
 
     @pytest.mark.asyncio
     async def test_login_invalid_user(self):
@@ -116,4 +116,4 @@ class TestAuthRepository:
         email = "not@exist.com"
         password = "1234"
         with pytest.raises(UserNotFoundError):
-            await self.repository.login(email=email, password=password)
+            await self.repository.login_user(email=email, password=password)

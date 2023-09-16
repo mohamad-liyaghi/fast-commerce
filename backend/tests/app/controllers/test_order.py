@@ -59,18 +59,18 @@ class TestOrderController:
 
     @pytest.mark.asyncio
     async def test_set_paid(self, order):
-        order = await self.controller.set_paid(order=order)
+        order = await self.controller._set_paid(order=order)
         assert order.status == OrderStatusEnum.PREPARING
 
     @pytest.mark.asyncio
     async def test_set_paid_twice(self, order):
-        order = await self.controller.set_paid(order=order)
+        order = await self.controller._set_paid(order=order)
         with pytest.raises(HTTPException):
-            await self.controller.set_paid(order=order)
+            await self.controller._set_paid(order=order)
 
     @pytest.mark.asyncio
     async def test_set_delivering(self, paid_order, admin):
-        order = await self.controller.set_delivering(
+        order = await self.controller._set_delivering(
             order=paid_order, request_user=admin
         )
         assert order.status == OrderStatusEnum.DELIVERING
@@ -78,18 +78,18 @@ class TestOrderController:
     @pytest.mark.asyncio
     async def test_set_delivering_as_user(self, paid_order, user):
         with pytest.raises(HTTPException):
-            await self.controller.set_delivering(order=paid_order, request_user=user)
+            await self.controller._set_delivering(order=paid_order, request_user=user)
 
     @pytest.mark.asyncio
     async def test_set_delivering_twice(self, delivering_order, admin):
         with pytest.raises(HTTPException):
-            await self.controller.set_delivering(
+            await self.controller._set_delivering(
                 order=delivering_order, request_user=admin
             )
 
     @pytest.mark.asyncio
     async def test_set_delivered(self, delivering_order, admin):
-        order = await self.controller.set_delivered(
+        order = await self.controller._set_delivered(
             order=delivering_order, request_user=admin
         )
         assert order.status == OrderStatusEnum.DELIVERED
@@ -97,13 +97,13 @@ class TestOrderController:
     @pytest.mark.asyncio
     async def test_set_delivered_as_user(self, delivering_order, user):
         with pytest.raises(HTTPException):
-            await self.controller.set_delivered(
+            await self.controller._set_delivered(
                 order=delivering_order, request_user=user
             )
 
     @pytest.mark.asyncio
     async def test_set_delivered_twice(self, delivered_order, admin):
         with pytest.raises(HTTPException):
-            await self.controller.set_delivered(
+            await self.controller._set_delivered(
                 order=delivered_order, request_user=admin
             )

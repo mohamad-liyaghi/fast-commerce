@@ -21,7 +21,7 @@ class UpdateVendorStatusDenied(Exception):
         super().__init__(message)
 
 
-class UpdateVendorDenied(Exception):
+class VendorInformationUpdateDenied(Exception):
     def __init__(self, message="You cannot update others vendor record."):
         super().__init__(message)
 
