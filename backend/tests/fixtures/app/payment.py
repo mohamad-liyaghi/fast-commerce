@@ -22,7 +22,7 @@ async def payment(payment_controller, order, admin, order_controller):
     """
     Payment fixture
     """
-    await order_controller.set_paid(order=order)
+    await order_controller._set_paid(order=order)
     return await payment_controller.create(
         user=admin,
         order=order,

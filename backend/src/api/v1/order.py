@@ -59,7 +59,7 @@ async def get_orders(
 
 
 @router.get("/{order_uuid}", status_code=status.HTTP_200_OK)
-async def get_order(
+async def retrieve_order(
     order_uuid: UUID,
     request_user: User = Depends(AuthenticationRequired()),
     order_controller: OrderController = Depends(Factory.get_order_controller),

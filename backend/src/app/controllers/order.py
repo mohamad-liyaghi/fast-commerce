@@ -2,6 +2,7 @@ from fastapi import HTTPException, status
 from uuid import UUID
 from src.app.controllers.base import BaseController
 from src.app.models import User, Order
+from src.app.repositories import OrderRepository
 from src.core.exceptions import CartEmptyException, OrderAlreadyPaid, OrderInvalidStatus
 from src.app.enums import OrderStatusEnum
 
@@ -11,6 +12,10 @@ class OrderController(BaseController):
     Order Controller is responsible for handling all the database related
     operations for the orders.
     """
+
+    def __init__(self, repository: OrderRepository):
+        self.repository = repository
+        super().__init__(repository)
 
     async def create_order(
         self,
@@ -39,11 +44,16 @@ class OrderController(BaseController):
         order = await self.get_by_uuid(uuid=order_uuid)
 
         match data.get("status"):
+            case OrderStatusEnum.PREPARING:
+                return await self._set_paid(order=order)
+
             case OrderStatusEnum.DELIVERING:
-                return await self.set_delivering(order=order, request_user=request_user)
+                return await self._set_delivering(
+                    order=order, request_user=request_user
+                )
 
             case OrderStatusEnum.DELIVERED:
-                return await self.set_delivered(order=order, request_user=request_user)
+                return await self._set_delivered(order=order, request_user=request_user)
 
             case _:
                 raise HTTPException(
@@ -51,7 +61,7 @@ class OrderController(BaseController):
                     status_code=status.HTTP_400_BAD_REQUEST,
                 )
 
-    async def set_paid(self, order: Order):  # TODO: add this to updapte status
+    async def _set_paid(self, order: Order):
         try:
             return await self.repository.set_paid(order=order)
         except OrderAlreadyPaid:
@@ -59,7 +69,7 @@ class OrderController(BaseController):
                 detail="Order already paid", status_code=status.HTTP_400_BAD_REQUEST
             )
 
-    async def set_delivering(self, order: Order, request_user: User) -> Order:
+    async def _set_delivering(self, order: Order, request_user: User) -> Order:
         if request_user.is_admin:
             try:
                 return await self.repository.set_delivering(order=order)
@@ -74,7 +84,7 @@ class OrderController(BaseController):
             status_code=status.HTTP_403_FORBIDDEN,
         )
 
-    async def set_delivered(self, order: Order, request_user: User) -> Order:
+    async def _set_delivered(self, order: Order, request_user: User) -> Order:
         if request_user.id == order.user_id:
             try:
                 return await self.repository.set_delivered(order=order)
