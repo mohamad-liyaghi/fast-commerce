@@ -22,7 +22,6 @@ class OrderItemRepository(BaseRepository):
         Bulk create order items for an order
         """
         product_uuids = list(cart.keys())
-        # All products in the cart
         products = await product_controller.retrieve(_in=True, uuid=product_uuids)
 
         if not products:

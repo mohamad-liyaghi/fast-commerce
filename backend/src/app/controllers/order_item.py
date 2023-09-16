@@ -3,6 +3,7 @@ from typing import List, Optional
 from uuid import UUID
 from src.app.controllers.base import BaseController
 from src.app.enums import OrderStatusEnum, OrderItemStatusEnum
+from src.app.repositories import OrderItemRepository
 from src.app.models import Vendor, OrderItem, User
 from src.app.controllers import OrderController
 from src.core.exceptions import (
@@ -17,6 +18,10 @@ class OrderItemController(BaseController):
     OrderItem Controller is responsible for handling all the database related
     operations for the Order items.
     """
+
+    def __init__(self, repository: OrderItemRepository):
+        self.repository = repository
+        super().__init__(self.repository)
 
     async def create_order_items(
         self, order, cart, product_controller
@@ -64,42 +69,46 @@ class OrderItemController(BaseController):
 
         match status:
             case OrderItemStatusEnum.DELIVERING:
-                await self.set_delivering(
+                await self._set_delivering(
                     order_item=order_item, request_user=request_user
                 )
+
             case OrderItemStatusEnum.DELIVERED:
-                await self.set_delivered(
+                await self._set_delivered(
                     order_item=order_item, request_user=request_user
                 )
+
             case _:
                 raise HTTPException(
                     status_code=fastapi_status.HTTP_400_BAD_REQUEST,
                     detail="Invalid status",
                 )
 
-    async def set_delivering(
+    async def _set_delivering(
         self, order_item: OrderItem, request_user: User
     ) -> OrderItem:
         """
-                Set order item status to DELIVERING.
+        Set order item status to DELIVERING.
         Only vendor can set order item status to DELIVERING
         """
         try:
             return await self.repository.set_delivering(
                 order_item=order_item, request_user=request_user
             )
+
         except VendorRequiredException:
             raise HTTPException(
                 status_code=fastapi_status.HTTP_403_FORBIDDEN,
                 detail="Only vendor can set order item status to DELIVERING",
             )
+
         except InappropriateOrderStatus:
             raise HTTPException(
                 status_code=fastapi_status.HTTP_400_BAD_REQUEST,
                 detail="Order status should be PREPARING",
             )
 
-    async def set_delivered(
+    async def _set_delivered(
         self, order_item: OrderItem, request_user: User
     ) -> OrderItem:
         """
