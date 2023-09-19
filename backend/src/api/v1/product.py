@@ -41,7 +41,11 @@ async def get_product_list(
     """Get a list of products."""
 
     return await product_controller.retrieve_or_search(
-        many=True, order_by=["created_at"], descending=True, limit=40, title=title
+        many=True,
+        order_by=["created_at", "is_available"],
+        descending=True,
+        limit=40,
+        title=title,
     )
 
 

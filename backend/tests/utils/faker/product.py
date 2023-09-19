@@ -8,6 +8,7 @@ async def create_product_credential() -> dict:
         "title": faker.name(),
         "description": faker.text(),
         "price": 1234,
+        "is_available": True,
         "specs": {
             "color": faker.color_name(),
             "size": "M",

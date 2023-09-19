@@ -10,3 +10,4 @@ class BaseProduct(BaseModel):
 
 class BaseProductSpecs(BaseProduct):
     specs: Dict[str, Any] = Field(default={})
+    is_available: bool = Field(default=True)

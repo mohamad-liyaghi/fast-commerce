@@ -26,7 +26,9 @@ class CartController(BaseController):
         """
         Add a new product to cart
         """
-        product = await product_controller.get_by_uuid(uuid=kwargs.get("product_uuid"))
+        product = await product_controller.get_by_uuid(
+            uuid=kwargs.get("product_uuid"), is_available=True
+        )
 
         try:
             await self.repository.add_item(
