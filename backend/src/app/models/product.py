@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, JSON, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, JSON, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from src.core.sql import UUIDType
 from uuid import uuid4
@@ -18,6 +18,7 @@ class Product(Base):
     price = Column(Integer, nullable=False)
     specs = Column(JSON, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
+    is_available = Column(Boolean, default=True)
 
     vendor_id = Column(Integer, ForeignKey("vendors.id"), nullable=False)
     vendor = relationship("Vendor", back_populates="products")
