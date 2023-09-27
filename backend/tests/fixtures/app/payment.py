@@ -4,7 +4,7 @@ from src.app.controllers import PaymentController
 from src.app.repositories import PaymentRepository
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def payment_controller(get_test_db, get_test_redis):
     """
     Payment controller fixture
@@ -16,7 +16,7 @@ async def payment_controller(get_test_db, get_test_redis):
     )
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def payment(payment_controller, order, admin, order_controller):
     """
     Payment fixture

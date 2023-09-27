@@ -12,33 +12,28 @@ class TestBaseRepository:
         )
 
     @pytest.mark.asyncio
-    async def test_create(self):
+    async def test_create_valid_data(self):
         credentials = await create_fake_credential()
         user = await self.repository.create(**credentials)
         assert user.id is not None
 
     @pytest.mark.asyncio
-    async def test_retrieve(self, user):
+    async def test_retrieve_existing_record(self, user):
         result = await self.repository.retrieve(id=user.id)
         assert result.id == user.id
 
     @pytest.mark.asyncio
-    async def test_update(self, user):
+    async def test_update_existing_record(self, user):
         new_first_name = "new name"
         result = await self.repository.update(user, first_name=new_first_name)
         assert result.first_name == new_first_name
 
     @pytest.mark.asyncio
-    async def test_delete(self, user):
-        result = await self.repository.delete(user)
-        assert result is None
-
-    @pytest.mark.asyncio
-    async def test_list(self):
+    async def test_non_empty_list(self):
         result = await self.repository.retrieve(many=True)
         assert result is not None
 
     @pytest.mark.asyncio
-    async def test_empty_list(self):
-        result = await self.repository.retrieve(many=True)
-        assert not result
+    async def test_delete_existing_record(self, user):
+        result = await self.repository.delete(user)
+        assert result is None

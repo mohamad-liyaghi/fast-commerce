@@ -6,7 +6,7 @@ from src.app.controllers import VendorController
 from src.app.repositories import VendorRepository
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def vendor_controller(get_test_db, get_test_redis):
     """
     Returns a UserController instance
@@ -18,7 +18,7 @@ async def vendor_controller(get_test_db, get_test_redis):
     )
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def pending_vendor(vendor_controller, user, admin):
     """
     Returns a pending vendor
@@ -34,7 +34,7 @@ async def pending_vendor(vendor_controller, user, admin):
     return vendor
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def accepted_vendor(vendor_controller, user, admin):
     """
     Returns accepted vendor
@@ -52,7 +52,7 @@ async def accepted_vendor(vendor_controller, user, admin):
     return vendor
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def rejected_vendor(vendor_controller, user, admin):
     """
     Returns a rejected vendor

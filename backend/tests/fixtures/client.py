@@ -4,7 +4,7 @@ from src.main import app
 from src.core.handlers import JWTHandler
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def client() -> AsyncClient:
     """
     Create a new FastAPI AsyncClient
@@ -14,7 +14,7 @@ async def client() -> AsyncClient:
         yield client
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def authorized_client(user, client) -> AsyncClient:
     """
     Create a new user and login
@@ -26,7 +26,7 @@ async def authorized_client(user, client) -> AsyncClient:
     return client
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def admin_client(admin, client) -> AsyncClient:
     """
     Create a new admin and login

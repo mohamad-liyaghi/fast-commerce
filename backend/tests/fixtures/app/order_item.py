@@ -5,7 +5,7 @@ from src.app.repositories import OrderItemRepository
 from src.app.enums import OrderItemStatusEnum
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def order_item_controller(get_test_db, get_test_redis):
     """
     Return an order item controller
@@ -17,7 +17,7 @@ async def order_item_controller(get_test_db, get_test_redis):
     )
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def preparing_order_item(
     accepted_vendor, paid_order, order_item_controller, product
 ):
@@ -31,7 +31,7 @@ async def preparing_order_item(
     return order_item
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def delivering_order_item(
     accepted_vendor, paid_order, order_item_controller, product
 ):
@@ -46,7 +46,7 @@ async def delivering_order_item(
     return order_item
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture(scope="class")
 async def delivered_order_item(
     accepted_vendor, paid_order, order_item_controller, product
 ):
