@@ -4,7 +4,7 @@ from src.core.database import Base
 from tests.mocks import override_get_db, engine
 
 
-@pytest_asyncio.fixture(scope="function")
+@pytest_asyncio.fixture(scope="session")
 async def get_test_db() -> AsyncSession:
     """
     Reset database and return a session
