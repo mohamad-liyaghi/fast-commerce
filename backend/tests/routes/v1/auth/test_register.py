@@ -21,26 +21,22 @@ class TestRegisterRoute:
 
     @pytest.mark.asyncio
     async def test_register_user(self) -> None:
-        """Test user creation."""
         response = await self.client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_201_CREATED
 
     @pytest.mark.asyncio
-    async def test_register_user_no_data(self) -> None:
-        """Test user creation."""
+    async def test_register_user_invalid_data(self) -> None:
         response = await self.client.post(self.url)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     @pytest.mark.asyncio
-    async def test_register_existing_email(self, user):
+    async def test_register_user_exists(self, user):
         self.data["email"] = user.email
         response = await self.client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_409_CONFLICT
 
     @pytest.mark.asyncio
-    async def test_register_pending_verification(self):
-        # Create a user
-        await self.client.post(self.url, json=self.data)
-        # Create again
-        response = await self.client.post(self.url, json=self.data)
+    async def test_register_user_pending_verification(self):
+        await self.client.post(self.url, json=self.data)  # Register once
+        response = await self.client.post(self.url, json=self.data)  # Register again
         assert response.status_code == status.HTTP_400_BAD_REQUEST

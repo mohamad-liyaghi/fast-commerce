@@ -14,18 +14,7 @@ class TestVerifyRoute:
         self.url = "v1/auth/verify"
 
     @pytest.mark.asyncio
-    async def test_verify(self, get_test_redis) -> None:
-        """Test user creation."""
-        cache_key = await format_key(
-            key=settings.CACHE_USER_KEY, email=self.data["email"]
-        )
-        cached_user = await get_test_redis.hgetall(cache_key)
-        self.data["otp"] = cached_user["otp"]
-        response = await self.client.post(self.url, json=self.data)
-        assert response.status_code == status.HTTP_200_OK
-
-    @pytest.mark.asyncio
-    async def test_verify_invalid_code(self, get_test_redis) -> None:
+    async def test_verify_invalid_otp(self, get_test_redis) -> None:
         cache_key = await format_key(
             key=settings.CACHE_USER_KEY, email=self.data["email"]
         )
@@ -35,33 +24,36 @@ class TestVerifyRoute:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.asyncio
+    async def test_verify_valid_otp(self, get_test_redis) -> None:
+        cache_key = await format_key(
+            key=settings.CACHE_USER_KEY, email=self.data["email"]
+        )
+        cached_user = await get_test_redis.hgetall(cache_key)
+        self.data["otp"] = cached_user["otp"]
+        response = await self.client.post(self.url, json=self.data)
+        assert response.status_code == status.HTTP_200_OK
+
+    @pytest.mark.asyncio
     async def test_verify_invalid_data(self) -> None:
         response = await self.client.post(self.url)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
 
     @pytest.mark.asyncio
-    async def test_verify_invalid_user(self) -> None:
+    async def test_verify_user_not_exist(self) -> None:
         self.data["otp"] = 12345
-        self.data["email"] = "not@exist.com"
-        response = await self.client.post(self.url, json=self.data)
-        assert response.status_code == status.HTTP_404_NOT_FOUND
-
-    @pytest.mark.asyncio
-    async def test_verify_not_found(self) -> None:
-        self.data["email"] = "non@gmail.com"
-        self.data["otp"] = 12345
+        self.data["email"] = self.data["email"] + "invalid"
         response = await self.client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.asyncio
     async def test_verify_active_user(self, user) -> None:
-        self.data["otp"] = 12345
         self.data["email"] = user.email
+        self.data["otp"] = 12345
         response = await self.client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
 
     @pytest.mark.asyncio
-    async def test_verify_long_conde(self) -> None:
+    async def test_verify_long_code(self) -> None:
         self.data["otp"] = 1234567
         response = await self.client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY

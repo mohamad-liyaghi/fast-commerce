@@ -1,4 +1,5 @@
 import pytest
+import asyncio
 from fastapi import HTTPException
 from tests.utils.faker import create_fake_credential
 from src.core.utils import format_key
@@ -6,29 +7,31 @@ from src.core.configs import settings
 
 
 class TestAuthController:
-    @pytest.mark.asyncio
-    async def test_register(self, auth_controller, get_test_redis):
-        credentials = await create_fake_credential()
-        await auth_controller.register_user(credentials)
-        cache_key = await format_key(
-            key=settings.CACHE_USER_KEY, email=credentials["email"]
-        )
-        cached_user = await get_test_redis.hgetall(cache_key)
-        assert cached_user["email"] == credentials["email"]
+    @pytest.fixture(autouse=True)
+    def setup(self):
+        self.credentials = asyncio.run(create_fake_credential())
 
     @pytest.mark.asyncio
-    async def test_register_already_exists(self, auth_controller, user):
-        credential = await create_fake_credential()
-        credential["email"] = user.email
+    async def test_register_valid_data(self, auth_controller, get_test_redis):
+        await auth_controller.register_user(self.credentials)
+        # Get user from cache
+        cache_key = await format_key(
+            key=settings.CACHE_USER_KEY, email=self.credentials["email"]
+        )
+        cached_user = await get_test_redis.hgetall(cache_key)
+        assert cached_user["email"] == self.credentials["email"]
+
+    @pytest.mark.asyncio
+    async def test_register_user_already_exists(self, auth_controller, user):
+        self.credentials["email"] = user.email
         with pytest.raises(HTTPException):
-            await auth_controller.register_user(credential)
+            await auth_controller.register_user(self.credentials)
 
     @pytest.mark.asyncio
     async def test_register_exists_in_cache(self, auth_controller, cached_user):
-        credential = await create_fake_credential()
-        credential["email"] = cached_user["email"]
+        self.credentials["email"] = cached_user["email"]
         with pytest.raises(HTTPException):
-            await auth_controller.register_user(credential)
+            await auth_controller.register_user(self.credentials)
 
     @pytest.mark.asyncio
     async def test_verify(self, auth_controller, cached_user, get_test_redis):
