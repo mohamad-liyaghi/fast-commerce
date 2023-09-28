@@ -1,5 +1,4 @@
 from fastapi import status
-from datetime import datetime, timedelta
 import pytest
 import asyncio
 from httpx import AsyncClient
@@ -18,11 +17,6 @@ class TestCreateVendorRoute:
     async def test_create_unauthorized(self, client):
         response = await client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_403_FORBIDDEN
-
-    @pytest.mark.asyncio
-    async def test_create(self, authorized_client):
-        response = await authorized_client.post(self.url, json=self.data)
-        assert response.status_code == status.HTTP_201_CREATED
 
     @pytest.mark.asyncio
     async def test_create_pending_exists(self, authorized_client, pending_vendor):
@@ -44,12 +38,13 @@ class TestCreateVendorRoute:
 
     @pytest.mark.asyncio
     async def test_create_old_rejected_exist(
-        self, authorized_client, rejected_vendor, vendor_controller
+        self, authorized_client, old_rejected_vendor
     ):
-        reviewed_at = datetime.utcnow() - timedelta(days=11)
-        await vendor_controller.repository.update(
-            rejected_vendor, reviewed_at=reviewed_at, request_user=rejected_vendor.owner
-        )
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_201_CREATED
-        assert rejected_vendor.status == VendorStatusEnum.REJECTED
+        assert old_rejected_vendor.status == VendorStatusEnum.REJECTED
+
+    @pytest.mark.asyncio
+    async def test_create(self, authorized_client):
+        response = await authorized_client.post(self.url, json=self.data)
+        assert response.status_code == status.HTTP_201_CREATED

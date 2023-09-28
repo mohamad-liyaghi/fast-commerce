@@ -13,11 +13,6 @@ class TestVendorController:
         self.controller = vendor_controller
 
     @pytest.mark.asyncio
-    async def test_create(self, user):
-        await self.controller.create(request_user=user, **self.data)
-        assert await self.controller.retrieve(many=True) is not None
-
-    @pytest.mark.asyncio
     async def test_create_pending_exists(self, user, pending_vendor):
         assert pending_vendor.status == VendorStatusEnum.PENDING
         with pytest.raises(HTTPException):
@@ -36,15 +31,9 @@ class TestVendorController:
             await self.controller.create(request_user=user, **self.data)
 
     @pytest.mark.asyncio
-    async def test_create_old_rejected_exist(self, rejected_vendor):
-        assert rejected_vendor.status == VendorStatusEnum.REJECTED
-        reviewed_at = datetime.utcnow() - timedelta(days=11)
-        await self.controller.repository.update_vendor(
-            instance=rejected_vendor,
-            reviewed_at=reviewed_at,
-            request_user=rejected_vendor.owner,
-        )
+    async def test_create_old_rejected_exist(self, old_rejected_vendor):
         assert await self.controller.retrieve(many=True) is not None
+        assert old_rejected_vendor.status == VendorStatusEnum.REJECTED
 
     @pytest.mark.asyncio
     async def test_update_by_owner(self, accepted_vendor):
@@ -89,3 +78,9 @@ class TestVendorController:
                 vendor_uuid=accepted_vendor.uuid,
                 status=VendorStatusEnum.REJECTED,
             )
+
+    @pytest.mark.asyncio
+    async def test_create(self, user, accepted_vendor):
+        await self.controller.repository.delete(instance=accepted_vendor)
+        await self.controller.create(request_user=user, **self.data)
+        assert await self.controller.retrieve(many=True) is not None
