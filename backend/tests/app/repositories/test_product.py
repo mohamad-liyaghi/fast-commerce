@@ -13,7 +13,21 @@ class TestAuthRepository:
         )
 
     @pytest.mark.asyncio
-    async def test_create(self, user, accepted_vendor):
+    async def test_create_fails_by_pending_vendor(self, user, pending_vendor):
+        with pytest.raises(AcceptedVendorRequired):
+            await self.repository.create(
+                request_user=user, request_vendor=pending_vendor, data={}
+            )
+
+    @pytest.mark.asyncio
+    async def test_create_fails_rejected_vendor(self, user, rejected_vendor):
+        with pytest.raises(AcceptedVendorRequired):
+            await self.repository.create(
+                request_user=user, request_vendor=rejected_vendor, data={}
+            )
+
+    @pytest.mark.asyncio
+    async def test_create_by_accepted_vendor(self, user, accepted_vendor):
         data = await create_product_credential()
         product = await self.repository.create(
             request_user=user, request_vendor=accepted_vendor, **data
@@ -21,37 +35,23 @@ class TestAuthRepository:
         assert product.user_id == user.id
 
     @pytest.mark.asyncio
-    async def test_create_pending_vendor(self, user, pending_vendor):
-        with pytest.raises(AcceptedVendorRequired):
-            await self.repository.create(
-                request_user=user, request_vendor=pending_vendor, data={}
-            )
-
-    @pytest.mark.asyncio
-    async def test_create_rejected_vendor(self, user, rejected_vendor):
-        with pytest.raises(AcceptedVendorRequired):
-            await self.repository.create(
-                request_user=user, request_vendor=rejected_vendor, data={}
-            )
-
-    @pytest.mark.asyncio
-    async def test_update(self, user, product):
+    async def test_update_existing_product(self, user, product):
         product = await self.repository.update_product(
             product, request_user=user, data={"title": "new title"}
         )
         assert product.title == "new title"
 
     @pytest.mark.asyncio
-    async def test_update_by_non_owner(self, admin, product):
+    async def test_update_fails_by_non_owner(self, admin, product):
         with pytest.raises(ProductOwnerRequired):
             await self.repository.update_product(product, request_user=admin, data={})
 
     @pytest.mark.asyncio
-    async def test_delete(self, user, product):
+    async def test_delete_existing_product(self, user, product):
         product = await self.repository.delete_product(product, request_user=user)
         assert product is None
 
     @pytest.mark.asyncio
-    async def test_delete_by_non_owner(self, admin, product):
+    async def test_delete_fails_by_non_owner(self, admin, product):
         with pytest.raises(ProductOwnerRequired):
             await self.repository.delete_product(product, request_user=admin)
