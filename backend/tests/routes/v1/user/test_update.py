@@ -1,6 +1,7 @@
 import pytest
 from fastapi import status
 from httpx import AsyncClient
+from uuid import uuid4
 
 
 @pytest.mark.asyncio
@@ -27,4 +28,10 @@ class TestUpdateProfileRoute:
     @pytest.mark.asyncio
     async def test_update_another_user(self, authorized_client, admin) -> None:
         response = await authorized_client.put(f"v1/user/{admin.uuid}", json=self.data)
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+
+    @pytest.mark.asyncio
+    async def test_update_non_existing_user(self, authorized_client) -> None:
+        url = f"v1/user/{uuid4()}"
+        response = await authorized_client.put(url, json=self.data)
         assert response.status_code == status.HTTP_404_NOT_FOUND
