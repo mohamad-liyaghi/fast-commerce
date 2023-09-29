@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from uuid import UUID
 from .base import BaseCacheRepository
 from src.app.models import Product, User
 from src.core.exceptions import (
@@ -7,7 +8,6 @@ from src.core.exceptions import (
     CartItemQuantityException,
     CartItemNotFound,
 )
-from src.core.sql.types import UUIDType
 from src.core.utils import format_key
 from src.core.configs import settings
 
@@ -67,7 +67,7 @@ class CartRepository(BaseCacheRepository):
         )
 
     async def update_item(
-        self, request_user: User, product_uuid: UUIDType, **kwargs
+        self, request_user: User, product_uuid: UUID, **kwargs
     ) -> None:
         """Update the quantity of a specific item in the cart."""
         product_in_cart = await self._get_cart_item(
@@ -82,7 +82,7 @@ class CartRepository(BaseCacheRepository):
             key=key, data={str(product_uuid): json.dumps(product_in_cart)}
         )
 
-    async def delete_item(self, request_user: User, product_uuid: UUIDType) -> None:
+    async def delete_item(self, request_user: User, product_uuid: UUID) -> None:
         """Remove a specific item from the cart."""
         key = await self._create_key(user=request_user)
         await self._get_cart_item(
