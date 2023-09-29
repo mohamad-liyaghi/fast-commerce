@@ -5,7 +5,7 @@ from src.app.repositories import ProductRepository
 from tests.utils.faker import create_product_credential
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def product_controller(get_test_db, get_test_redis):
     """
     Return a product controller
@@ -17,7 +17,7 @@ async def product_controller(get_test_db, get_test_redis):
     )
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def product(product_controller, accepted_vendor, user):
     """
     Create and return a product

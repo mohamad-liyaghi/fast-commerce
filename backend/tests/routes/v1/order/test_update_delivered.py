@@ -14,9 +14,16 @@ class TestUpdateToDeliveredgRoute:
         }
 
     @pytest.mark.asyncio
-    async def test_update_unauthorized(self, client) -> None:
+    async def test_update_unauthorized_fails(self, client) -> None:
         response = await client.put(self.url, json=self.data)
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    @pytest.mark.asyncio
+    async def test_set_delivered_twice_fails(self, admin_client, delivered_order):
+        url = f"v1/order/{delivered_order.uuid}"
+        response = await admin_client.put(url, json=self.data)
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert delivered_order.status == OrderStatusEnum.DELIVERED
 
     @pytest.mark.asyncio
     async def test_update_by_owner(self, admin_client, admin) -> None:
@@ -29,13 +36,6 @@ class TestUpdateToDeliveredgRoute:
         response = await authorized_client.put(self.url, json=self.data)
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert user.id != self.order.user_id
-
-    @pytest.mark.asyncio
-    async def test_update_already_delivered(self, admin_client, delivered_order):
-        url = f"v1/order/{delivered_order.uuid}"
-        response = await admin_client.put(url, json=self.data)
-        assert response.status_code == status.HTTP_400_BAD_REQUEST
-        assert delivered_order.status == OrderStatusEnum.DELIVERED
 
     @pytest.mark.asyncio
     async def test_update_invalid_status(self, admin_client):

@@ -5,7 +5,7 @@ from src.app.repositories import OrderRepository
 from src.app.enums import OrderStatusEnum
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def order_controller(get_test_db, get_test_redis):
     """
     Return an order controller
@@ -17,7 +17,7 @@ async def order_controller(get_test_db, get_test_redis):
     )
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def order(
     admin,
     cart,
@@ -37,7 +37,7 @@ async def order(
     return order
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def paid_order(
     admin,
     cart,
@@ -58,7 +58,7 @@ async def paid_order(
     return order
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def delivering_order(
     admin,
     cart,
@@ -79,7 +79,7 @@ async def delivering_order(
     return order
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def delivered_order(
     admin,
     cart,

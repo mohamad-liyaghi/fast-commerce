@@ -31,7 +31,6 @@ class VendorRepository(BaseRepository):
                 and existing_vendor.reviewed_at > datetime.utcnow() - timedelta(days=10)
             ):
                 raise RejectedVendorExistsException()
-
         vendor_data["owner_id"] = request_user.id
         return await super().create(**vendor_data)
 

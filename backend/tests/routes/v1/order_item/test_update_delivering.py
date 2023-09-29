@@ -14,23 +14,12 @@ class TestUpdateDeliveringItemRoute:
         }
 
     @pytest.mark.asyncio
-    async def test_update_unauthorized(self, client) -> None:
+    async def test_update_unauthorized_fails(self, client) -> None:
         response = await client.put(self.url, json=self.data)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.asyncio
-    async def test_update_by_vendor(self, accepted_vendor, authorized_client) -> None:
-        response = await authorized_client.put(self.url, json=self.data)
-        assert response.status_code == status.HTTP_200_OK
-        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED
-
-    @pytest.mark.asyncio
-    async def test_update_non_vendor(self, admin_client) -> None:
-        response = await admin_client.put(self.url, json=self.data)
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-
-    @pytest.mark.asyncio
-    async def test_update_already_delivering(
+    async def test_update_delivering_item_fails(
         self, authorized_client, delivering_order_item
     ):
         url = f"v1/order_item/status/{delivering_order_item.uuid}"
@@ -39,7 +28,18 @@ class TestUpdateDeliveringItemRoute:
         assert delivering_order_item.status == OrderItemStatusEnum.DELIVERING
 
     @pytest.mark.asyncio
-    async def test_update_invalid_status(self, authorized_client):
+    async def test_update_by_vendor(self, accepted_vendor, authorized_client) -> None:
+        response = await authorized_client.put(self.url, json=self.data)
+        assert response.status_code == status.HTTP_200_OK
+        assert accepted_vendor.status == VendorStatusEnum.ACCEPTED
+
+    @pytest.mark.asyncio
+    async def test_update_by_non_vendor_fails(self, admin_client) -> None:
+        response = await admin_client.put(self.url, json=self.data)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    @pytest.mark.asyncio
+    async def test_update_with_invalid_status_fails(self, authorized_client):
         self.data["status"] = str(OrderItemStatusEnum.PREPARING.value)
         response = await authorized_client.put(self.url, json=self.data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

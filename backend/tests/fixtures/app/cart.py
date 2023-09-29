@@ -5,7 +5,7 @@ from src.core.utils import format_key
 from src.core.configs import settings
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def cart_controller(get_test_redis):
     """
     Return a cart controller
@@ -13,7 +13,7 @@ async def cart_controller(get_test_redis):
     return CartController(repository=CartRepository(redis_client=get_test_redis))
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def cart(product, admin, cart_controller, product_controller):
     """
     Create and return a cart

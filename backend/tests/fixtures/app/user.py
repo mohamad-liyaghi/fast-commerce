@@ -5,7 +5,7 @@ from src.app.repositories import UserRepository
 from tests.utils.faker import create_fake_credential
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def user_controller(get_test_db, get_test_redis):
     """
     Returns a UserController instance
@@ -17,7 +17,7 @@ async def user_controller(get_test_db, get_test_redis):
     )
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def user(user_controller):
     """
     Returns a User instance
@@ -26,7 +26,7 @@ async def user(user_controller):
     return await user_controller.create(**credentials)
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def cached_user(user_controller, client):
     credential = await create_fake_credential()
     data = {
@@ -39,7 +39,7 @@ async def cached_user(user_controller, client):
     return data
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def admin(user_controller):
     """
     Returns a User instance

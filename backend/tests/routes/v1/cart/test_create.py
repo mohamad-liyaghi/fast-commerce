@@ -17,12 +17,12 @@ class TestAddCartItemRoute:
         }
 
     @pytest.mark.asyncio
-    async def test_add_unauthorized(self, client):
+    async def test_add_unauthorized_fails(self, client):
         response = await client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.asyncio
-    async def test_add_item_by_product_user(self, authorized_client, user):
+    async def test_add_item_by_product_owner_fails(self, authorized_client, user):
         response = await authorized_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert self.product.user_id == user.id
@@ -35,7 +35,7 @@ class TestAddCartItemRoute:
 
     @pytest.mark.asyncio
     async def test_add_item_increment_quantity(
-        self, admin_client, cart_controller, admin, cart
+        self, admin_client, cart_controller, admin
     ):
         response = await admin_client.post(self.url, json=self.data)
         cache_key = await format_key(key=settings.CACHE_CART_KEY, user_uuid=admin.uuid)
@@ -48,13 +48,13 @@ class TestAddCartItemRoute:
         assert cart_product["quantity"] == 2
 
     @pytest.mark.asyncio
-    async def test_add_item_not_found(self, admin_client, admin):
+    async def test_add_item_not_found(self, admin_client):
         self.data["product_uuid"] = str(uuid4())
         response = await admin_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_404_NOT_FOUND
 
     @pytest.mark.asyncio
-    async def test_add_more_than_10_items(self, admin_client, cart):
+    async def test_add_more_than_10_items_fails(self, admin_client):
         self.data["quantity"] = 9
         response = await admin_client.post(self.url, json=self.data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST

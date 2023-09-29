@@ -4,7 +4,7 @@ from src.app.controllers import AuthController
 from src.app.repositories import AuthRepository
 
 
-@pytest_asyncio.fixture
+@pytest_asyncio.fixture(scope="class")
 async def auth_controller(get_test_db, get_test_redis):
     """
     Returns a AuthController instance

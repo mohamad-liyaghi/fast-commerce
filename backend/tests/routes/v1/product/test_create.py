@@ -16,23 +16,15 @@ class TestCreateProductRoute:
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.asyncio
-    async def test_create_no_vendor(self, authorized_client):
+    async def test_create_fails_by_non_vendor(self, authorized_client):
         credential = await create_product_credential()
         response = await authorized_client.post(self.url, json=credential)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.asyncio
-    async def test_create_rejected_vendor(self, authorized_client, rejected_vendor):
-        """
-        Test that a rejected vendor cannot create a product
-        """
-        credential = await create_product_credential()
-        response = await authorized_client.post(self.url, json=credential)
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-        assert rejected_vendor.status == VendorStatusEnum.REJECTED
-
-    @pytest.mark.asyncio
-    async def test_create_pending_vendor(self, authorized_client, pending_vendor):
+    async def test_create_fails_by_pending_vendor(
+        self, authorized_client, pending_vendor
+    ):
         """
         Test that a pending vendor cannot create a product
         """
@@ -40,6 +32,18 @@ class TestCreateProductRoute:
         response = await authorized_client.post(self.url, json=credential)
         assert response.status_code == status.HTTP_403_FORBIDDEN
         assert pending_vendor.status == VendorStatusEnum.PENDING
+
+    @pytest.mark.asyncio
+    async def test_create_fails_by_rejected_vendor(
+        self, authorized_client, rejected_vendor
+    ):
+        """
+        Test that a rejected vendor cannot create a product
+        """
+        credential = await create_product_credential()
+        response = await authorized_client.post(self.url, json=credential)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert rejected_vendor.status == VendorStatusEnum.REJECTED
 
     @pytest.mark.asyncio
     async def test_create_with_accepted_vendor(
@@ -57,9 +61,6 @@ class TestCreateProductRoute:
     async def test_create_invalid_data(self, authorized_client, accepted_vendor):
         """
         Test that an accepted vendor cannot create a product with invalid data
-        :param authorized_client:
-        :param accepted_vendor:
-        :return:
         """
         invalid_data = {}
         response = await authorized_client.post(self.url, json=invalid_data)

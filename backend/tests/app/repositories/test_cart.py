@@ -1,4 +1,5 @@
 import pytest
+from uuid import uuid4
 from src.app.repositories import CartRepository
 from src.core.exceptions import (
     CartItemOwnerException,
@@ -18,25 +19,21 @@ class TestAuthRepository:
         }
 
     @pytest.mark.asyncio
-    async def test_add_item(self, admin):
+    async def test_add_item_to_cart(self, admin):
         await self.repository.add_item(
             product=self.product, request_user=admin, **self.data
         )
 
     @pytest.mark.asyncio
-    async def test_add_by_product_owner(self, user):
+    async def test_add_item_by_product_owner_fails(self, user):
         with pytest.raises(CartItemOwnerException):
             await self.repository.add_item(
                 product=self.product, request_user=user, **self.data
             )
 
     @pytest.mark.asyncio
-    async def test_add_more_than_10_items(self, admin):
+    async def test_add_more_than_10_items_fails(self, admin):
         self.data["quantity"] = 10
-        await self.repository.add_item(
-            product=self.product, request_user=admin, **self.data
-        )
-        self.data["quantity"] = 1
         with pytest.raises(CartItemQuantityException):
             await self.repository.add_item(
                 product=self.product, request_user=admin, **self.data
@@ -53,20 +50,20 @@ class TestAuthRepository:
         )
 
     @pytest.mark.asyncio
-    async def test_update_item_not_found(self, admin):
+    async def test_update_non_existing_item(self, admin):
         with pytest.raises(CartItemNotFound):
             await self.repository.update_item(
-                request_user=admin, product_uuid=self.product.uuid, quantity=5
+                request_user=admin, product_uuid=uuid4(), quantity=5
             )
 
     @pytest.mark.asyncio
-    async def test_delete_item(self, admin, cart):
+    async def test_delete_item(self, admin):
         await self.repository.delete_item(
             request_user=admin, product_uuid=self.product.uuid
         )
 
     @pytest.mark.asyncio
-    async def test_delete_item_not_found(self, admin):
+    async def test_delete_non_existing_item(self, admin):
         with pytest.raises(CartItemNotFound):
             await self.repository.delete_item(
                 request_user=admin, product_uuid=self.product.uuid

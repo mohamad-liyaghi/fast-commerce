@@ -9,12 +9,12 @@ class TestListCartRoute:
         self.url = "v1/cart/"
 
     @pytest.mark.asyncio
-    async def test_list_unauthorized(self, client: AsyncClient) -> None:
+    async def test_get_list_unauthorized_fails(self, client: AsyncClient) -> None:
         response = await client.get(self.url)
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
     @pytest.mark.asyncio
-    async def test_empty_list(self, authorized_client) -> None:
+    async def test_get_empty_list(self, authorized_client) -> None:
         response = await authorized_client.get(self.url)
         assert response.status_code == status.HTTP_200_OK
         assert response.json() is None
