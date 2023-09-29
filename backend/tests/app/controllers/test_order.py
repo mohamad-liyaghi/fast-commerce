@@ -63,10 +63,9 @@ class TestOrderController:
         assert order.status == OrderStatusEnum.PREPARING
 
     @pytest.mark.asyncio
-    async def test_set_paid_twice(self, order):
-        order = await self.controller._set_paid(order=order)
+    async def test_set_paid_twice(self, paid_order):
         with pytest.raises(HTTPException):
-            await self.controller._set_paid(order=order)
+            await self.controller._set_paid(order=paid_order)
 
     @pytest.mark.asyncio
     async def test_set_delivering(self, paid_order, admin):

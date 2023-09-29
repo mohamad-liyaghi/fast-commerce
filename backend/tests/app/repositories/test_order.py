@@ -35,7 +35,7 @@ class TestOrderRepository:
         assert await self.repository.retrieve(many=True) is not None
 
     @pytest.mark.asyncio
-    async def test_create_empty_cart(self):
+    async def test_create_with_empty_cart_fails(self):
         self.cart = {}
         with pytest.raises(CartEmptyException):
             await self.repository.create_order(
@@ -48,7 +48,7 @@ class TestOrderRepository:
             )
 
     @pytest.mark.asyncio
-    async def test_order_price(self, product):
+    async def test_set_order_total_price(self, product):
         order = await self.repository.create_order(
             user=self.user,
             order_item_controller=self.order_item_controller,
@@ -61,25 +61,24 @@ class TestOrderRepository:
         assert order.total_price == product.price
 
     @pytest.mark.asyncio
+    async def test_set_pending_order_to_delivering_fails(self, order):
+        with pytest.raises(OrderInvalidStatus):
+            await self.repository.set_delivering(order=order)
+
+    @pytest.mark.asyncio
     async def test_set_paid(self, order):
         order = await self.repository.set_paid(order=order)
         assert order.status == OrderStatusEnum.PREPARING
 
     @pytest.mark.asyncio
-    async def test_set_paid_twice(self, order):
-        order = await self.repository.set_paid(order=order)
+    async def test_set_paid_twice(self, paid_order):
         with pytest.raises(OrderAlreadyPaid):
-            await self.repository.set_paid(order=order)
+            await self.repository.set_paid(order=paid_order)
 
     @pytest.mark.asyncio
     async def test_set_delivering(self, paid_order):
         updated_order = await self.repository.set_delivering(order=paid_order)
         assert updated_order.status == OrderStatusEnum.DELIVERING
-
-    @pytest.mark.asyncio
-    async def test_set_delivering_invalid_status(self, order):
-        with pytest.raises(OrderInvalidStatus):
-            await self.repository.set_delivering(order=order)
 
     @pytest.mark.asyncio
     async def test_set_delivered(self, delivering_order):
