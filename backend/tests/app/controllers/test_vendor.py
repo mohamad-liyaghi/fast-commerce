@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 import pytest
 import asyncio
-from datetime import datetime, timedelta
 from src.app.enums import VendorStatusEnum
 from tests.utils.faker import create_vendor_credential
 
