@@ -8,12 +8,12 @@ class BaseConfig(BaseSettings):
 
     model_config = SettingsConfigDict(
         env_file=(
-            "env/cache.env",
-            "env/celery.env",
-            "env/jwt.env",
-            "env/mail.env",
-            "env/pg.env",
-            "env/redis.env",
+            "envs/cache.env",
+            "envs/celery.env",
+            "envs/jwt.env",
+            "envs/mail.env",
+            "envs/pg.env",
+            "envs/redis.env",
         ),
     )
 
