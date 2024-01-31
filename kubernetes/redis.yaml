@@ -37,8 +37,6 @@ spec:
                 image: redis:7-alpine
                 ports:
                     - containerPort: 6379
-                env:
-                    - name: REDIS_URL
-                      value: redis://redis:6379/0
-                    - name: TEST_REDIS_URL
-                      value: redis://redis-test:6379/0
+                envFrom:
+                  - configMapRef:
+                      name: fast-commerce-env

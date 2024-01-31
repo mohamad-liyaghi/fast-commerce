@@ -40,3 +40,6 @@ spec:
                     - containerPort: 8000
                 command: ["/bin/sh"]
                 args: ["-c", "sh docker/scripts/entrypoint.sh"]
+                envFrom:
+                  - configMapRef:
+                      name: fast-commerce-env

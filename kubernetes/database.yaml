@@ -37,15 +37,6 @@ spec:
                 image: postgres:15.4-alpine
                 ports:
                     - containerPort: 5432
-                env:
-                    - name: POSTGRES_USER
-                      value: postgres
-                    - name: POSTGRES_PASSWORD
-                      value: postgres
-                    - name: POSTGRES_DB
-                      value: fast-commerce
-                    - name: POSTGRES_HOST
-                      value: fast-commerce-database
-                    - name: POSTGRES_URL
-                      value: postgres://postgres:postgres@fast-commerce-database:5432/fast-commerce
-
+                envFrom:
+                  - configMapRef:
+                      name: fast-commerce-env
