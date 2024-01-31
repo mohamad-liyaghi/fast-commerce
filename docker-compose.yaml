@@ -19,8 +19,6 @@ services:
           condition: service_healthy
         redis:
           condition: service_started
-        redis-test:
-            condition: service_started
         smtp4dev:
             condition: service_started
 
@@ -53,13 +51,6 @@ services:
     networks:
       - main
 
-  redis-test:
-    container_name: 'fast-commerce-redis-test'
-    image: redis:7-alpine
-    expose:
-      - "6379"
-    networks:
-      - main
 
   smtp4dev:
     image: rnwood/smtp4dev:v3
