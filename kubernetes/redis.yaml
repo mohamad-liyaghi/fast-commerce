@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 
 metadata:
-  name: fast-commerce-redis
+  name: redis
   labels:
     app: fast-commerce-redis
 

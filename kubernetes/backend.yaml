@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: fast-commerce-backend
+  name: backend
   labels:
       app: fast-commerce-backend
 
