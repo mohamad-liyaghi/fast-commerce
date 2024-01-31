@@ -5,7 +5,8 @@
 2. [Scenario](#scenario)
 3. [Backend](#backend)
 4. [Frontend](#frontend)
-5. [How to Run](#how-to-run)
+5. [How to Run With Docker](#how-to-run)
+6. [How to Run With Kubernetes](#how-to-run-with-kubernetes)
 
 ## Introduction
 Fast Commerce is a comprehensive e-commerce system designed for exceptional performance, extensibility, and maintainability. This repository houses both the backend and frontend components of the system, offering a complete solution for online shopping.
@@ -45,3 +46,15 @@ To get Fast Commerce up and running on your local environment, follow these step
 
 
 You can now access the backend server at `http://localhost:8000/`.
+
+## How to Run With Kubernetes
+To run Fast Commerce with Kubernetes, follow these steps:
+
+1. **Install Minikube:** Follow the instructions [here](https://minikube.sigs.k8s.io/docs/start/).
+2. **Start Minikube:** `minikube start`
+3. **Clone the Repository:** `git clone https://github.com/mohamad-liyaghi/fast-commerce.git`
+4. **Cd into the Backend Directory:** `cd fast-commerce/`
+5. **Create a Confmap:** `kubectl create configmap fast-commerce-env --from-env-file=backend/envs/cache.env --from-env-file=backend/envs/celery.env --from-env-file=backend/envs/jwt.env --from-env-file=backend/envs/mail.env --from-env-file=backend/envs/pg.env --from-env-file=backend/envs/redis.env`
+6. **Run the Kubernetes Deployment:** `kubectl apply -f kubernetes/`
+7. **Get external ip from minikube:** `minikube service backend`
+
