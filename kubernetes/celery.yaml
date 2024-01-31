@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery
+  labels:
+      app: fast-commerce-celery
+
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: fast-commerce-celery
+    template:
+        metadata:
+            labels:
+                app: fast-commerce-celery
+        spec:
+            containers:
+              - name: fast-commerce-celery
+                image: ml06py/fast_commerce_celery:latest
+                imagePullPolicy: Always
+                ports:
+                    - containerPort: 8000
+                command: ["/bin/sh"]
+                args: ["-c", "sh docker/scripts/celery.sh"]
+                envFrom:
+                  - configMapRef:
+                      name: fast-commerce-env

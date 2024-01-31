@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: database
+  labels:
+    app: fast-commerce-database
+
+spec:
+    ports:
+        - port: 5432
+          targetPort: 5432
+    selector:
+        app: fast-commerce-database
+
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: fast-commerce-database
+  labels:
+    app: fast-commerce-database
+
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+          app: fast-commerce-database
+    template:
+        metadata:
+          labels:
+              app: fast-commerce-database
+        spec:
+          containers:
+              - name: fast-commerce-database
+                image: postgres:15.4-alpine
+                ports:
+                    - containerPort: 5432
+                envFrom:
+                  - configMapRef:
+                      name: fast-commerce-env

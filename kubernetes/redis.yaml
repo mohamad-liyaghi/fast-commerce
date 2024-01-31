@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: redis
+  labels:
+    app: fast-commerce-redis
+
+spec:
+    ports:
+        - port: 6379
+          targetPort: 6379
+    selector:
+        app: fast-commerce-redis
+
+---
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: fast-commerce-redis
+  labels:
+    app: fast-commerce-redis
+
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+          app: fast-commerce-redis
+    template:
+        metadata:
+          labels:
+              app: fast-commerce-redis
+        spec:
+          containers:
+              - name: fast-commerce-redis
+                image: redis:7-alpine
+                ports:
+                    - containerPort: 6379
+                envFrom:
+                  - configMapRef:
+                      name: fast-commerce-env
