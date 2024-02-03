@@ -44,8 +44,14 @@ jobs:
     - name: Run Kubernetes Deployments
       run: kubectl apply -f kubernetes/
 
-    - name: Wait for Deployments
+    - name: Wait for Database Deployments
+      run: kubectl wait --for=condition=available --timeout=600s deployment/fast-commerce-postgres
+
+    - name: Wait for Backend Deployments
       run: kubectl wait --for=condition=available --timeout=600s deployment/fast-commerce-backend
+
+
+
 
     - name: Run Backend Tests
       run: kubectl exec -it $(kubectl get pods | grep backend | awk '{print $1}') -- pytest
