@@ -34,11 +34,8 @@ jobs:
     - name: Set up kubectl
       uses: azure/setup-kubectl@v1
 
-    - name: Setup minikube
-      uses: kodermax/setup-minikube@v1
-
-    - name: Run Minikube
-      run: minikube start
+    - name: Start minikube
+      uses: medyagh/setup-minikube@master
 
     - name: Run Kubernetes Deployments
       run: kubectl apply -f kubernetes/
