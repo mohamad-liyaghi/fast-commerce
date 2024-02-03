@@ -45,7 +45,7 @@ jobs:
       run: kubectl apply -f kubernetes/
 
     - name: Wait for Database Deployments
-      run: kubectl wait --for=condition=available --timeout=600s deployment/fast-commerce-postgres
+      run: kubectl wait --for=condition=available --timeout=600s deployment/fast-commerce-database
 
     - name: Wait for Backend Deployments
       run: kubectl wait --for=condition=available --timeout=600s deployment/fast-commerce-backend
