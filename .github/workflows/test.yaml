@@ -26,7 +26,6 @@ jobs:
 
   run-test-with-kubernetes:
     runs-on: ubuntu-latest
-    needs: run-test-with-docker
 
     steps:
     - uses: actions/checkout@v3
@@ -45,13 +44,13 @@ jobs:
       run: kubectl apply -f kubernetes/
 
     - name: Wait for Database Deployments
-      run: kubectl wait --for=condition=available --timeout=600s deployment/fast-commerce-database
+      run: kubectl wait --for=condition=available --timeout=60s deployment/fast-commerce-database
+
+    - name: Wait for Redis Service
+      run: kubectl wait --for=condition=available --timeout=60s deployment/fast-commerce-redis
 
     - name: Wait for Backend Deployments
-      run: kubectl wait --for=condition=available --timeout=600s deployment/fast-commerce-backend
-
-
-
+      run: kubectl wait --for=condition=available --timeout=60s deployment/fast-commerce-backend
 
     - name: Run Backend Tests
       run: kubectl exec -it $(kubectl get pods | grep backend | awk '{print $1}') -- pytest
