@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  run-test-with-docker:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,3 +23,19 @@ jobs:
 
     - name: Run Backend Tests
       run: make test
+
+  run-test-with-kubernetes:
+    runs-on: ubuntu-latest
+    needs: run-test-with-docker
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v1
+
+    - name: Run Files
+      run: kubectl apply -f kubernetes/
+
+    - name: Run Backend Tests
+      run: kubectl exec -it $(kubectl get pods | grep backend | awk '{print $1}') -- pytest
