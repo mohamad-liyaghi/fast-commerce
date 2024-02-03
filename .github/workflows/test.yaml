@@ -34,8 +34,15 @@ jobs:
     - name: Set up kubectl
       uses: azure/setup-kubectl@v1
 
-    - name: Run Files
+    - name: Setup minikube
+      uses: kodermax/setup-minikube@v1
+
+    - name: Run Minikube
+      run: minikube start
+
+    - name: Run Kubernetes Deployments
       run: kubectl apply -f kubernetes/
+
 
     - name: Run Backend Tests
       run: kubectl exec -it $(kubectl get pods | grep backend | awk '{print $1}') -- pytest
