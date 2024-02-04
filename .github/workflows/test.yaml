@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run-test-with-docker:
+  test-on-docker:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,7 +24,7 @@ jobs:
     - name: Run Backend Tests
       run: make test
 
-  run-test-with-kubernetes:
+  test-on-kubernetes:
     runs-on: ubuntu-latest
 
     steps:
