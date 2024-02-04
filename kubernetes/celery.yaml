@@ -17,7 +17,7 @@ spec:
         spec:
             containers:
               - name: fast-commerce-celery
-                image: ml06py/fast_commerce_celery:latest
+                image: ml06py/fast_commerce:latest
                 imagePullPolicy: Always
                 ports:
                     - containerPort: 8000
