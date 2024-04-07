@@ -38,7 +38,6 @@ jobs:
 
 
     - name: Create ConfigMap
-      working-directory: backend/
       run: make confmap
 
     - name: Run Kubernetes Deployments

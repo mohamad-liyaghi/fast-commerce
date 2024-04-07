@@ -9,6 +9,7 @@ help:
 	@echo "  test    - Run the tests."
 	@echo "  admin   - Create an admin user."
 	@echo " ruff    - Run ruff check for backend code."
+	@echo " confmap - Create a configmap for kubernetes."
 
 
 
@@ -35,4 +36,4 @@ ruff:
 	docker exec -it fast-commerce-backend ruff check .
 
 confmap:
-	kubectl create configmap fast-commerce-env --from-env-file=envs/cache.env --from-env-file=envs/celery.env --from-env-file=envs/jwt.env --from-env-file=envs/mail.env --from-env-file=envs/pg.env --from-env-file=envs/redis.env
+	kubectl create configmap fast-commerce-env --from-env-file=backend/envs/cache.env --from-env-file=backend/envs/celery.env --from-env-file=backend/envs/jwt.env --from-env-file=backend/envs/mail.env --from-env-file=backend/envs/pg.env --from-env-file=backend/envs/redis.env
