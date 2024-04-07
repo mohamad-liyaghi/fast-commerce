@@ -1,4 +1,4 @@
-.PHONY: help build run stop test admin
+.PHONY: help build run stop test admin confmap
 
 help:
 	@echo "Available targets:"
@@ -33,3 +33,6 @@ admin:
 
 ruff:
 	docker exec -it fast-commerce-backend ruff check .
+
+confmap:
+	kubectl create configmap fast-commerce-env --from-env-file=envs/cache.env --from-env-file=envs/celery.env --from-env-file=envs/jwt.env --from-env-file=envs/mail.env --from-env-file=envs/pg.env --from-env-file=envs/redis.env

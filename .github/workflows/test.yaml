@@ -38,7 +38,8 @@ jobs:
 
 
     - name: Create ConfigMap
-      run: kubectl create configmap fast-commerce-env --from-env-file=backend/envs/cache.env --from-env-file=backend/envs/celery.env --from-env-file=backend/envs/jwt.env --from-env-file=backend/envs/mail.env --from-env-file=backend/envs/pg.env --from-env-file=backend/envs/redis.env
+      working-directory: backend/
+      run: make confmap
 
     - name: Run Kubernetes Deployments
       run: kubectl apply -f kubernetes/
