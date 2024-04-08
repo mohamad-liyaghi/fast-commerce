@@ -17,7 +17,7 @@ click==8.1.6
 click-didyoumean==0.3.0
 click-plugins==1.1.1
 click-repl==0.3.0
-cryptography==41.0.3
+cryptography==42.0.4
 dnspython==2.4.2
 ecdsa==0.18.0
 elastic-transport==8.4.0
