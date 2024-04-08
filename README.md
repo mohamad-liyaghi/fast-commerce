@@ -54,7 +54,7 @@ To run Fast Commerce with Kubernetes, follow these steps:
 2. **Start Minikube:** `minikube start`
 3. **Clone the Repository:** `git clone https://github.com/mohamad-liyaghi/fast-commerce.git`
 4. **Cd into the Backend Directory:** `cd fast-commerce/`
-5. **Create a Confmap:** `kubectl create configmap fast-commerce-env --from-env-file=backend/envs/cache.env --from-env-file=backend/envs/celery.env --from-env-file=backend/envs/jwt.env --from-env-file=backend/envs/mail.env --from-env-file=backend/envs/pg.env --from-env-file=backend/envs/redis.env`
+5. **Create a Confmap:** `make confmap`
 6. **Run the Kubernetes Deployment:** `kubectl apply -f kubernetes/`
 7. **Get external ip from minikube:** `minikube service backend`
 
