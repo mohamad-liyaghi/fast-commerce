@@ -24,7 +24,7 @@ elastic-transport==8.4.0
 elasticsearch==8.9.0
 email-validator==2.0.0.post2
 Faker==19.3.0
-fastapi==0.101.1
+fastapi==0.109.1
 fastapi-mail==1.4.1
 greenlet==2.0.2
 h11==0.14.0
