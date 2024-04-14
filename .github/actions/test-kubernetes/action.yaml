@@ -30,5 +30,5 @@ runs:
       shell: bash
 
     - name: Run Backend Tests
-      run: kubectl exec -it $(kubectl get pods | grep backend | awk '{print $1}') -- pytest
+      run: make test_k8s
       shell: bash

@@ -1,4 +1,4 @@
-.PHONY: help build run stop test admin confmap
+.PHONY: help build run stop test admin confmap k8s
 
 help:
 	@echo "Available targets:"
@@ -10,6 +10,10 @@ help:
 	@echo "  admin   - Create an admin user."
 	@echo " ruff    - Run ruff check for backend code."
 	@echo " confmap - Create a configmap for kubernetes."
+	@echo " k8s - Run project using kubernetes."
+	@echo " test_k8s - Test Project On Kubernetes."
+
+
 
 
 
@@ -37,3 +41,9 @@ ruff:
 
 confmap:
 	kubectl create configmap fast-commerce-env --from-env-file=backend/envs/cache.env --from-env-file=backend/envs/celery.env --from-env-file=backend/envs/jwt.env --from-env-file=backend/envs/mail.env --from-env-file=backend/envs/pg.env --from-env-file=backend/envs/redis.env
+
+k8s:
+	kubectl apply -f kubernetes/
+
+test_k8s:
+	kubectl exec -it $(shell kubectl get pods | grep backend | awk '{print $$1}') -- pytest
