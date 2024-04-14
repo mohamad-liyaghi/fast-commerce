@@ -1,0 +1,52 @@
+name: Fast Commerce Deployment
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/fast_commerce
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Docker Image
+        uses: ./.github/actions/build
+        with:
+          image_name: ${{ env.IMAGE_NAME }}
+          registry: ${{ env.REGISTRY }}
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub_password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+
+  test-on-docker:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Test Docker Image
+        uses: ./.github/actions/test-docker
+        with:
+          image_name: ${{ env.IMAGE_NAME }}
+          registry: ${{ env.REGISTRY }}
+
+  test-on-kubernetes:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Test Kubernetes
+        uses: ./.github/actions/test-kubernetes
+
+  deploy:
+    needs: [ test-on-docker, test-on-kubernetes ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy The Code
+        uses: ./.github/actions/deploy

@@ -1,0 +1,35 @@
+name: "Test On Docker"
+description: "Test The Code On Docker"
+
+inputs:
+  image_name:
+    description: "Name of the image"
+    required: true
+    default: "fast_commerce"
+  registry:
+    description: "Docker registry"
+    required: true
+    default: "docker.io"
+
+runs:
+  using: composite
+  steps:
+    - name: SetUp Docker
+      uses: docker/setup-buildx-action@v2
+
+    - name: Pull The Image
+      run: docker pull ${{ inputs.registry }}/${{ inputs.image_name }}:latest
+      shell: bash
+
+    - name: Run Containers
+      run: make run DETACHED=true
+      shell: bash
+
+    - name: Wait for backend container to prepare
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '5s'
+
+    - name: Run tests
+      run: make test
+      shell: bash
