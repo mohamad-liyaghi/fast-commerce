@@ -7,6 +7,7 @@
 4. [Frontend](#frontend)
 5. [How to Run With Docker](#how-to-run)
 6. [How to Run With Kubernetes](#how-to-run-with-kubernetes)
+7. [How to Run Tests](#how-to-run-tests)
 
 ## Introduction
 Fast Commerce is a comprehensive e-commerce system designed for exceptional performance, extensibility, and maintainability. This repository houses both the backend and frontend components of the system, offering a complete solution for online shopping.
@@ -34,7 +35,7 @@ For detailed documentation on the backend components and how to set up and run t
 > The Frontend Is Not Yet Available. We regret any inconvenience this may cause. If you are interested in contributing to the development of the frontend, please feel free to reach out.
 Please refer to the [Frontend README](frontend/README.md) for more information.
 
-## How to Run
+## How to Run With Docker
 To get Fast Commerce up and running on your local environment, follow these steps:
 
 1. **Clone the Repository:** `git clone https://github.com/mohamad-liyaghi/fast-commerce.git`
@@ -48,7 +49,7 @@ To get Fast Commerce up and running on your local environment, follow these step
 You can now access the backend server at `http://localhost:8000/`.
 
 ## How to Run With Kubernetes
-To run Fast Commerce with Kubernetes, follow these steps:
+To run Fast Commerce backend with Kubernetes, follow these steps:
 
 1. **Install Minikube:** Follow the instructions [here](https://minikube.sigs.k8s.io/docs/start/).
 2. **Start Minikube:** `minikube start`
@@ -57,4 +58,19 @@ To run Fast Commerce with Kubernetes, follow these steps:
 5. **Create a Confmap:** `make confmap`
 6. **Run the Kubernetes Deployment:** `kubectl apply -f kubernetes/`
 7. **Get external ip from minikube:** `minikube service backend`
+
+
+## How to Run Tests
+The backend of Fast Commerce is equipped with a comprehensive test suite to ensure its reliability and robustness.
+<br>
+
+To run tests, you can run the following command on the backend directory:
+```bash
+make test
+```
+
+If you are running the project with kubernetes, you can run tests by running the following command:
+```bash
+  make test_k8s
+```
 

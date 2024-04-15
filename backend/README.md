@@ -33,3 +33,4 @@ The **Order** section allows users to create orders from the available products.
 
 ### Payment Processing (Payment)
 The **Payment** section is responsible for handling payments for orders. Users must make payments to confirm and proceed with their orders, ensuring a secure and efficient payment process. [**Documentation**](docs/payment.md)
+
