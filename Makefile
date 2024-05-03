@@ -27,6 +27,9 @@ else
 	docker compose up
 endif
 
+deploy:
+	docker compose -f docker-compose.prod.yml up -d
+
 stop:
 	docker compose down
 
