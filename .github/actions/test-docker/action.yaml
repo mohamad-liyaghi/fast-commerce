@@ -22,7 +22,7 @@ runs:
       shell: bash
 
     - name: Run Containers
-      run: make run DETACHED=true
+      run: make deploy
       shell: bash
 
     - name: Wait for backend container to prepare
