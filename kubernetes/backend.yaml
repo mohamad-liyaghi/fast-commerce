@@ -43,3 +43,6 @@ spec:
                 envFrom:
                   - configMapRef:
                       name: fast-commerce-env
+                env:
+                  - name: ENVIRONMENT
+                    value: "PRODUCTION"
