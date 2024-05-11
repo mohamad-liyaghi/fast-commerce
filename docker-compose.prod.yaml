@@ -5,9 +5,7 @@ services:
     container_name: 'fast-commerce-backend'
     command: sh "docker/scripts/entrypoint.sh"
     tty: true
-    build:
-      context: .
-      dockerfile: ./backend/docker/Dockerfile
+    image: ml06py/fast_commerce:latest
     ports:
       - "8000:8000"
     volumes:
@@ -67,9 +65,7 @@ services:
     container_name: 'fast-commerce-celery'
     command: sh "docker/scripts/celery.sh"
     tty: true
-    build:
-      context: .
-      dockerfile: ./backend/docker/Dockerfile
+    image: ml06py/fast_commerce:latest
     volumes:
       - ./backend:/backend
     networks:
