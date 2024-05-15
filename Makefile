@@ -8,13 +8,9 @@ help:
 	@echo "  stop    - Stop the docker container."
 	@echo "  test    - Run the tests."
 	@echo "  admin   - Create an admin user."
-	@echo " ruff    - Run ruff check for backend code."
 	@echo " confmap - Create a configmap for kubernetes."
 	@echo " k8s - Run project using kubernetes."
 	@echo " test_k8s - Test Project On Kubernetes."
-
-
-
 
 
 build:
@@ -38,9 +34,6 @@ test:
 
 admin:
 	docker exec -it fast-commerce-backend python scripts/create_admin.py
-
-ruff:
-	docker exec -it fast-commerce-backend ruff check .
 
 confmap:
 	kubectl create configmap fast-commerce-env --from-env-file=backend/envs/cache.env --from-env-file=backend/envs/celery.env --from-env-file=backend/envs/jwt.env --from-env-file=backend/envs/mail.env --from-env-file=backend/envs/pg.env --from-env-file=backend/envs/redis.env
