@@ -11,7 +11,7 @@
 
 ## Introduction
 Fast Commerce is a comprehensive e-commerce system designed for exceptional performance, extensibility, and maintainability. This repository houses both the backend and frontend components of the system, offering a complete solution for online shopping.
-It uses Fastapi as the backend framework and React as the frontend framework.
+Fast commerce uses Fastapi as the backend framework and React as the frontend framework.
 
 ## Scenario
 > FastPicture a thriving e-commerce ecosystem where tech giants like Apple and Microsoft have joined forces with Fast Commerce. Aspiring company owners embark on their journey by registering as users, gaining the opportunity to become recognized vendors upon approval. These vendors seamlessly introduce their world-class products to our platform. When a user places an order, vendors take charge of delivering the items to our central hub. Fast Commerce acts as the catalyst, orchestrating the entire order fulfillment process, ensuring prompt delivery to end-users. This collaborative synergy empowers businesses to effortlessly expand their reach, while customers relish unhindered access to premium products.
